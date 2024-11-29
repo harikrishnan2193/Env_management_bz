@@ -1,107 +1,409 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <title>Projects</title>
-    <!-- tailwind cdn -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- fontawsome cdn -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</head>
+    <link href="/css/tailwind.css" rel="stylesheet" />
 
-<body>
-    <div class="text-2xl font-bold m-8">Welcome </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Add jQuery -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+      integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+      integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
 
-    <div class="card shadow ml-3 w-2/3 mx-auto mb-User16 relative">
-        <div class="bg-white rounded-lg shadow-lg">
-            <div class="flex justify-between mt-2 mb-2 p-4">
-                <h3 class="text-green-600 text-2xl font-semibold">My Projects</h3>
-                <div>
-                    <!-- Project Button -->
-                    <button id="openModalBtn" class="bg-purple-600 text-white px-4 py-2 rounded">
-                        <a href="/project/status">Add Project</a>
-                    </button>
-                </div>
+    <style>
+      /* Add these at the top of your CSS */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        width: 100%;
+        overflow-x: hidden; /* Prevents horizontal scroll */
+      }
+
+      body {
+        position: relative;
+        background: #0f2027;
+        background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+        min-height: 100vh;
+      }
+
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("/images/k.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        opacity: 0.3;
+        z-index: 1;
+        pointer-events: none;
+      }
+      .main-content {
+        position: relative;
+        z-index: 2;
+      }
+
+      #sidebar {
+        background: #0f2027;
+        background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+      }
+
+      .custom-dropdown {
+        position: relative;
+        width: 200px;
+        cursor: pointer;
+        font-family: Arial, sans-serif;
+      }
+
+      /* Displayed selected value */
+      .selected {
+        padding: 10px 15px;
+        border: 2px solid orange;
+        border-radius: 5px;
+        background-color: white;
+        font-size: 16px;
+        color: black;
+      }
+
+      /* Dropdown options container */
+      .dropdown-options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        border: 2px solid orange;
+        border-top: none;
+        border-radius: 0 0 5px 5px;
+        max-height: 150px; /* Scrollable dropdown */
+        overflow-y: auto;
+        display: none; /* Initially hidden */
+        z-index: 1000;
+      }
+
+      /* Individual options */
+      .dropdown-option {
+        padding: 10px 15px;
+        font-size: 16px;
+        color: black;
+        border-bottom: 1px solid #ddd;
+        background-color: white;
+      }
+
+      /* Highlight option on hover */
+      .dropdown-option:hover {
+        background-color: orange;
+        color: white;
+      }
+
+      /* Show options when dropdown is active */
+      .custom-dropdown.active .dropdown-options {
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body class="text-white">
+    <div class="main-content">
+      <!-- Navbar -->
+      <header><%- include('navbar') %></header>
+
+      <!-- Main Content -->
+      <main class="w-4/5 mx-auto mt-20">
+        <section class="justify-center">
+          <!-- Search and Add Projects Section -->
+          <div
+            class="flex mb-12 flex-col md:flex-row items-center gap-10 justify-center"
+          >
+            <h1 class="text-3xl font-bold">Projects</h1>
+            <!-- Search Box -->
+            <div class="relative flex items-center gap-4">
+              <input
+                class="border border-gray-400 p-2 pl-10 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-800 text-black md:w-[500px]"
+                type="text"
+                placeholder="Search projects"
+                id="search-bar"
+              />
+              <span class="absolute left-3 top-[10px] text-gray-500">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </span>
+              <button
+                id="search-btn"
+                class="bg-white text-gray-800 px-4 py-2 rounded-md hover:text-orange-500 min-w-24"
+              >
+                Search
+              </button>
             </div>
 
-            <!-- Error Message -->
-            <% if (error && error.length> 0) { %>
-                <div class="text-red-600 ps-6 alert alert-danger alert-dismissible fade show" role="alert">
-                    <%= error[0] %>
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
+            <p
+              id="openModalBtn"
+              class="bg-white text-gray-800 px-4 py-2 rounded-md hover:text-orange-500"
+            >
+              <a href="/project/status" class="flex gap-3">
+                <span>Add Project</span>
+                <span><i class="fa-solid fa-plus"></i></span>
+              </a>
+            </p>
+          </div>
+
+          <!-- Projects Grid -->
+          <div
+            id="projectsContainer"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-16"
+          >
+            <!-- Projects will be populated using JS -->
+          </div>
+        </section>
+
+        <!-- Sidebar -->
+        <aside
+          id="sidebar"
+          class="hidden fixed top-0 right-0 h-full w-full sm:w-7/12 lg:w-4/12 xl:w-3/12 shadow-lg p-6 border-l z-10"
+        >
+          <div class="flex justify-end items-center">
+            <!-- <h2 id="sidebarTitle" class="text-2xl font-bold capitalize">
+            Project Title
+          </h2> -->
+            <button
+              onclick="closeSidebar()"
+              class="text-white hover:text-orange-500"
+            >
+              <i class="fas fa-xl fa-times"></i>
+            </button>
+          </div>
+          <div id="sidebarContent" class="mt-5">
+            <p>More project details can be added here in the future.</p>
+          </div>
+        </aside>
+      </main>
+      <div id="permissions-container"></div>
+
+      <script>
+        // Initialize projects,success,error array with data from server
+        const projects = <%- JSON.stringify(projects) %>;
+        const error =  <%- JSON.stringify(error) %>;
+        const success =  <%- JSON.stringify(success) %>;
+
+        // success and error message using toastr
+        toastr.options = {
+          timeOut: "1000",
+        };
+
+        if (success && success.length > 0) {
+          toastr.success(success[0]);
+        }
+
+        if (error && error.length > 0) {
+          toastr.error(error[0]);
+        }
+      </script>
+
+      <script>
+        const searchBar = document.querySelector("#search-bar");
+        const searchBtn = document.querySelector("#search-btn");
+        const projectsContainer = document.querySelector("#projectsContainer");
+
+        const statusCodes = {
+          1: "Active",
+          2: "InActive",
+          3: "Completed",
+        };
+
+        //Sidebar Functionality
+
+        // Sidebar open
+        function openSidebar(project) {
+          console.log(project); // To check the object in the console
+
+          // Show the sidebar and update the title
+          const sidebar = document.getElementById("sidebar");
+          const sidebarTitle = document.getElementById("sidebarTitle");
+          sidebar.classList.remove("hidden");
+          // sidebarTitle.textContent = project.project_name; // Set the title
+
+          // You can also set other details in the sidebar for future use
+          const sidebarContent = document.getElementById("sidebarContent");
+          sidebarContent.innerHTML = `
+              <div class="p-4 space-y-6">
+                <!-- Details Section -->
+                <div>
+                  <h3 class="text-lg text-orange-500 uppercase font-semibold mb-3">Details</h3>
+                  <p class="mb-2">
+                    <span class="font-medium">Status:</span>
+                    <span>${
+                      statusCodes[project.status_id] || "No status available."
+                    }</span>
+                  </p>
+                  <p class="mb-2">
+                    <span class="font-medium">Technology:</span>
+                    <span>${
+                      project.technology || "No technology available."
+                    }</span>
+                  </p>
                 </div>
-                <% } %>
-                    <!-- Success Message -->
-                    <% if (success && success.length> 0) { %>
-                        <div class="text-green-600 ps-6 alert alert-success alert-dismissible fade show" role="alert">
-                            <%= success[0] %>
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
-                        </div>
-                        <% } %>
+
+                <!-- Description Section -->
+                <div style="margin-bottom:4rem">
+                  <h3 class="text-lg text-orange-500 uppercase font-semibold">Description</h3>
+                  <p class="">${
+                    project.description || "No description available."
+                  }</p>
+                </div>
 
 
-                            <% projects.forEach(project=> { %>
-                                <div class="mt-4 pb-3">
-                                    <div class="border flex items-center rounded-lg p-4 m-3 bg-gray-100">
-                                        <a href="/project/envStatus?project_id=<%= project.project_id %>"
-                                            class="text-lg font-medium hover:text-blue-600 cursor-pointer">
-                                            <%= project.project_name %>
-                                        </a>
+                <div class="flex gap-6">
+                  <!-- Edit Button -->
+                  <button class="text-white block" id="editBtn">
+                   <a
+                     href="/project/alldetils?project_id=${project.project_id}"
+                     > <span class="flex gap-1 items-center hover:text-gray-400"><i class="fas fa-edit"></i>Edit Project</span></a>
+                  </button>
+                  <!-- Delete Button -->
+                  <form action="/project/delete" method="POST" class="inline-block">
+                    <input
+                      type="hidden"
+                      name="project_id"
+                      value=${project.project_id}  
+                     />
+                   <button type="submit" class="text-red-600 hover:text-red-800 flex items-center gap-1"><i class="fas fa-trash"></i><span>Delete Project </span></button>
+                 </form>
+                </div>
+              </div>`;
+        }
 
-                                        <div class="ml-auto flex space-x-3">
-                                            <!-- Edit Button -->
-                                            <button class="text-blue-600" id="editBtn">
-                                                <a href="/project/alldetils?project_id=<%= project.project_id %>"><i
-                                                        class="fas fa-edit"></i></a>
-                                            </button>
-                                            <!-- Delete Button -->
-                                            <form action="/project/delete" method="POST" class="inline-block">
-                                                <input type="hidden" name="project_id"
-                                                    value="<%= project.project_id %>" />
-                                                <button type="submit" class="text-red-600 hover:text-red-800">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                <% }) %>
+        //Sidebar close
+        function closeSidebar() {
+          // Hide the sidebar
+          const sidebar = document.getElementById("sidebar");
+          sidebar.classList.add("hidden");
+        }
 
-                                    <!-- Permissions Button -->
-                                    <div id="permissions-container"></div>
+        // Function to create a project card
+        function createProjectCard(project) {
+          const statusColors = {
+            1: "bg-green-500",
+            2: "bg-red-500",
+            3: "bg-blue-500",
+          };
 
+          return `
+          <div class="bg-gray-200 text-black shadow-md border border-gray-300 rounded-lg p-4 relative">
+          <p onclick='openSidebar(${JSON.stringify(project)})'>
+              <i class="fa-solid fa-circle-info cursor-pointer hover:text-orange-500 absolute right-2 top-2"></i>
+            </p>
 
+            <div class="flex flex-col gap-3">
+              <div class="flex gap-2 items-center flex-wrap">
+                <p>
+                  <a href="/project/envStatus?project_id=${
+                    project.project_id
+                  }" class="font-semibold cursor-pointer hover:text-orange-500 capitalize">
+                    ${project.project_name}
+                  </a>
+                </p>
+                <p class="p-1 h-1 w-1 text-sm font-semibold text-white rounded ${
+                  statusColors[project.status_id]
+                } text-center"></p>
+              </div>
 
-        </div>
-    </div>
+              <p class="text-gray-500 min-h-20">${project.description}</p>
+              <p>${project.technology}</p>
+            </div>
+          </div>
+        `;
+        }
 
-    <script>
-        // Function to fetch user role_scope
+        // Function to search project
+        function searchProjects() {
+          const searchTerm = searchBar.value.toLowerCase();
+          projectsContainer.innerHTML = ""; // Clear previous results
+
+          const filteredProjects = projects.filter((project) => {
+            return (
+              project.project_name.toLowerCase().includes(searchTerm) ||
+              project.description.toLowerCase().includes(searchTerm) ||
+              project.technology.toLowerCase().includes(searchTerm)
+            );
+          });
+
+          if (filteredProjects.length > 0) {
+            const gridHTML = filteredProjects
+              .map((project) => createProjectCard(project))
+              .join("");
+            projectsContainer.innerHTML = gridHTML;
+          } else {
+            projectsContainer.innerHTML = `
+            <div class="col-span-full text-center py-8 text-gray-500">
+              No projects found.
+            </div>
+          `;
+          }
+        }
+
+        // Event listeners
+        document.addEventListener("DOMContentLoaded", () => {
+          searchProjects();
+        });
+
+        searchBtn.addEventListener("click", searchProjects);
+
+        searchBar.addEventListener("keyup", (e) => {
+          if (e.key === "Enter") {
+            searchProjects();
+          }
+          if (searchBar.value === "") {
+            searchProjects();
+          }
+        });
+
+        // Function to fetch user role_scope and conditionally render a button
         async function fetchUserRoleScope() {
-            try {
-                const response = await fetch('/getUserRoleScope');
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('User Role Scope:', data.role_scope);
-    
-                    // check role_scope is a string and render the button if it's 'organization'
-                    if (typeof data.role_scope === 'string' && data.role_scope === 'organization') {
-            
-                        const container = document.getElementById('permissions-container');
-                        
-                        // the permissions button HTML
-                        const permissionsButton = `
+          try {
+            const response = await fetch("/getUserRoleScope");
+            if (response.ok) {
+              const data = await response.json();
+              console.log("User Role Scope:", data.role_scope);
+
+              // check role_scope is a string and render the button if it's 'organization'
+              if (
+                typeof data.role_scope === "string" &&
+                data.role_scope === "organization"
+              ) {
+                const container = document.getElementById(
+                  "permissions-container"
+                );
+
+                // the permissions button HTML
+                const permissionsButton = `
                             <p class="absolute -bottom-12 text-center text-lg font-semibold text-gray-700">
                                 View Permissions?
                                 <a href="/superadmin/permission"
@@ -110,24 +412,23 @@
                                 </a>
                             </p>
                         `;
-                        // append the button to the container
-                        container.innerHTML = permissionsButton;
-                    }
-                } else {
-                    console.error('Failed to fetch user role scope:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error fetching user role scope:', error.message);
+                // append the button to the container
+                container.innerHTML = permissionsButton;
+              }
+            } else {
+              console.error(
+                "Failed to fetch user role scope:",
+                response.statusText
+              );
             }
+          } catch (error) {
+            console.error("Error fetching user role scope:", error.message);
+          }
         }
-    
+
         // call the function when page loads
         window.onload = fetchUserRoleScope;
-    </script>
-    
-    
-
-</body>
-
-
+      </script>
+    </div>
+  </body>
 </html>

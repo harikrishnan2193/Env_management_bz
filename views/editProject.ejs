@@ -1,76 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add New Project</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link href="/css/tailwind.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Add jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    <div class="w-full inset-0 bg-white bg-opacity-50 flex justify-center items-center">
-        <div class="relative bg-white w-full max-w-xl mx-auto p-8 rounded-lg shadow-lg">
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        width: 100%;
+        overflow-x: hidden; /* Prevents horizontal scroll */
+      }
 
-            <h2 class="text-3xl font-bold text-gray-800 text-center mb-6">Edit Project</h2>
+      body {
+        position: relative;
+        background: #0f2027;
+        background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+        min-height: 100vh;
+      }
 
-            <!-- Form -->
-            <form action="/project/update" method="POST" class="space-y-5">
-                <% projectDetils.forEach(project=> { %>
-                    <!-- Project Name Input -->
-                    <div class="relative">
-                        <label for="name" class="block text-gray-700 font-semibold mb-2">Project Name</label>
-                        <input type="text" id="name" name="name" value="<%= project.project_name %>" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm" />
-                    </div>
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("/images/k.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        opacity: 0.3;
+        z-index: 1;
+        pointer-events: none;
+      }
 
-                    <!-- Project Description Input -->
-                    <div class="relative">
-                        <label for="description" class="block text-gray-700 font-semibold mb-2">Project
-                            Description</label>
-                        <textarea id="description" name="description" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm h-32"><%= project.description %></textarea>
-                    </div>
+      .main-content {
+        position: relative;
+        z-index: 2;
+      }
+    </style>
+  </head>
 
-                    <!-- Technology Input -->
-                    <div class="relative">
-                        <label for="technology" class="block text-gray-700 font-semibold mb-2">Technology</label>
-                        <input type="text" id="technology" name="technology" value="<%= project.technology %>" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm" />
-                    </div>
+  <body class="">
+    <div class="main-content">
+    <div class="flex flex-col items-center justify-center space-y-6 mt-20">
+        <!-- Form Section -->
+        <div
+          class="w-11/12 md:w-[500px] bg-white text-black p-6 shadow-lg rounded-lg"
+        >
+        <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">
+          Edit Project
+        </h2>
 
-                    <input type="hidden" name="project_id" value="<%= project.project_id %>" />
+        <!-- Form -->
+        <form action="/project/update" method="POST" class="space-y-5">
+          <% projectDetils.forEach(project=> { %>
+          <!-- Project Name Input -->
+          <div class="relative">
+            <label for="name" class="block text-gray-700 font-semibold mb-2"
+              >Project Name</label
+            >
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value="<%= project.project_name %>"
+              required
+              class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm"
+            />
+          </div>
 
-                    <!-- Status Dropdown -->
-                    <div class="relative">
-                        <label for="status" class="block text-gray-700 font-semibold mb-2">Status</label>
-                        <select id="status" name="status" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm">
-                            <option value="" disabled>Select status</option>
-                            <% status.forEach((statuses)=> { %>
-                                <option value="<%= statuses.status_id %>"
-                                    <%=projectDetils[0].status_id===statuses.status_id ? 'selected' : '' %>>
-                                    <%= statuses.status_name %>
-                                </option>
-                                <% }) %>
-                        </select>
-                    </div>
+          <!-- Project Description Input -->
+          <div class="relative">
+            <label
+              for="description"
+              class="block text-gray-700 font-semibold mb-2"
+              >Project Description</label
+            >
+            <textarea
+              id="description"
+              name="description"
+              required
+              class="w-full border border-gray-300 rounded-md h-32"
+            >
+            <%= project.description %></textarea>
+          </div>
 
-                    <% }) %>
+          <!-- Technology Input -->
+          <div class="relative">
+            <label
+              for="technology"
+              class="block text-gray-700 font-semibold mb-2"
+              >Technology</label
+            >
+            <input
+              type="text"
+              id="technology"
+              name="technology"
+              value="<%= project.technology %>"
+              required
+              class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm"
+            />
+          </div>
 
-                        <!-- Submit Button -->
-                        <div class="flex justify-center">
-                            <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded">Update
-                                Project</button>
-                        </div>
+          <input
+            type="hidden"
+            name="project_id"
+            value="<%= project.project_id %>"
+          />
 
-            </form>
+          <!-- Status Dropdown -->
+          <div class="relative">
+            <label for="status" class="block text-gray-700 font-semibold mb-2"
+              >Status</label
+            >
+            <select
+              id="status"
+              name="status"
+              required
+              class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:outline-none focus:ring-orange-500"
+            >
+              <option value="" disabled>Select status</option>
+            <% status.forEach((statuses)=> { %>
+                <option value="<%= statuses.status_id %>"
+                    <%=projectDetils[0].status_id===statuses.status_id ? 'selected' : '' %>>
+                    <%= statuses.status_name %>
+                </option>
+                <% }) %>
+            </select>
 
-        </div>
+          </div>
+
+          <% }) %>
+
+          <!-- Submit Button -->
+          <div class="flex justify-center">
+            <button
+              type="submit"
+              class="bg-orange-400 hover:bg-orange-500 hover:text-gray-800 text-white px-4 py-2 rounded-md w-1/2""
+            >
+              Update Project
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-
-
-</body>
-
+  </div>
+  </body>
 </html>

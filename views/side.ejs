@@ -1,135 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sidebar Example</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link href="/css/tailwind.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Add jQuery -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+      integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+      integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sidebar Example</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <script src="https://cdn.tailwindcss.com"></script>
-
-</head>
-
-<body class="">
-  <!-- Burger Menu Button -->
-  <% if (typeof roleDetails !=='undefined' && (roleDetails.role_scope==='organization' ||
-    (roleDetails.role_name==='project_admin' && roleDetails.role_scope==='project' ))) { %>
+  <body class="">
+    <!-- Burger Menu Button -->
+    <% if (typeof roleDetails !=='undefined' &&
+    (roleDetails.role_scope==='organization' ||
+    (roleDetails.role_name==='project_admin' &&
+    roleDetails.role_scope==='project' ))) { %>
     <div class="fixed top-4 left-4 z-50">
       <button id="toggleMenu" class="text-white p-2 rounded focus:outline-none">
-        <span id="burgerIcon" class="block"><i class="fa fa-bars fa-lg"></i></span>
-        <span id="closeIcon" class="hidden"><i class="fa-solid fa-x fa-lg"></i></span>
+        <span id="burgerIcon" class="block"
+          ><i class="fa fa-bars fa-lg"></i
+        ></span>
+        <span id="closeIcon" class="hidden"
+          ><i class="fa-solid fa-x fa-lg"></i
+        ></span>
       </button>
     </div>
     <% } %>
 
+    <!-- Sidebar -->
+    <div
+      id="sidebar"
+      class="fixed top-0 left-0 h-full w-72 text-white transform -translate-x-full transition-transform duration-300 z-20"
+    >
+      <div class="p-4 mt-20">
+        <div class="w-full mx-auto mt-8">
+          <!-- Accordion -->
 
-      <!-- Sidebar -->
-      <div id="sidebar"
-        class="fixed top-0 left-0 h-full w-72 text-white transform -translate-x-full transition-transform duration-300 z-20">
-        <div class="p-4 mt-20">
-          <div class="w-full mx-auto mt-8">
-            <!-- Accordion -->
-
-            <div class="border rounded-lg shadow">
-              <div class="w-full px-4 py-2 text-left text-lg font-medium flex justify-between">
-                <h3>Users</h3>
-                <span class="accordian-open cursor-pointer" onclick="toggleAccordion(event)">
-                  <i class="fa-solid fa-plus"></i>
-                </span>
-                <span class="accordian-close hidden cursor-pointer" onclick="toggleAccordion(event)">
-                  <i class="fa-solid fa-minus"></i>
-                </span>
-              </div>
-
-              <div id="accordionContent"
-                class="hidden border-t overflow-hidden transition-[max-height] duration-500 ease-in-out"
-                style="max-height: 0">
-                <ul id="userList" class="px-4 py-2">
-                  <!-- List items -->
-                </ul>
-              </div>
+          <div class="border rounded-lg shadow">
+            <div
+              class="w-full px-4 py-2 text-left text-lg font-medium flex justify-between"
+            >
+              <h3>Users</h3>
+              <span
+                class="accordian-open cursor-pointer"
+                onclick="toggleAccordion(event)"
+              >
+                <i class="fa-solid fa-plus"></i>
+              </span>
+              <span
+                class="accordian-close hidden cursor-pointer"
+                onclick="toggleAccordion(event)"
+              >
+                <i class="fa-solid fa-minus"></i>
+              </span>
             </div>
 
+            <div
+              id="accordionContent"
+              class="hidden border-t overflow-hidden transition-[max-height] duration-500 ease-in-out"
+              style="max-height: 0"
+            >
+              <ul id="userList" class="px-4 py-2">
+                <!-- List items -->
+              </ul>
+            </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <script>
-        const toggleMenuButton = document.getElementById("toggleMenu");
-        const sidebar = document.getElementById("sidebar");
-        const burgerIcon = document.getElementById("burgerIcon");
-        const closeIcon = document.getElementById("closeIcon");
+    <script>
+      const toggleMenuButton = document.getElementById("toggleMenu");
+      const sidebar = document.getElementById("sidebar");
+      const burgerIcon = document.getElementById("burgerIcon");
+      const closeIcon = document.getElementById("closeIcon");
 
-        toggleMenuButton.addEventListener("click", () => {
-          sidebar.classList.toggle("-translate-x-full");
+      toggleMenuButton.addEventListener("click", () => {
+        sidebar.classList.toggle("-translate-x-full");
 
-          burgerIcon.classList.toggle("hidden");
-          closeIcon.classList.toggle("hidden");
-        });
+        burgerIcon.classList.toggle("hidden");
+        closeIcon.classList.toggle("hidden");
+      });
 
-        function toggleAccordion(event) {
-          const clickedElement = event.target.closest(".accordian-open, .accordian-close");
-          if (!clickedElement) return;
+      function toggleAccordion(event) {
+        const clickedElement = event.target.closest(
+          ".accordian-open, .accordian-close"
+        );
+        if (!clickedElement) return;
 
-          const accordionContainer = clickedElement.closest(".border");
-          const content = accordionContainer.querySelector("#accordionContent");
-          const openIcon = accordionContainer.querySelector(".accordian-open");
-          const closeIcon = accordionContainer.querySelector(".accordian-close");
+        const accordionContainer = clickedElement.closest(".border");
+        const content = accordionContainer.querySelector("#accordionContent");
+        const openIcon = accordionContainer.querySelector(".accordian-open");
+        const closeIcon = accordionContainer.querySelector(".accordian-close");
 
-          if (clickedElement.classList.contains("accordian-close")) {
-            // Close the accordion
-            content.style.maxHeight = "0";
-            content.classList.add("hidden");
-            openIcon.classList.remove("hidden");
-            closeIcon.classList.add("hidden");
-          } else if (clickedElement.classList.contains("accordian-open")) {
-            // Open the accordion
-            content.classList.remove("hidden");
-            content.style.maxHeight = content.scrollHeight + "px";
-            openIcon.classList.add("hidden");
-            closeIcon.classList.remove("hidden");
-          }
+        if (clickedElement.classList.contains("accordian-close")) {
+          // Close the accordion
+          content.style.maxHeight = "0";
+          content.classList.add("hidden");
+          openIcon.classList.remove("hidden");
+          closeIcon.classList.add("hidden");
+        } else if (clickedElement.classList.contains("accordian-open")) {
+          // Open the accordion
+          content.classList.remove("hidden");
+          content.style.maxHeight = content.scrollHeight + "px";
+          openIcon.classList.add("hidden");
+          closeIcon.classList.remove("hidden");
         }
+      }
 
+      // Function to fetch data
+      async function fetchAssociatedUsers() {
+        try {
+          const response = await fetch("/users/associated");
 
-        // Function to fetch data 
-        async function fetchAssociatedUsers() {
-          try {
-            const response = await fetch('/users/associated');
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
 
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+          const data = await response.json();
 
-            const data = await response.json();
+          // console.log("Associated Users:", data);
 
-            // console.log("Associated Users:", data);
+          if (data.success && data.data.length > 0) {
+            // response data
+            const users = data.data;
 
-            if (data.success && data.data.length > 0) {
-              // response data
-              const users = data.data;
+            // reference the UL inside the #accordionContent div
+            const userList = document.querySelector("#accordionContent ul");
 
-              // reference the UL inside the #accordionContent div
-              const userList = document.querySelector('#accordionContent ul');
+            userList.innerHTML = "";
 
-              userList.innerHTML = '';
+            // Populate the list with fetched data
+            users.forEach((user) => {
+              const listItem = document.createElement("li");
+              listItem.classList.add(
+                "py-3",
+                "flex",
+                "flex-col",
+                "items-start",
+                "space-y-2"
+              );
 
-              // Populate the list with fetched data
-              users.forEach(user => {
-                const listItem = document.createElement('li');
-                listItem.classList.add('py-3', 'flex', 'flex-col', 'items-start', 'space-y-2');
-
-                // create the content HTML without the trash button initially
-                let contentHTML = `
+              // create the content HTML without the trash button initially
+              let contentHTML = `
                   <span class="font-semibold">${user.username}</span>  
                   <p class="text-sm text-gray-500">${user.role_name}</p>
                 `;
 
-                // conditionally render the trash button based on the user's role
-                if (user.role_name !== 'project_admin') {
-                  contentHTML += `
+              // conditionally render the trash button based on the user's role
+              if (user.role_name !== "project_admin") {
+                contentHTML += `
                     <span class="ml-auto"> 
                     <button
                       class="text-red-500 delete-button"
@@ -139,55 +186,58 @@
                     </button>
                     </span>
                   `;
-                }
+              }
 
-                // Set the innerHTML of the listItem
-                listItem.innerHTML = contentHTML;
+              // Set the innerHTML of the listItem
+              listItem.innerHTML = contentHTML;
 
-                // attach delete functionality to the button
-                const deleteButton = listItem.querySelector('.delete-button');
-                if (deleteButton) {
-                  deleteButton.addEventListener('click', async (event) => {
-                    const userId = event.target.closest('button').getAttribute('data-user-id');
+              // attach delete functionality to the button
+              const deleteButton = listItem.querySelector(".delete-button");
+              if (deleteButton) {
+                deleteButton.addEventListener("click", async (event) => {
+                  const userId = event.target
+                    .closest("button")
+                    .getAttribute("data-user-id");
 
-                    try {
-                      const response = await fetch(`/users/delete/${userId}`, { method: 'DELETE' });
-                      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                      alert('User successfully deleted!');
-                      listItem.remove();  // remove the user from the DOM
-                    } catch (error) {
-                      console.error('Error deleting user:', error);
-                      alert('Error deleting user.');
-                    }
-                  });
-                }
+                  try {
+                    const response = await fetch(`/users/delete/${userId}`, {
+                      method: "DELETE",
+                    });
+                    if (!response.ok)
+                      throw new Error(`HTTP error! Status: ${response.status}`);
+                    alert("User successfully deleted!");
+                    listItem.remove(); // remove the user from the DOM
+                  } catch (error) {
+                    console.error("Error deleting user:", error);
+                    alert("Error deleting user.");
+                  }
+                });
+              }
 
-                // ensure the userList element exists and then append the item
-                const userList = document.getElementById('userList');
-                if (userList) {
-                  userList.appendChild(listItem);
-                } else {
-                  console.error('userList element not found!');
-                }
-              });
+              // ensure the userList element exists and then append the item
+              const userList = document.getElementById("userList");
+              if (userList) {
+                userList.appendChild(listItem);
+              } else {
+                console.error("userList element not found!");
+              }
+            });
 
-              // make accordion visible
-              const accordionContent = document.querySelector('#accordionContent');
-              accordionContent.classList.remove('hidden');
-              accordionContent.style.maxHeight = `${accordionContent.scrollHeight}px`;
-            } else {
-              console.log('No associated users found.');
-            }
-          } catch (error) {
-            console.error("Error fetching associated users:", error);
+            // make accordion visible
+            const accordionContent =
+              document.querySelector("#accordionContent");
+            accordionContent.classList.remove("hidden");
+            accordionContent.style.maxHeight = `${accordionContent.scrollHeight}px`;
+          } else {
+            console.log("No associated users found.");
           }
+        } catch (error) {
+          console.error("Error fetching associated users:", error);
         }
+      }
 
-        // Call the function when the page loads
-        window.onload = fetchAssociatedUsers;
-
-      </script>
-
-</body>
-
+      // Call the function when the page loads
+      window.onload = fetchAssociatedUsers;
+    </script>
+  </body>
 </html>
