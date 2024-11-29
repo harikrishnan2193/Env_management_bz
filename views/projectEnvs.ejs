@@ -39,6 +39,9 @@
       referrerpolicy="no-referrer"
     />
 
+    <!-- for testing purpose using tailwind cdn -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
       body {
         background: #0f2027; /* fallback for old browsers */
@@ -80,16 +83,18 @@
         margin: 0 !important;
         padding: 0 !important;
       }
+
+
     </style>
   </head>
 
-  <body class="">
+  <body >
     <!-- SIDEBAR SECTION -->
     <section class="">
       <%- include('side', { roleDetails: roleDetails }) %>
     </section>
 
-    <div class="min-h-screen flex gap-1">
+    <div class="min-h-screen flex gap-1 ">
       <!-- CONTENT SECTION -->
       <section class="relative flex-1 z-10">
         <div class="flex flex-col items-center justify-center space-y-6 mt-10">
@@ -111,7 +116,7 @@
             <select
               id="options"
               name="env_id"
-              class="w-48 py-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 px-2"
+              class="w-72 px-2 py-1 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               onchange="this.form.submit()"
             >
               <option value="" disabled selected>Select Env</option>
@@ -125,7 +130,7 @@
 
           <!-- Container -->
           <div
-            class="w-full md:w-5/12 bg-white text-black p-6 shadow-lg rounded-lg relative"
+            class="xs:w-11/12 sm:w-10/12 lg:w-7/12 bg-white text-black p-6 shadow-lg rounded-lg relative"
           >
             <h2 class="text-2xl font-bold mb-4 text-center text-gray-900">
               Env Types
@@ -135,12 +140,12 @@
               <!-- Display Envs -->
               <% if (allEnvs && allEnvs.length> 0) { %>
                 <% allEnvs.forEach(env=> { %>
-                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[800px]">
+                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[850px]">
                       <textarea name="env_content"  class="w-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdi!=='undefined' && !canEdit) ? 'readonly' : '' %> placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"><%= (typeof canView !== 'undefined' && canView) ? env.env_content || '' : '' %> ></textarea>
                   </div>
                 <% }) %>
                 <% } else { %>
-                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[600px]">
+                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[850px]">
                       <textarea name="env_content"
                       class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdit !=='undefined' && !canEdit) ? 'readonly' : '' %>
                       placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"></textarea>

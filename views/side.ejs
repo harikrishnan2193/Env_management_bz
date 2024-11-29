@@ -34,6 +34,23 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      @media (max-width: 1535px) {
+        #sidebar {
+          background: #0f2027; /* fallback for old browsers */
+          background: -webkit-linear-gradient(
+            to right,
+            #2c5364,
+            #203a43,
+            #0f2027
+          ); /* Chrome 10-25, Safari 5.1-6 */
+          background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+        }
+      }
+    </style>
   </head>
 
   <body class="">
@@ -57,7 +74,7 @@
     <!-- Sidebar -->
     <div
       id="sidebar"
-      class="fixed top-0 left-0 h-full w-72 text-white transform -translate-x-full transition-transform duration-300 z-20"
+      class="fixed top-0 left-0 h-full w-72 text-white transform -translate-x-full transition-transform duration-300 z-20 2xl:bg-transparent"
     >
       <!-- Users Content -->
       <div class="p-4">

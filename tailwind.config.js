@@ -5,7 +5,14 @@ module.exports = {
     "./public/**/*.html", // Adjust this to match any static HTML files
   ],
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        xs: "320px",
+      },
+    },
   },
   plugins: [],
 };
+
+//use this line to build tailwind classes that are not in public/css/tailwind.css
+// npx tailwindcss -i ./public/css/styles.css -o ./public/css/tailwind.css --watch
