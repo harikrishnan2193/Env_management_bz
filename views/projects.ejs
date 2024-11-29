@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Projects</title>
     <link
       rel="stylesheet"
@@ -29,7 +31,6 @@
     />
 
     <style>
-      /* Add these at the top of your CSS */
       * {
         margin: 0;
         padding: 0;
@@ -67,6 +68,7 @@
         z-index: 1;
         pointer-events: none;
       }
+
       .main-content {
         position: relative;
         z-index: 2;
@@ -75,59 +77,6 @@
       #sidebar {
         background: #0f2027;
         background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
-      }
-
-      .custom-dropdown {
-        position: relative;
-        width: 200px;
-        cursor: pointer;
-        font-family: Arial, sans-serif;
-      }
-
-      /* Displayed selected value */
-      .selected {
-        padding: 10px 15px;
-        border: 2px solid orange;
-        border-radius: 5px;
-        background-color: white;
-        font-size: 16px;
-        color: black;
-      }
-
-      /* Dropdown options container */
-      .dropdown-options {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background-color: white;
-        border: 2px solid orange;
-        border-top: none;
-        border-radius: 0 0 5px 5px;
-        max-height: 150px; /* Scrollable dropdown */
-        overflow-y: auto;
-        display: none; /* Initially hidden */
-        z-index: 1000;
-      }
-
-      /* Individual options */
-      .dropdown-option {
-        padding: 10px 15px;
-        font-size: 16px;
-        color: black;
-        border-bottom: 1px solid #ddd;
-        background-color: white;
-      }
-
-      /* Highlight option on hover */
-      .dropdown-option:hover {
-        background-color: orange;
-        color: white;
-      }
-
-      /* Show options when dropdown is active */
-      .custom-dropdown.active .dropdown-options {
-        display: block;
       }
     </style>
   </head>
@@ -148,7 +97,7 @@
             <!-- Search Box -->
             <div class="relative flex items-center gap-4">
               <input
-                class="border border-gray-400 p-2 pl-10 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-800 text-black md:w-[500px]"
+                class="border border-gray-400 p-2 pl-10 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-800 text-black lg:w-[500px]"
                 type="text"
                 placeholder="Search projects"
                 id="search-bar"
@@ -166,9 +115,9 @@
 
             <p
               id="openModalBtn"
-              class="bg-white text-gray-800 px-4 py-2 rounded-md hover:text-orange-500"
+              class="bg-white text-gray-800 px-2 py-2 rounded-md hover:text-orange-500 min-w-36"
             >
-              <a href="/project/status" class="flex gap-3">
+              <a href="/project/status" class="flex justify-between">
                 <span>Add Project</span>
                 <span><i class="fa-solid fa-plus"></i></span>
               </a>
@@ -362,7 +311,7 @@
             projectsContainer.innerHTML = gridHTML;
           } else {
             projectsContainer.innerHTML = `
-            <div class="col-span-full text-center py-8 text-gray-500">
+            <div class="col-span-full py-8 text-xl text-center">
               No projects found.
             </div>
           `;

@@ -4,10 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Project Support</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+
     <!-- SweetAlert -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
@@ -15,18 +13,26 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
+
     <link href="/css/tailwind.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Add jQuery -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+      integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+      integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+
 
     <style>
       body {
@@ -65,22 +71,22 @@
         display: none;
       }
 
-      #selectedOption{
+      #selectedOption {
         margin: 0 !important;
         padding: 0 !important;
       }
 
+
     </style>
   </head>
 
-  <body class="">
-
+  <body >
     <!-- SIDEBAR SECTION -->
     <section class="">
       <%- include('side', { roleDetails: roleDetails }) %>
-  </section>
+    </section>
 
-    <div class="min-h-screen flex gap-1">
+    <div class="min-h-screen flex gap-1 ">
       <!-- CONTENT SECTION -->
       <section class="relative flex-1 z-10">
         <div class="flex flex-col items-center justify-center space-y-6 mt-10">
@@ -94,40 +100,29 @@
             >
           </a>
 
-          <!-- Dropdown and Button -->
           <form
             id="projectEnvForm"
             action="/project/env_type/envs"
             method="GET"
           >
-            <div
-              class="custom-dropdown w-48 p-1 text-gray-700 bg-white  px-2 rounded-md"
-              id="customDropdown"
+            <select
+              id="options"
+              name="env_id"
+              class="w-72 px-2 py-1 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              onchange="this.form.submit()"
             >
-              <div id="selectedOption" class="selected cursor-pointer">
-                Select Env
-              </div>
-              <div
-                class="dropdown-options hidden absolute z-10 bg-white w-48 mt-1 rounded-b-md" style="margin-left: -0.55rem "
-                id="dropdownOptions"
-              >
-                <% envStatus.forEach(project => { %>
-                <div
-                  class="dropdown-option hover:bg-orange-500 hover:text-white cursor-pointer capitalize"
-                  data-value="<%= project.env_id %>"
-                >
-                  <%= project.env_type %>
-                </div>
-                <% }) %>
-              </div>
-            </div>
-
-            <input type="hidden" name="env_id" id="hiddenInput" />
+              <option value="" disabled selected>Select Env</option>
+              <% envStatus.forEach(project=> { %>
+              <option value="<%= project.env_id %>">
+                <%= project.env_type %>
+              </option>
+              <% }) %>
+            </select>
           </form>
 
           <!-- Container -->
           <div
-            class="w-full md:w-5/12 bg-white text-black p-6 shadow-lg rounded-lg relative "
+            class="xs:w-11/12 sm:w-10/12 lg:w-7/12 bg-white text-black p-6 shadow-lg rounded-lg relative"
           >
             <h2 class="text-2xl font-bold mb-4 text-center text-gray-900">
               Env Types
@@ -137,12 +132,12 @@
               <!-- Display Envs -->
               <% if (allEnvs && allEnvs.length> 0) { %>
                 <% allEnvs.forEach(env=> { %>
-                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[800px]">
+                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[850px]">
                       <textarea name="env_content"  class="w-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdi!=='undefined' && !canEdit) ? 'readonly' : '' %> placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"><%= (typeof canView !== 'undefined' && canView) ? env.env_content || '' : '' %> ></textarea>
                   </div>
                 <% }) %>
                 <% } else { %>
-                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[600px]">
+                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[850px]">
                       <textarea name="env_content"
                       class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdit !=='undefined' && !canEdit) ? 'readonly' : '' %>
                       placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"></textarea>
@@ -232,55 +227,64 @@
       async function openModal(event) {
         event.preventDefault();
 
-                    try {
-                        // fetch user and role data from server
-                        const response = await fetch('/getAllUsers_AllRoles');
-                        if (response.ok) {
-                            const data = await response.json();
-                            const { users, roles, loggedInUserId: fetchedLoggedInUserId, selectedProjectId: fetchedSelectedProjectId } = data;
+        try {
+          // fetch user and role data from server
+          const response = await fetch("/getAllUsers_AllRoles");
+          if (response.ok) {
+            const data = await response.json();
+            const {
+              users,
+              roles,
+              loggedInUserId: fetchedLoggedInUserId,
+              selectedProjectId: fetchedSelectedProjectId,
+            } = data;
 
-                            // store loggedInUserId globally to use in submitModal
-                            loggedInUserId = fetchedLoggedInUserId;
-                            selectedProjectId = fetchedSelectedProjectId
+            // store loggedInUserId globally to use in submitModal
+            loggedInUserId = fetchedLoggedInUserId;
+            selectedProjectId = fetchedSelectedProjectId;
 
-                            // dropdown with usernames
-                            const usernameSelect = document.getElementById('username');
-                            usernameSelect.innerHTML = '<option disabled selected>Select a user</option>';
-                            console.log('users are:', users);
+            // dropdown with usernames
+            const usernameSelect = document.getElementById("username");
+            usernameSelect.innerHTML =
+              "<option disabled selected>Select a user</option>";
+            console.log("users are:", users);
 
-                            users.forEach(user => {
-                                if (user.user_id !== loggedInUserId && user.role_scope !== "organization") {
-                                    const option = document.createElement('option');
-                                    option.value = user.user_id;
-                                    option.textContent = user.username;
-                                    usernameSelect.appendChild(option);
-                                }
-                            });
+            users.forEach((user) => {
+              if (
+                user.user_id !== loggedInUserId &&
+                user.role_scope !== "organization"
+              ) {
+                const option = document.createElement("option");
+                option.value = user.user_id;
+                option.textContent = user.username;
+                usernameSelect.appendChild(option);
+              }
+            });
 
+            // dropdown with roles
+            const userroleSelect = document.getElementById("userrole");
+            userroleSelect.innerHTML =
+              "<option disabled selected>Select a role</option>";
+            console.log("roles are:", roles);
 
-                            // dropdown with roles 
-                            const userroleSelect = document.getElementById('userrole');
-                            userroleSelect.innerHTML = '<option disabled selected>Select a role</option>';
-                            console.log('roles are:', roles);
+            roles
+              .filter((role) => role.role_scope === "project") // filter roles based on role_scope
+              .forEach((role) => {
+                const option = document.createElement("option");
+                option.value = role.role_id;
+                option.textContent = role.role_name;
+                userroleSelect.appendChild(option);
+              });
+          } else {
+            console.error("Failed to fetch user and role data");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
 
-                            roles
-                                .filter(role => role.role_scope === 'project') // filter roles based on role_scope
-                                .forEach(role => {
-                                    const option = document.createElement('option');
-                                    option.value = role.role_id;
-                                    option.textContent = role.role_name;
-                                    userroleSelect.appendChild(option);
-                                });
-                        } else {
-                            console.error('Failed to fetch user and role data');
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                    }
-
-                    // open modal
-                    document.getElementById('modal').style.display = "flex";
-                }
+        // open modal
+        document.getElementById("modal").style.display = "flex";
+      }
 
       //submit main model
       function submitModal() {
@@ -303,71 +307,35 @@
           selectedProjectId: selectedProjectId,
         };
 
-                    fetch('/postUser_roles', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                console.log('Success:', data);
-                                alert(data.message)
-                                closeModal()
-                                location.reload();  // reload the current page
-                            } else {
-                                console.log('Error:', data);
-                                // alert(data.message)
-                            }
-                        })
-                        .catch((error) => {
-                            console.error('Error:', error);
-                        });
-                }
+        fetch("/postUser_roles", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              console.log("Success:", data);
+              alert(data.message);
+              closeModal();
+              location.reload(); // reload the current page
+            } else {
+              console.log("Error:", data);
+              // alert(data.message)
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
 
       function closeModal() {
         //close main model
         // document.getElementById("modal").classList.add("hidden");
         document.getElementById("modal").style.display = "none";
       }
-    </script>
-
-    <script>
-      const customDropdown = document.getElementById("customDropdown");
-      const selectedOption = document.getElementById("selectedOption");
-      const dropdownOptions = document.getElementById("dropdownOptions");
-      const hiddenInput = document.getElementById("hiddenInput");
-      const form = document.getElementById("projectEnvForm");
-
-      // Toggle dropdown visibility
-      selectedOption.addEventListener("click", () => {
-        dropdownOptions.classList.toggle("hidden");
-      });
-
-      // Handle option click
-      dropdownOptions.addEventListener("click", (e) => {
-        const target = e.target;
-        if (target.classList.contains("dropdown-option")) {
-          // Set selected value
-          const value = target.getAttribute("data-value");
-          const text = target.textContent;
-          selectedOption.textContent = text; // Update displayed text
-          hiddenInput.value = value; // Set the hidden input value
-          dropdownOptions.classList.add("hidden"); // Hide the dropdown
-
-          // Submit the form (mimics onchange behavior)
-          form.submit();
-        }
-      });
-
-      // Close dropdown when clicking outside
-      document.addEventListener("click", (e) => {
-        if (!customDropdown.contains(e.target)) {
-          dropdownOptions.classList.add("hidden");
-        }
-      });
     </script>
   </body>
 </html>
