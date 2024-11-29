@@ -1,201 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Project Support</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link href="/css/tailwind.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Add jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
-        /* Background Pattern */
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            background-size: cover;
-            z-index: -1;
-            clip-path: polygon(0 0, 100% 0, 100% 65%, 0 100%);
-        }
+      body {
+        background: #0f2027; /* fallback for old browsers */
+        background: -webkit-linear-gradient(
+          to right,
+          #2c5364,
+          #203a43,
+          #0f2027
+        ); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+      }
 
-        /* Adding lines to the background */
-        body::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
-            opacity: 0.1;
-            z-index: -1;
-            background-color: green;
-        }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+      }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
+      .modal-content {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        width: 300px;
+        max-width: 90%;
+        text-align: center;
+      }
 
-        .modal-content {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            width: 300px;
-            max-width: 90%;
-            text-align: center;
-        }
+      .hidden {
+        display: none;
+      }
 
-        .hidden {
-            display: none;
-        }
+      #selectedOption{
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
     </style>
-</head>
+  </head>
 
-<body class="relative min-h-screen flex flex-col items-center justify-start text-white font-sans">
+  <body class="">
 
     <!-- SIDEBAR SECTION -->
     <section class="">
-        <%- include('side', { roleDetails: roleDetails }) %>
-    </section>
+      <%- include('side', { roleDetails: roleDetails }) %>
+  </section>
 
+    <div class="min-h-screen flex gap-1">
+      <!-- CONTENT SECTION -->
+      <section class="relative flex-1 z-10">
+        <div class="flex flex-col items-center justify-center space-y-6 mt-10">
+          <!-- back to project -->
+          <a
+            href="/projects"
+            class="text-white absolute top-3 z-0 hover:text-orange-500"
+          >
+            <i class="fa-solid fa-arrow-left"></i>&nbsp;&nbsp;<span
+              >Back to project</span
+            >
+          </a>
 
-    <!-- Dropdown and Button -->
-    <div class="mt-6 flex space-x-3">
-        <form id="projectEnvForm" action="/project/env_type/envs" method="GET">
-            <select id="options" name="env_id"
-                class="block w-48 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
-                onchange="this.form.submit()">
-                <option value="" disabled selected>Select Env</option>
-                <% envStatus.forEach(project=> { %>
-                    <option value="<%= project.env_id %>">
-                        <%= project.env_type %>
-                    </option>
-                    <% }) %>
-            </select>
-        </form>
-
-    </div>
-
-    <!-- Container -->
-    <div class="w-full max-w-2xl mx-auto bg-white text-gray-800 px-6 py-2 mt-6 rounded-2xl shadow-2xl ">
-        <h2 class="text-2xl font-bold mb-4 text-center text-gray-900">Env Types</h2>
-
-        <!-- Form to handle environment updates -->
-        <form action="/project/updateEnvs" method="POST" id="envForm">
-            <!-- Display Envs -->
-            <% if (allEnvs && allEnvs.length> 0) { %>
-                <% allEnvs.forEach(env=> { %>
-                    <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[400px]">
-                        <textarea name="env_content"
-                            class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-shadow shadow-sm"
-                            <%=(typeof canEdit !=='undefined' && !canEdit) ? 'readonly' : '' %>
-                    placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"><%= (typeof canView !== 'undefined' && canView) ? env.env_content || '' : '' %></textarea>
-                    </div>
-                    <% }) %>
-                        <% } else { %>
-                            <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[400px]">
-                                <textarea name="env_content"
-                                    class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-shadow shadow-sm"
-                                    <%=(typeof canEdit !=='undefined' && !canEdit) ? 'readonly' : '' %>
-                placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"></textarea>
-                            </div>
-                            <% } %>
-
-                                <!-- Button -->
-                                <div class="text-center mb-2">
-                                    <button type="submit"
-                                        class="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl transition transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300"
-                                        <%=(typeof canEdit !=='undefined' && !canEdit) ? 'disabled' : '' %>>
-                                        Add Env
-                                    </button>
-                                </div>
-        </form>
-
-
-    </div>
-
-    <% if (typeof roleDetails !=='undefined' && ((roleDetails.role_scope==='organization' ) ||
-        (roleDetails.role_name==='project_admin' && roleDetails.role_scope==='project' ))) { %>
-        <p class="text-center text-gray-600 mt-4">
-            Add new users?
-            <a href="/getAllUsers_AllRoles" class="text-purple-500 hover:underline" onclick="openModal(event)">Click
-                here</a>
-        </p>
-        <% } %>
-
-
-
-            <!-- Back to project -->
-            <div class="text-right mt-4 mb-4">
-                <a href="/projects" class="text-blue-500 flex items-center justify-end">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 mr-2" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12h12m-12 0l4 4m-4-4l4-4" />
-                    </svg>
-                    <span>Go back to project</span>
-                </a>
-            </div>
-
-            <!-- Modal main-->
-            <div id="modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-                <!-- Modal Box -->
-                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md text-black">
-                    <!-- Modal Header -->
-                    <h2 class="text-lg font-semibold text-gray-700 mb-4">Add New User</h2>
-
-                    <!-- Username Dropdown -->
-                    <div class="mb-4">
-                        <label class="block text-gray-600">Username</label>
-                        <select id="username"
-                            class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                            <option disabled selected>Loading...</option>
-                        </select>
-                    </div>
-
-                    <!-- Rols Dropdown -->
-                    <div class="mb-4">
-                        <label class="block text-gray-600">Role</label>
-                        <select id="userrole"
-                            class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                            <option disabled selected>Loading...</option>
-                        </select>
-                    </div>
-
-
-                    <!-- Action Buttons -->
-                    <div class="flex justify-end space-x-2">
-                        <button onclick="closeModal()"
-                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">Cancel</button>
-                        <button onclick="submitModal()"
-                            class="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600">Submit</button>
-                    </div>
+          <!-- Dropdown and Button -->
+          <form
+            id="projectEnvForm"
+            action="/project/env_type/envs"
+            method="GET"
+          >
+            <div
+              class="custom-dropdown w-48 p-1 text-gray-700 bg-white  px-2 rounded-md"
+              id="customDropdown"
+            >
+              <div id="selectedOption" class="selected cursor-pointer">
+                Select Env
+              </div>
+              <div
+                class="dropdown-options hidden absolute z-10 bg-white w-48 mt-1 rounded-b-md" style="margin-left: -0.55rem "
+                id="dropdownOptions"
+              >
+                <% envStatus.forEach(project => { %>
+                <div
+                  class="dropdown-option hover:bg-orange-500 hover:text-white cursor-pointer capitalize"
+                  data-value="<%= project.env_id %>"
+                >
+                  <%= project.env_type %>
                 </div>
+                <% }) %>
+              </div>
             </div>
 
-            <!-- Permissions Modal Hear-->
+            <input type="hidden" name="env_id" id="hiddenInput" />
+          </form>
 
-            <script>
-                let loggedInUserId;
+          <!-- Container -->
+          <div
+            class="w-full md:w-5/12 bg-white text-black p-6 shadow-lg rounded-lg relative "
+          >
+            <h2 class="text-2xl font-bold mb-4 text-center text-gray-900">
+              Env Types
+            </h2>
+            <!-- Form to handle environment updates -->
+            <form action="/project/updateEnvs" method="POST" id="envForm">
+              <!-- Display Envs -->
+              <% if (allEnvs && allEnvs.length> 0) { %>
+                <% allEnvs.forEach(env=> { %>
+                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[800px]">
+                      <textarea name="env_content"  class="w-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdi!=='undefined' && !canEdit) ? 'readonly' : '' %> placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"><%= (typeof canView !== 'undefined' && canView) ? env.env_content || '' : '' %> ></textarea>
+                  </div>
+                <% }) %>
+                <% } else { %>
+                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[600px]">
+                      <textarea name="env_content"
+                      class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdit !=='undefined' && !canEdit) ? 'readonly' : '' %>
+                      placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"></textarea>
+                  </div>
+                <% } %>
+          
+                  <!-- Button -->
+                  <div class="text-center mb-2">
+                      <button type="submit" class="w-full bg-orange-400 text-white font-bold rounded-md py-2 hover:bg-orange-500" <%=(typeof canEdit !=='undefined' && !canEdit) ? 'disabled' : '' %>>Save Env</button>
+                  </div>
+              </form>
+          </div>
 
-                //open main model
-                async function openModal(event) {
-                    event.preventDefault();
+          <% if (typeof roleDetails !=='undefined' &&
+          ((roleDetails.role_scope==='organization' ) ||
+          (roleDetails.role_name==='project_admin' &&
+          roleDetails.role_scope==='project' ))) { %>
+          <p class="text-center text-white mt-4">
+            Add new users?
+            <a
+              href="/getAllUsers_AllRoles"
+              class="text-orange-500 hover:underline"
+              onclick="openModal(event)"
+              >Click here</a
+            >
+          </p>
+          <% } %>
+
+          <div
+            id="modal"
+            class="fixed inset-0 items-center justify-center bg-black bg-opacity-50 hidden"
+            style="margin: 0"
+          >
+            <div
+              class="bg-white rounded-lg shadow-lg max-w-md text-black w-full p-6"
+            >
+              <!-- Modal Header -->
+              <h2 class="text-lg font-semibold text-gray-700 mb-4">
+                Add New User
+              </h2>
+
+              <!-- Username Dropdown -->
+              <div class="mb-4">
+                <label class="block text-gray-600">Username</label>
+                <select
+                  id="username"
+                  class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                >
+                  <option disabled selected>Loading...</option>
+                </select>
+              </div>
+
+              <div class="mb-4">
+                <label class="block text-gray-600">Role</label>
+                <select
+                  id="userrole"
+                  class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                >
+                  <option disabled selected>Loading...</option>
+                </select>
+              </div>
+
+              <div class="flex justify-end space-x-2 mt-10">
+                <button
+                  onclick="closeModal()"
+                  class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  onclick="submitModal()"
+                  class="px-4 py-2 bg-orange-400 text-white rounded-md hover:bg-orange-500"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      let loggedInUserId;
+
+      //open main model
+      async function openModal(event) {
+        event.preventDefault();
 
                     try {
                         // fetch user and role data from server
@@ -244,29 +279,29 @@
                     }
 
                     // open modal
-                    document.getElementById('modal').classList.remove('hidden');
+                    document.getElementById('modal').style.display = "flex";
                 }
 
-                //submit main model
-                function submitModal() {
-                    const userSelect = document.getElementById('username');
-                    const roleSelect = document.getElementById('userrole');
+      //submit main model
+      function submitModal() {
+        const userSelect = document.getElementById("username");
+        const roleSelect = document.getElementById("userrole");
 
-                    const user_id = userSelect.value;
-                    const role_id = roleSelect.value;
+        const user_id = userSelect.value;
+        const role_id = roleSelect.value;
 
-                    if (user_id === "Select a user" || role_id === "Select a role") {
-                        console.error('Please select both a valid user and role.');
-                        alert("Please select a valid user and role before submitting.");
-                        return;
-                    }
+        if (user_id === "Select a user" || role_id === "Select a role") {
+          console.error("Please select both a valid user and role.");
+          alert("Please select a valid user and role before submitting.");
+          return;
+        }
 
-                    const data = {
-                        user_id: user_id,
-                        role_id: role_id,
-                        loggedInUserId: loggedInUserId,
-                        selectedProjectId: selectedProjectId
-                    };
+        const data = {
+          user_id: user_id,
+          role_id: role_id,
+          loggedInUserId: loggedInUserId,
+          selectedProjectId: selectedProjectId,
+        };
 
                     fetch('/postUser_roles', {
                         method: 'POST',
@@ -292,11 +327,47 @@
                         });
                 }
 
-                function closeModal() { //close main model
-                    document.getElementById('modal').classList.add('hidden');
-                }
-            </script>
+      function closeModal() {
+        //close main model
+        // document.getElementById("modal").classList.add("hidden");
+        document.getElementById("modal").style.display = "none";
+      }
+    </script>
 
-</body>
+    <script>
+      const customDropdown = document.getElementById("customDropdown");
+      const selectedOption = document.getElementById("selectedOption");
+      const dropdownOptions = document.getElementById("dropdownOptions");
+      const hiddenInput = document.getElementById("hiddenInput");
+      const form = document.getElementById("projectEnvForm");
 
+      // Toggle dropdown visibility
+      selectedOption.addEventListener("click", () => {
+        dropdownOptions.classList.toggle("hidden");
+      });
+
+      // Handle option click
+      dropdownOptions.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target.classList.contains("dropdown-option")) {
+          // Set selected value
+          const value = target.getAttribute("data-value");
+          const text = target.textContent;
+          selectedOption.textContent = text; // Update displayed text
+          hiddenInput.value = value; // Set the hidden input value
+          dropdownOptions.classList.add("hidden"); // Hide the dropdown
+
+          // Submit the form (mimics onchange behavior)
+          form.submit();
+        }
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!customDropdown.contains(e.target)) {
+          dropdownOptions.classList.add("hidden");
+        }
+      });
+    </script>
+  </body>
 </html>
