@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Env Project</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- font awsome  -->
     <link
       rel="stylesheet"
@@ -12,13 +13,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
+
     <link href="/css/tailwind.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Add jQuery -->
@@ -38,14 +33,14 @@
   </head>
 
   <body class="bg-gray-100 font-sans">
-    <div class="flex h-screen">
+    <div class="flex h-screen mt-4">
       <!-- Sidebar -->
-      <aside class="w-1/4 bg-white shadow-md p-4">
+      <aside class="w-1/4 bg-white shadow-md p-4 rounded-lg">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-bold">Roles</h2>
           <button
             id="openModalButton"
-            class="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            class="p-2 bg-orange-400 text-white rounded-full hover:bg-orange-500 focus:outline-none focus:ring-2"
             aria-label="Add Role"
           >
             <svg
@@ -64,7 +59,7 @@
             </svg>
           </button>
         </div>
-        <ul id="rolesList" class="space-y-2">
+        <ul id="rolesList" class="space-y-2 mt-10">
           <li>
             <button
               id="userrole"
@@ -76,12 +71,12 @@
         </ul>
       </aside>
 
-      <!-- Modal -->
+      <!-- Add Role Modal -->
       <div
         id="roleModal"
         class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden"
       >
-        <!-- Modal Content -->
+        <!--Modal Content -->
         <div class="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg">
           <h2 class="text-2xl font-semibold mb-4">Add Role</h2>
           <form id="roleForm">
@@ -148,22 +143,23 @@
       </div>
 
       <!-- Main Content -->
-      <main class="w-3/4 bg-white shadow-md m-4 p-6 rounded-lg relative">
+      <main class="w-3/4 bg-white shadow-md ml-4 p-6 rounded-lg relative">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-lg font-bold">Types of Envs</h2>
           <button
             id="open-modal-btn"
             class="bg-gray-100 border border-gray-300 text-gray-700 font-semibold text-lg px-4 py-2 rounded-lg shadow-sm hover:bg-gray-200 hover:shadow-md active:bg-gray-300 transition flex items-center gap-2"
           >
-            <i class="fa-solid fa-user-tie text-xl"></i>
-            Add New
+            <span>Add Admin</span>
+            <i class="fa-solid fa-user-plus"></i>
           </button>
         </div>
 
-        <div>
+        <!-- initially when we load env using fetchEnvTypes function the env-types-container is populated with env types, but initally none of the roles button is  selected, so if we try to check in the checkbox of can view or can edit it throws an error , and also its irrelevant to show a dummy env types without any role being selected -->
+        <!-- so the env-types-container-wrapper is set to hidden and only the hidden class is removed when we select a any one of the roles and its been handled in rolebutton event listener -->
+        <div id="env-types-container-wrapper" class="hidden">
           <!-- Headers -->
           <div class="grid grid-cols-3 gap-x-6 mb-4">
-            <div></div>
             <div class="text-sm font-semibold text-gray-600">View</div>
             <div class="text-sm font-semibold text-gray-600">Edit</div>
           </div>
@@ -230,7 +226,9 @@
           const rolesList = document.getElementById("rolesList");
           rolesList.innerHTML = "";
 
-          // add roles
+          //active list item
+          let activeListItem = null;
+
           roles.forEach((role) => {
             const roleName =
               role.role_name.charAt(0).toUpperCase() + role.role_name.slice(1);
@@ -239,32 +237,47 @@
               "flex",
               "items-center",
               "justify-between",
-              "p-2"
+              "p-2",
+              "shadow-lg",
+              "rounded-md"
             );
 
-            // create "role button"
+            // Create "role button"
             const roleButton = document.createElement("button");
             roleButton.classList.add(
               "w-full",
               "text-left",
               "p-2",
-              "hover:bg-gray-200",
               "rounded-md"
             );
             roleButton.setAttribute("value", role.role_id);
             roleButton.innerHTML = roleName;
-            roleButton.addEventListener("click", (event) =>
-              handleRoleClick(event)
-            );
 
-            // create "remove" button
+            roleButton.addEventListener("click", (event) => {
+              // Handle background color toggle for the parent list item
+              if (activeListItem) {
+                activeListItem.classList.remove("bg-orange-400"); // Remove highlight from the previous list item
+                activeListItem.classList.remove("text-white");
+              }
+              activeListItem = listItem; // Update the active list item
+              listItem.classList.add("bg-orange-400"); // Highlight the clicked list item
+              listItem.classList.add("text-white"); // Highlight the clicked list item
+
+              // Call your handleRoleClick function
+              handleRoleClick(event);
+
+              //removing the hidden class from the env-types-container-wrapper
+              document
+                .getElementById("env-types-container-wrapper")
+                .classList.remove("hidden");
+            });
+
+            // Create "remove" button
             const removeButton = document.createElement("button");
-            removeButton.innerHTML = "✖️";
-            removeButton.classList.add(
-              "text-red-500",
-              "ml-2",
-              "hover:text-red-700"
-            );
+            removeButton.innerHTML =
+              '<span><i class="fa-solid fa-lg fa-xmark"></i></span>';
+
+            removeButton.classList.add("ml-2", "hover:text-red-500");
             removeButton.addEventListener("click", async (event) => {
               event.stopPropagation();
               await removeRole(role.role_id);
@@ -273,7 +286,7 @@
             listItem.appendChild(roleButton);
             listItem.appendChild(removeButton);
 
-            // append the list item to the roles list
+            // Append the list item to the roles list
             rolesList.appendChild(listItem);
           });
         } catch (error) {
@@ -310,6 +323,7 @@
           }
 
           const types = await response.json();
+          console.log(types);
 
           const container = document.getElementById("env-types-container");
           container.innerHTML = "";
@@ -320,18 +334,18 @@
             div.className = "grid grid-cols-3 gap-x-6 items-center mb-4";
 
             div.innerHTML = `
-            <div class="text-base font-bold text-gray-800" data-env-id="${type.env_id}">
+            <div class="text-base font-bold text-gray-800 capitalize" data-env-id="${type.env_id}">
               ${type.env_type}
             </div>
-            <input 
-              type="checkbox" 
-              class="h-5 w-5 text-blue-600 focus:ring-blue-500 rounded" 
-              id="canView-${type.env_id}"  
+            <input
+              type="checkbox"
+              class="h-5 w-5 text-blue-600 focus:ring-blue-500 rounded"
+              id="canView-${type.env_id}"
             />
-            <input 
-              type="checkbox" 
-              class="h-5 w-5 text-blue-600 focus:ring-blue-500 rounded" 
-              id="canEdit-${type.env_id}"  
+            <input
+              type="checkbox"
+              class="h-5 w-5 text-blue-600 focus:ring-blue-500 rounded"
+              id="canEdit-${type.env_id}"
             />
           `;
 
