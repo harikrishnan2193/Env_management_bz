@@ -33,9 +33,34 @@
   </head>
 
   <body class="bg-gray-100 font-sans">
-    <div class="flex h-screen mt-4">
+    <!--Roles and env types wrapper -->
+    <div class="flex h-screen">
+      <!-- Burger Menu -->
+      <button id="burger-menu" class="md:hidden absolute top-3 left-4 z-20">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+
       <!-- Sidebar -->
-      <aside class="w-1/4 bg-white shadow-md p-4 rounded-lg">
+      <aside
+        id="sidebar"
+        class="fixed md:relative top-0 left-0 h-full w-80 md:w-4/12 bg-white shadow-md transform transition-transform duration-300 md:translate-x-0 -translate-x-full z-40 p-5"
+      >
+        <p class="top-2 cursor-pointer p-1 mb-8 md:hidden" id="close-sidebar">
+          <i class="fa-solid fa-x"></i>
+        </p>
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-bold">Roles</h2>
           <button
@@ -71,84 +96,13 @@
         </ul>
       </aside>
 
-      <!-- Add Role Modal -->
-      <div
-        id="roleModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden"
-      >
-        <!--Modal Content -->
-        <div class="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg">
-          <h2 class="text-2xl font-semibold mb-4">Add Role</h2>
-          <form id="roleForm">
-            <div class="mb-4">
-              <label
-                for="roleName"
-                class="block text-sm font-medium text-gray-700"
-                >Enter Role Name</label
-              >
-              <input
-                type="text"
-                id="roleName"
-                name="roleName"
-                class="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                required
-              />
-            </div>
-            <div class="mb-4">
-              <label
-                for="roleDescription"
-                class="block text-sm font-medium text-gray-700"
-                >Enter Description</label
-              >
-              <textarea
-                id="roleDescription"
-                name="roleDescription"
-                class="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                required
-              ></textarea>
-            </div>
-            <div class="mb-4">
-              <label
-                for="roleScope"
-                class="block text-sm font-medium text-gray-700"
-                >Select Role Scope</label
-              >
-              <select
-                id="roleScope"
-                name="roleScope"
-                class="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                required
-              >
-                <option value="organization">Organization</option>
-                <option value="project">Project</option>
-              </select>
-            </div>
-            <div class="flex justify-between">
-              <button
-                type="submit"
-                class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-              >
-                Submit
-              </button>
-              <button
-                type="button"
-                id="closeModal"
-                class="bg-gray-300 text-black py-2 px-4 rounded-md hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-
       <!-- Main Content -->
-      <main class="w-3/4 bg-white shadow-md ml-4 p-6 rounded-lg relative">
+      <main class="bg-white shadow-md p-5 w-full md:w-8/12 pt-12 md:pt-0">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-lg font-bold">Types of Envs</h2>
           <button
             id="open-modal-btn"
-            class="bg-gray-100 border border-gray-300 text-gray-700 font-semibold text-lg px-4 py-2 rounded-lg shadow-sm hover:bg-gray-200 hover:shadow-md active:bg-gray-300 transition flex items-center gap-2"
+            class="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-gray-200 hover:shadow-md active:bg-gray-300 transition flex items-center gap-2"
           >
             <span>Add Admin</span>
             <i class="fa-solid fa-user-plus"></i>
@@ -157,58 +111,180 @@
 
         <!-- initially when we load env using fetchEnvTypes function the env-types-container is populated with env types, but initally none of the roles button is  selected, so if we try to check in the checkbox of can view or can edit it throws an error , and also its irrelevant to show a dummy env types without any role being selected -->
         <!-- so the env-types-container-wrapper is set to hidden and only the hidden class is removed when we select a any one of the roles and its been handled in rolebutton event listener -->
-        <div id="env-types-container-wrapper" class="hidden">
-          <!-- Headers -->
-          <div class="grid grid-cols-3 gap-x-6 mb-4">
-            <div class="text-sm font-semibold text-gray-600">View</div>
-            <div class="text-sm font-semibold text-gray-600">Edit</div>
-          </div>
 
-          <!-- Row -->
-          <div id="env-types-container" class="grid gap-y-4">
-            <!-- Data -->
+        <div class="relative">
+          <!-- empty envs message -->
+          <p id="env-empty-message" class="text-center mt-60">
+            Please select a role to display to Env Types
+          </p>
+
+          <div id="env-types-container-wrapper" class="hidden">
+            <!-- Headers -->
+
+            <div class="grid grid-cols-3 gap-x-6 mb-4">
+              <div class="text-sm font-semibold text-gray-600">View</div>
+              <div class="text-sm font-semibold text-gray-600">Edit</div>
+            </div>
+
+            <!-- Row -->
+            <div id="env-types-container" class="grid gap-y-4">
+              <!-- Data -->
+            </div>
           </div>
         </div>
       </main>
+    </div>
 
-      <!-- Modal for add new admin -->
-      <div
-        id="env-modal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
-      >
-        <div class="bg-white w-1/3 rounded-lg p-6 shadow-lg">
-          <h3 class="text-lg font-bold mb-4">Add admin</h3>
+    <!-- MODALS  -->
+
+    <!-- Add Role Modal -->
+    <div
+      id="roleModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden"
+    >
+      <!--Modal Content -->
+      <div class="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-4">Add Role</h2>
+        <form id="roleForm">
           <div class="mb-4">
             <label
-              for="env-type"
+              for="roleName"
               class="block text-sm font-medium text-gray-700"
-              >Select a organizer</label
+              >Enter Role Name</label
+            >
+            <input
+              type="text"
+              id="roleName"
+              name="roleName"
+              class="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="roleDescription"
+              class="block text-sm font-medium text-gray-700"
+              >Enter Description</label
+            >
+            <textarea
+              id="roleDescription"
+              name="roleDescription"
+              class="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              required
+            ></textarea>
+          </div>
+          <div class="mb-4">
+            <label
+              for="roleScope"
+              class="block text-sm font-medium text-gray-700"
+              >Select Role Scope</label
             >
             <select
-              id="env-type"
-              class="w-full border border-gray-300 rounded-md p-2 mt-1"
+              id="roleScope"
+              name="roleScope"
+              class="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              required
             >
-              <option id="modal-content" value="env1"></option>
+              <option value="organization">Organization</option>
+              <option value="project">Project</option>
             </select>
           </div>
-          <div class="flex justify-end">
+          <div class="flex justify-between">
             <button
-              id="close-modal-btn"
-              class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow mr-2 hover:bg-gray-400 transition"
-            >
-              Cancel
-            </button>
-            <button
-              id="submit-modal-btn"
-              class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition"
-              onclick="submitAdmin()"
+              type="submit"
+              class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
             >
               Submit
             </button>
+            <button
+              type="button"
+              id="closeModal"
+              class="bg-gray-300 text-black py-2 px-4 rounded-md hover:bg-gray-400"
+            >
+              Cancel
+            </button>
           </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal for add new admin -->
+    <div
+      id="env-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
+    >
+      <div class="bg-white w-1/3 rounded-lg p-6 shadow-lg">
+        <h3 class="text-lg font-bold mb-4">Add admin</h3>
+        <div class="mb-4">
+          <label for="env-type" class="block text-sm font-medium text-gray-700"
+            >Select a organizer</label
+          >
+          <select
+            id="env-type"
+            class="w-full border border-gray-300 rounded-md p-2 mt-1"
+          >
+            <option id="modal-content" value="env1"></option>
+          </select>
+        </div>
+        <div class="flex justify-end">
+          <button
+            id="close-modal-btn"
+            class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow mr-2 hover:bg-gray-400 transition"
+          >
+            Cancel
+          </button>
+          <button
+            id="submit-modal-btn"
+            class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition"
+            onclick="submitAdmin()"
+          >
+            Submit
+          </button>
         </div>
       </div>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const burgerMenu = document.getElementById("burger-menu");
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.createElement("div");
+        const closeSidebar = document.getElementById("close-sidebar");
+
+        overlay.classList.add(
+          "fixed",
+          "inset-0",
+          "bg-black",
+          "bg-opacity-50",
+          "z-30",
+          "hidden"
+        );
+        document.body.appendChild(overlay);
+
+        burgerMenu.addEventListener("click", () => {
+          sidebar.classList.toggle("-translate-x-full");
+          overlay.classList.toggle("hidden");
+        });
+
+        closeSidebar.addEventListener("click", () => {
+          sidebar.classList.add("-translate-x-full");
+          overlay.classList.add("hidden");
+        });
+
+        overlay.addEventListener("click", () => {
+          sidebar.classList.add("-translate-x-full");
+          overlay.classList.add("hidden");
+        });
+
+        // Close sidebar when clicking outside on mobile
+        window.addEventListener("resize", () => {
+          if (window.innerWidth >= 768) {
+            sidebar.classList.remove("-translate-x-full");
+            overlay.classList.add("hidden");
+          }
+        });
+      });
+    </script>
 
     <script>
       let currentRoleId = null;
@@ -270,6 +346,10 @@
               document
                 .getElementById("env-types-container-wrapper")
                 .classList.remove("hidden");
+
+              document
+                .getElementById("env-empty-message")
+                .classList.add("hidden");
             });
 
             // Create "remove" button
