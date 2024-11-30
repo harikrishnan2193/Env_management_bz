@@ -119,14 +119,14 @@ exports.login = async (req, res) => {
                         req.flash('error', 'Something went wrong. Please try again.');
                         return res.redirect('/');
                     }
-                
+
                     req.session.user_id = user.user_id;
                     req.session.organization_id = user.organization_id; // set organisation_id in session
-                
+
                     // token for authentication
                     // const token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET);
                     // console.log("JWT Token:", token);
-                
+
                     req.flash('success', 'Login successful!');
                     return res.redirect('/projects');
                 });
@@ -226,7 +226,7 @@ exports.addNewProject = async (req, res) => {
                 });
             }
         }
-        
+
         res.redirect('/projects');
     } catch (error) {
         console.error("Error creating project:", error);
@@ -274,7 +274,7 @@ exports.getProjectAllDetils = async (req, res) => {
         // Middleware attaches user role details to req.userRoleDetails
         const userRoleDetails = req.userRoleDetails;
         console.log('userRoleDetails is:', userRoleDetails);
-        
+
 
         const projectDetils = await Projects.findAll({
             where: { project_id },
@@ -425,7 +425,7 @@ exports.getAllEnvs = async (req, res) => {
             allEnvs,
             canView,
             canEdit,
-            roleDetails 
+            roleDetails
         });
     } catch (error) {
         console.error('Error fetching all environments:', error.message);
@@ -528,3 +528,4 @@ exports.updateProjectDetails = async (req, res) => {
         res.status(500).send('Server Error');
     }
 }
+
