@@ -295,7 +295,7 @@
         // Function to search project
         function searchProjects() {
           const searchTerm = searchBar.value.toLowerCase();
-          projectsContainer.innerHTML = ""; // Clear previous results
+          projectsContainer.innerHTML = ""; 
 
           const filteredProjects = projects.filter((project) => {
             return (
@@ -335,49 +335,6 @@
           }
         });
 
-        // Function to fetch user role_scope and conditionally render a button
-        async function fetchUserRoleScope() {
-          try {
-            const response = await fetch("/getUserRoleScope");
-            if (response.ok) {
-              const data = await response.json();
-              console.log("User Role Scope:", data.role_scope);
-
-              // check role_scope is a string and render the button if it's 'organization'
-              if (
-                typeof data.role_scope === "string" &&
-                data.role_scope === "organization"
-              ) {
-                const container = document.getElementById(
-                  "permissions-container"
-                );
-
-                // the permissions button HTML
-                const permissionsButton = `
-                            <p class="absolute -bottom-12 text-center text-lg font-semibold text-gray-700">
-                                View Permissions?
-                                <a href="/superadmin/permission"
-                                    class="text-blue-600 font-semibold hover:text-blue-800 hover:underline decoration-transparent">
-                                    Click Here
-                                </a>
-                            </p>
-                        `;
-                // append the button to the container
-                container.innerHTML = permissionsButton;
-              }
-            } else {
-              console.error(
-                "Failed to fetch user role scope:",
-                response.statusText
-              );
-            }
-          } catch (error) {
-            console.error("Error fetching user role scope:", error.message);
-          }
-        }
-
-        // call the function when page loads
-        window.onload = fetchUserRoleScope;
       </script>
     </div>
   </body>

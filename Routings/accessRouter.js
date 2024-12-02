@@ -4,8 +4,6 @@ const router = new express.Router()
 const accessController = require('../Controllers/accessController')
 const checkRoleScope = require('../Middleware/checkRole_scope')
 
-//route to get all users and all roles
-// router.get('/getAllUsersAllRoles', accessController.getAllusersAllroles)
 
 //route to get all users and all roles
 router.get('/getAllUsers_AllRoles', accessController.getAllusers_Allroles)

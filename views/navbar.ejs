@@ -1,56 +1,41 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Projects</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <link href="/css/tailwind.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Add jQuery -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
-      integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
-      integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
 
-    <style>
-      .nav-bar {
-        background: #0f2027; /* fallback for old browsers */
-        background: -webkit-linear-gradient(
-          to right,
+<head>
+  <title>Projects</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="/css/tailwind.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Add jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+    integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+    integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    .nav-bar {
+      background: #0f2027;
+      /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right,
           #2c5364,
           #203a43,
-          #0f2027
-        ); /* Chrome 10-25, Safari 5.1-6 */
-        background: linear-gradient(
-          to right,
+          #0f2027);
+      /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right,
           #2c5364,
           #203a43,
-          #0f2027
-        ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-      }
-    </style>
-  </head>
+          #0f2027);
+      /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+  </style>
+</head>
 
   <body>
     <main
@@ -69,32 +54,20 @@
           <i class="fa-regular fa-user text-xl"></i>
         </p>
 
-        <!-- User Options Dropdown -->
-        <div
-          id="user-options"
-          class="hidden bg-white text-black mt-3 rounded-md shadow-lg divide-y absolute right-0 w-40"
-        >
-          <p
-            class="flex items-center px-4 py-2 space-x-2 cursor-pointer hover:bg-orange-400"
-          >
-            <i class="fa-solid fa-user"></i>&nbsp;
-            <span>Profile</span>
-          </p>
-          <p
-            class="flex items-center px-4 py-2 space-x-2 cursor-pointer hover:bg-orange-400"
-          >
-            <i class="fa-solid fa-gear"></i>&nbsp;
-            <span href="/settings">Settings</span>
-          </p>
-          <p
-            class="flex items-center px-4 py-2 space-x-2 cursor-pointer hover:bg-orange-400"
-          >
-            <i class="fa-solid fa-right-from-bracket"></i>&nbsp;
-            <span>Logout</span>
-          </p>
-        </div>
+      <!-- User Options Dropdown -->
+      <div id="user-options"
+        class="hidden bg-white text-black mt-3 rounded-md shadow-lg divide-y absolute right-0 w-40">
+        <p class="flex items-center px-4 py-2 space-x-2 cursor-pointer hover:bg-orange-400">
+          <i class="fa-solid fa-user"></i>&nbsp;
+          <span>Profile</span>
+        </p>
+        <p class="flex items-center px-4 py-2 space-x-2 cursor-pointer hover:bg-orange-400">
+          <i class="fa-solid fa-right-from-bracket"></i>&nbsp;
+          <span>Logout</span>
+        </p>
       </div>
-    </main>
+    </div>
+  </main>
 
     <script>
       const userOptions = document.getElementById("user-options");
@@ -121,5 +94,59 @@
       // Add click event to the user icon
       userIcon.addEventListener("click", openLogo);
     </script>
-  </body>
+
+
+  <script>
+    const userOptions = document.getElementById("user-options");
+    function openLogo() {
+      userOptions.classList.toggle("hidden");
+    }
+
+    // Function to fetch user role_scope and conditionally render a button
+    async function fetchUserRoleScope() {
+      try {
+        const response = await fetch("/getUserRoleScope");
+        if (response.ok) {
+          const data = await response.json();
+          console.log("User Role Scope:", data.role_scope);
+
+          // check role_scope is a string and render the button if it's 'organization'
+          if (
+            typeof data.role_scope === "string" &&
+            data.role_scope === "organization"
+          ) {
+
+            // settings option HTML
+            const settingsOption = `
+              <p class="flex items-center px-4 py-2 space-x-2 cursor-pointer hover:bg-orange-400">
+                <i class="fa-solid fa-gear"></i>&nbsp;
+                <span>
+                  <a href="/superadmin/permission">
+                    Settings
+                  </a>
+                </span>
+              </p>
+            `;
+
+            // append settings option
+            userOptions.innerHTML += settingsOption;
+          }
+
+        } else {
+          console.error(
+            "Failed to fetch user role scope:",
+            response.statusText
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching user role scope:", error.message);
+      }
+    }
+
+    // call the function when page loads
+    window.onload = fetchUserRoleScope;
+
+  </script>
+</body>
+
 </html>
