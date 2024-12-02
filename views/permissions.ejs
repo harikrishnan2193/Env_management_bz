@@ -217,7 +217,7 @@
         <h3 class="text-lg font-bold mb-4">Add admin</h3>
         <div class="mb-4">
           <label for="env-type" class="block text-sm font-medium text-gray-700"
-            >Select a organizer</label
+            >Select a person</label
           >
           <select
             id="env-type"
@@ -339,7 +339,7 @@
               listItem.classList.add("bg-orange-400"); // Highlight the clicked list item
               listItem.classList.add("text-white"); // Highlight the clicked list item
 
-              // Call your handleRoleClick function
+              // Call handleRoleClick function
               handleRoleClick(event);
 
               //removing the hidden class from the env-types-container-wrapper
@@ -652,7 +652,6 @@
             return;
           }
 
-          // POST request
           const response = await fetch("/postnew_admin", {
             method: "POST",
             headers: {
@@ -725,7 +724,6 @@
             body: JSON.stringify(data),
           });
 
-          // Check if the response is successful
           if (response.ok) {
             const result = await response.json();
             alert(result.message || "Role added successfully!");

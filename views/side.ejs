@@ -65,9 +65,9 @@
               <ul id="userList" class="px-4 py-2">
                 <!-- List items -->
               </ul>
+            </div>
 
-
-              <% if (typeof roleDetails !=='undefined' && ((roleDetails.role_scope==='organization' ) ||
+            <% if (typeof roleDetails !=='undefined' && ((roleDetails.role_scope==='organization' ) ||
                 (roleDetails.role_name==='project_admin' && roleDetails.role_scope==='project' ))) { %>
                 <p class="text-center text-white mt-4">
                   Add new users?
@@ -76,9 +76,6 @@
                 </p>
                 <% } %>
 
-
-
-            </div>
           </div>
         </div>
       </div>
