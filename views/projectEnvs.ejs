@@ -132,13 +132,13 @@
               <!-- Display Envs -->
               <% if (allEnvs && allEnvs.length> 0) { %>
                 <% allEnvs.forEach(env=> { %>
-                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[850px]">
-                      <textarea name="env_content"  class="w-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdi!=='undefined' && !canEdit) ? 'readonly' : '' %> placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"><%= (typeof canView !== 'undefined' && canView) ? env.env_content || '' : '' %> ></textarea>
+                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[750px]">
+                      <textarea name="env_content"  class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdi!=='undefined' && !canEdit) ? 'readonly' : '' %> placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"><%= (typeof canView !== 'undefined' && canView) ? env.env_content || '' : '' %> ></textarea>
                   </div>
                 <% }) %>
                 <% } else { %>
-                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[850px]">
-                      <textarea name="env_content"
+                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[750px]">
+                      <textarea name="env_content "
                       class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdit !=='undefined' && !canEdit) ? 'readonly' : '' %>
                       placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"></textarea>
                   </div>
@@ -222,6 +222,10 @@
 
     <script>
       let loggedInUserId;
+      toastr.options = {
+        timeOut: "2000",
+      };
+
 
       //open main model
       async function openModal(event) {
@@ -295,8 +299,8 @@
         const role_id = roleSelect.value;
 
         if (user_id === "Select a user" || role_id === "Select a role") {
-          console.error("Please select both a valid user and role.");
-          alert("Please select a valid user and role before submitting.");
+          console.warn("Please select both a valid user and role.");
+          toastr.warning("Please select a valid user and role before submitting")
           return;
         }
 
@@ -318,16 +322,17 @@
           .then((data) => {
             if (data.success) {
               console.log("Success:", data);
-              alert(data.message);
+              toastr.success(data.message)
               closeModal();
               location.reload(); // reload the current page
             } else {
               console.log("Error:", data);
-              // alert(data.message)
+              toastr.error(data.message)
             }
           })
           .catch((error) => {
             console.error("Error:", error);
+            toastr.error(error)
           });
       }
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Env Project</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+
     <!-- font awsome  -->
     <link
       rel="stylesheet"
@@ -15,8 +15,9 @@
     />
 
     <link href="/css/tailwind.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <!-- Add jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
       integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
@@ -32,9 +33,9 @@
     />
   </head>
 
-  <body class="bg-gray-100 font-sans">
+  <body class="bg-gray-100 font-sans p-10">
     <!--Roles and env types wrapper -->
-    <div class="flex h-screen">
+    <div class="flex h-screen gap-10">
       <!-- Burger Menu -->
       <button id="burger-menu" class="md:hidden absolute top-3 left-4 z-20">
         <svg
@@ -84,8 +85,8 @@
             </svg>
           </button>
         </div>
-        <ul id="rolesList" class="space-y-2 mt-10">
-          <li>
+        <ul id="rolesList" class="space-y-2 mt-10 gap-5 flex flex-col">
+          <li class="">
             <button
               id="userrole"
               class="w-full text-left p-2 hover:bg-gray-200 rounded-md"
@@ -97,14 +98,14 @@
       </aside>
 
       <!-- Main Content -->
-      <main class="bg-white shadow-md p-5 w-full md:w-8/12 pt-12 md:pt-0">
+      <main class="bg-white shadow-md w-full md:w-8/12 p-5">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-lg font-bold">Types of Envs</h2>
+          <h2 class="text-xl font-bold">Types of Envs</h2>
           <button
             id="open-modal-btn"
             class="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-gray-200 hover:shadow-md active:bg-gray-300 transition flex items-center gap-2"
           >
-            <span>Add Admin</span>
+            <span class="">Add Admin</span>
             <i class="fa-solid fa-user-plus"></i>
           </button>
         </div>
@@ -115,13 +116,15 @@
         <div class="relative">
           <!-- empty envs message -->
           <p id="env-empty-message" class="text-center mt-60">
-            Please select a role to display to Env Types
+            Please select a role to display Env Types
           </p>
 
           <div id="env-types-container-wrapper" class="hidden">
             <!-- Headers -->
 
             <div class="grid grid-cols-3 gap-x-6 mb-4">
+              <!-- dummy div just for grid alignment -->
+              <div></div>
               <div class="text-sm font-semibold text-gray-600">View</div>
               <div class="text-sm font-semibold text-gray-600">Edit</div>
             </div>
@@ -143,7 +146,7 @@
       class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden"
     >
       <!--Modal Content -->
-      <div class="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg">
+      <div class="bg-white w-[300px] lg:w-1/2 p-6 rounded-lg shadow-lg">
         <h2 class="text-2xl font-semibold mb-4">Add Role</h2>
         <form id="roleForm">
           <div class="mb-4">
@@ -192,7 +195,7 @@
           <div class="flex justify-between">
             <button
               type="submit"
-              class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+              class="bg-orange-400 text-white py-2 px-4 rounded-md hover:bg-orange-500"
             >
               Submit
             </button>
@@ -213,8 +216,8 @@
       id="env-modal"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
     >
-      <div class="bg-white w-1/3 rounded-lg p-6 shadow-lg">
-        <h3 class="text-lg font-bold mb-4">Add admin</h3>
+      <div class="bg-white w-[450px] rounded-lg p-6 shadow-lg">
+        <h3 class="text-2xl font-semibold mb-4">Add admin</h3>
         <div class="mb-4">
           <label for="env-type" class="block text-sm font-medium text-gray-700"
             >Select a organizer</label
@@ -235,7 +238,7 @@
           </button>
           <button
             id="submit-modal-btn"
-            class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition"
+            class="bg-orange-400 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-500 transition"
             onclick="submitAdmin()"
           >
             Submit
@@ -283,11 +286,21 @@
             overlay.classList.add("hidden");
           }
         });
+
+        window.addEventListener("resize", () => {
+          if (window.innerWidth < 768) {
+            overlay.classList.remove("hidden");
+          }
+        });
       });
     </script>
 
     <script>
       let currentRoleId = null;
+      // success and error message using toastr
+      toastr.options = {
+        timeOut: "2000",
+      };
 
       //Functions to get roles
       async function fetchAndDisplayRoles() {
@@ -355,7 +368,7 @@
             // Create "remove" button
             const removeButton = document.createElement("button");
             removeButton.innerHTML =
-              '<span><i class="fa-solid fa-lg fa-xmark"></i></span>';
+              '<span><i class="fa-solid  fa-trash"></i></span>';
 
             removeButton.classList.add("ml-2", "hover:text-red-500");
             removeButton.addEventListener("click", async (event) => {
@@ -382,15 +395,18 @@
           });
 
           if (response.ok) {
-            alert("Role removed successfully!");
+            // alert("Role removed successfully!");
+            toastr.success("Role removed successfully!");
             fetchAndDisplayRoles(); // refresh the list after removing the role
           } else {
             const error = await response.json();
-            alert(error.message || "Error removing role");
+            // alert(error.message || "Error removing role");
+            toastr.error(error.message || "Error removing role");
           }
         } catch (error) {
           console.error("Error removing role:", error);
-          alert("An error occurred while trying to remove the role.");
+          // alert("An error occurred while trying to remove the role.");
+          toastr.error("An error occurred while trying to remove the role.");
         }
       }
 
@@ -419,12 +435,12 @@
             </div>
             <input
               type="checkbox"
-              class="h-5 w-5 text-blue-600 focus:ring-blue-500 rounded"
+              class="h-5 w-5 text-orange-400 focus:ring-orange-500 rounded"
               id="canView-${type.env_id}"
             />
             <input
               type="checkbox"
-              class="h-5 w-5 text-blue-600 focus:ring-blue-500 rounded"
+              class="h-5 w-5 text-orange-400 focus:ring-orange-500 rounded"
               id="canEdit-${type.env_id}"
             />
           `;
@@ -488,13 +504,16 @@
           // response from server
           const data = await response.json();
           if (data.success) {
-            alert(data.message);
+            // alert(data.message);
+            toastr.success(data.message);
           } else {
-            alert("Error: " + data.error);
+            // alert("Error: " + data.error);
+            toastr.error(data.error);
           }
         } catch (error) {
           console.error("Error updating permission:", error);
-          alert("An error occurred while updating the permission");
+          // alert("An error occurred while updating the permission");
+          toastr.error("An error occurred while updating the permission");
         }
       }
 
@@ -581,8 +600,8 @@
       });
 
       //add new admin - model
-      const openModalBtn = document.getElementById("open-modal-btn");
-      const closeModalBtn = document.getElementById("close-modal-btn");
+      const openEnvModalBtn = document.getElementById("open-modal-btn");
+      const closeEnveModalBtn = document.getElementById("close-modal-btn");
       const envModal = document.getElementById("env-modal");
       const modalContent = document.getElementById("modal-content");
 
@@ -648,7 +667,8 @@
           const selectedUserId = selectElement.value;
 
           if (!selectedUserId) {
-            alert("Please select an organizer.");
+            // alert("Please select an organizer.");
+            toastr.warning("Please select an organizer");
             return;
           }
 
@@ -668,17 +688,19 @@
           const result = await response.json();
           console.log("Post result:", result);
 
-          alert("Admin added successfully!");
+          // alert("Admin added successfully!");
+          toastr.success("Admin added successfully!");
           document.getElementById("env-modal").classList.add("hidden"); // close modal
         } catch (error) {
           console.error("Error posting new admin:", error);
-          alert("Failed to add admin. Please try again.");
+          // alert("Failed to add admin. Please try again");
+          toastr.error("Failed to add admin. Please try again");
         }
       }
 
       //event listener
-      openModalBtn.addEventListener("click", openModal);
-      closeModalBtn.addEventListener("click", closeModal);
+      openEnvModalBtn.addEventListener("click", openModal);
+      closeEnveModalBtn.addEventListener("click", closeModal);
 
       // close modal - clicking outside
       envModal.addEventListener("click", (event) => {
@@ -690,19 +712,25 @@
 
     <!-- add roles -->
     <script>
-      const openModalButton = document.getElementById("openModalButton");
-      const closeModalButton = document.getElementById("closeModal");
+      const openRoleModalButton = document.getElementById("openModalButton");
+      const closeRoleModalButton = document.getElementById("closeModal");
       const roleModal = document.getElementById("roleModal");
       const roleForm = document.getElementById("roleForm");
 
       // Function to open the modal
-      openModalButton.addEventListener("click", () => {
+      openRoleModalButton.addEventListener("click", () => {
         roleModal.classList.remove("hidden");
       });
 
       // Function to close the modal
-      closeModalButton.addEventListener("click", () => {
+      closeRoleModalButton.addEventListener("click", () => {
         roleModal.classList.add("hidden");
+      });
+
+      roleModal.addEventListener("click", (event) => {
+        if (event.target === roleModal) {
+          roleModal.classList.add("hidden");
+        }
       });
 
       // Handle form submission
@@ -728,15 +756,18 @@
           // Check if the response is successful
           if (response.ok) {
             const result = await response.json();
-            alert(result.message || "Role added successfully!");
+            // alert(result.message || "Role added successfully!");
+            toastr.success(result.message || "Role added successfully!");
             location.reload(); // Refresh the page after the alert
           } else {
             const error = await response.json();
             alert(error.message || "Error adding role.");
+            toastr.error(error.message || "Error adding role");
           }
         } catch (error) {
           console.error("Error during form submission:", error);
-          alert("An unexpected error occurred. Please try again.");
+          // alert("An unexpected error occurred. Please try again");
+          toastr.error("An unexpected error occurred. Please try again");
         }
       });
     </script>
