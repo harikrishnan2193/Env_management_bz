@@ -20,12 +20,8 @@ exports.getOrganisationId = async (req, res) => {
     console.log('Inside getOrganizationId and user rolles controller');
 
     try {
-        // Fetch the first record from the organization table
+        // fetch the first record from the organization table
         const organizations = await Organization.findAll();
-
-        // //get all roles from roles table 
-        // const roles = await Roles.findAll();
-        // console.log(roles);
 
         // first organization or default to null if none found
         const organization = organizations.length > 0 ? organizations[0] : null;
@@ -33,7 +29,6 @@ exports.getOrganisationId = async (req, res) => {
         res.render('auth', {
             isRegisterPath: true,
             organization: organization || null,
-            // allRoles: roles || null,
         });
 
     } catch (error) {
@@ -184,8 +179,7 @@ exports.addNewProject = async (req, res) => {
             technology,
         });
 
-        // Use the role scope data from the middleware
-        const scope = req.roleScope; // Access the role scope from middleware
+        const scope = req.roleScope; // from middleware
 
         await User_Roles.create({
             user_id,
@@ -195,23 +189,22 @@ exports.addNewProject = async (req, res) => {
             assigned_by: user_id,
         });
 
-        // Get all env_id values from the Environments table
+        // get all env_id values from the Environments table
         const allEnvs = await Environments.findAll();
 
-        // Insert or update permissions for each environment
         for (const env of allEnvs) {
             const env_id = env.env_id;
 
-            // Check if permission already exists
+            // check if permission already exists
             const existingPermission = await Permission.findOne({
                 where: {
-                    role_id: scope.role_id, // Use dynamically fetched role_id
+                    role_id: scope.role_id, // dynamically fetched role_id
                     env_id,
                 },
             });
 
             if (existingPermission) {
-                // Update the existing permission
+                // update the existing permission
                 await existingPermission.update({
                     can_view: 1,
                     can_edit: 1,
@@ -219,7 +212,7 @@ exports.addNewProject = async (req, res) => {
             } else {
                 // Insert new permission if it does not exist
                 await Permission.create({
-                    role_id: scope.role_id, // Use dynamically fetched role_id
+                    role_id: scope.role_id, 
                     env_id,
                     can_view: 1,
                     can_edit: 1,
@@ -271,7 +264,6 @@ exports.getProjectAllDetils = async (req, res) => {
     }
 
     try {
-        // Middleware attaches user role details to req.userRoleDetails
         const userRoleDetails = req.userRoleDetails;
         console.log('userRoleDetails is:', userRoleDetails);
         
@@ -283,7 +275,7 @@ exports.getProjectAllDetils = async (req, res) => {
         const status = await Satuses.findAll();
         console.log(status);
 
-        const role_id = userRoleDetails.role_id; // Access the role_id from middleware
+        const role_id = userRoleDetails.role_id; // from middleware
 
         res.render('editProject', { projectDetils, status, role_id });
         console.log(projectDetils);
@@ -301,13 +293,13 @@ exports.getEnvStatus = async (req, res) => {
     req.session.project_id = project_id; // Store selected project's project_id in session
 
     try {
-        // Middleware provides userRoleDetails
+        // Middleware
         const userRoleDetails = req.userRoleDetails;
 
-        // Fetch all environments
+        // fetch all environments
         const envStatus = await Environments.findAll();
 
-        // Fetch role_scope and role_name from the Roles table
+        // fetch role_scope and role_name from the Roles table
         const roleDetails = await Roles.findOne({
             where: { role_id: userRoleDetails.role_id },
         });
@@ -317,7 +309,6 @@ exports.getEnvStatus = async (req, res) => {
             return res.redirect('/projects');
         }
 
-        // Render the frontend with role details
         res.render('projectEnvs', {
             envStatus,
             roleDetails: {
@@ -341,8 +332,6 @@ exports.deleteProject = async (req, res) => {
     }
 
     try {
-        // The middlewares ensure user association and permissions; no need to re-check
-        // Perform deletion of the project and associated records
         await Projects.destroy({
             where: { project_id },
         });
@@ -368,22 +357,21 @@ exports.getAllEnvs = async (req, res) => {
 
     const { env_id } = req.query;
     const project_id = req.session.project_id;
-    const userRoleDetails = req.userRoleDetails; // Populated by checkUserAssociation middleware
+    const userRoleDetails = req.userRoleDetails; // checkUserAssociation middleware
 
     console.log('env_id is:', env_id);
     req.session.env_id = env_id // save env_id in session
 
-    // Validate required parameters
     if (!env_id || !project_id) {
         console.log('env_id or project_id is not available');
         return res.status(400).send('env_id or project_id is not available. Please login again...');
     }
 
     try {
-        // Get role_id and ensure role details are available
+        // get role_id and ensure role details are available
         const role_id = userRoleDetails.role_id;
 
-        // Fetch role details (role_scope and role_name) from Roles table
+        // fetch role details (role_scope and role_name) from Roles table
         const roleDetails = await Roles.findOne({
             where: {
                 role_id: role_id,
@@ -394,16 +382,16 @@ exports.getAllEnvs = async (req, res) => {
             return res.status(403).send('Role details not found.');
         }
 
-        // Fetch permissions for the user's role and environment
+        // fetch permissions for the user's role and environment
         const permission = await Permission.findOne({
             where: { role_id, env_id },
         });
 
-        // Check if the user has view/edit permissions
+        // check if the user has view/edit permissions
         const canView = permission ? permission.can_view === 1 : false;
         const canEdit = permission ? permission.can_edit === 1 : false;
 
-        // Fetch all environments for the project and env_id
+        // fetch all environments for the project and env_id
         const allEnvs = await Project_env.findAll({
             where: {
                 project_id,
@@ -411,7 +399,7 @@ exports.getAllEnvs = async (req, res) => {
             },
         });
 
-        // Fetch environment statuses
+        // fetch environment statuses
         const envStatus = await Environments.findAll();
 
         if (allEnvs.length > 0) {
@@ -419,7 +407,6 @@ exports.getAllEnvs = async (req, res) => {
             req.session.project_env_id = project_env_id; // Store project_env_id in the session
         }
 
-        // Render the environments page
         return res.render('projectEnvs', {
             envStatus,
             allEnvs,
@@ -507,7 +494,6 @@ exports.updateProjectDetails = async (req, res) => {
     }
 
     try {
-        // Update project details in the database
         await Projects.update(
             {
                 project_name: name,

@@ -7,40 +7,16 @@ const Permission = require('../Models/permissionModel')
 const { Op } = require('sequelize');
 
 
-// //get all uses and all roles
-// exports.getAllusersAllroles = async (req, res) => {
-//     console.log('inside getAllusersAllroles Controller');
-
-//     //get all users an  rolles
-//     try {
-//         const users = await User.findAll()
-//         console.log(users);
-//         const roles = await Roles.findAll()
-//         console.log(roles);
-
-//         const loggedInUserId = req.session.user_id;
-//         console.log('Loged in user Id is', loggedInUserId);
-//         const selectedProjectId = req.session.project_id_edit
-//         console.log('selected project id is', selectedProjectId);
-
-//         res.json({ users, roles, loggedInUserId, selectedProjectId })
-
-//     } catch (error) {
-//         console.error('Error fetching projects:', error.message);
-//         res.status(500).send('Server Error');
-//     }
-// }
 
 // get all users and roles in the environment page
 exports.getAllusers_Allroles = async (req, res) => {
     console.log('inside getAllusersAllroles Controller');
 
     try {
-        // get all users
         const users = await User.findAll();
         console.log('Fetched users:', users);
 
-        // Map through the users to fetch their roles and role scopes
+        // map through the users to fetch their roles and role scopes
         const usersWithRoleScopes = await Promise.all(
             users.map(async (user) => {
                 // find the role associated with the user
@@ -241,7 +217,7 @@ exports.getUpdatedPermission = async (req, res) => {
                 [permission_type]: permissionValue,  // dynamically set the permission
             });
 
-            // Fetch the environment type from the environments table using env_id
+            // fetch the environment type from the environments table using env_id
             const environment = await Environments.findOne({
                 where: { env_id: env_id }
             });
@@ -297,19 +273,19 @@ exports.getSelectedPermissions = async (req, res) => {
     const envIds = env_details.map(env => env.env_id);
 
     try {
-        // Fetch permissions for the given role_id and env_ids
+        // fetch permissions for the given role_id and env_ids
         const permissions = await Permission.findAll({
             where: {
                 role_id: role_id,
                 env_id: {
-                    [Op.in]: envIds  // Op.in to find records where env_id matches any in the envIds array
+                    [Op.in]: envIds 
                 }
             }
         });
 
         // check if found any permissions
         if (permissions.length > 0) {
-            // map the results to include the required data
+            // map the results
             const result = permissions.map(permission => ({
                 env_id: permission.env_id,
                 can_view: permission.can_view,
@@ -377,7 +353,7 @@ exports.users_Associated = async (req, res) => {
     try {
         const userRoles = await User_Roles.findAll({
             where: { project_id },
-            attributes: ['user_id', 'role_id'], // Fetch user_id and role_id
+            attributes: ['user_id', 'role_id'], // fetch user_id and role_id
             include: [
                 {
                     model: User,
@@ -449,13 +425,13 @@ exports.postNew_admin = async (req, res) => {
             return res.status(400).json({ error: 'User ID, Role ID, and Organization ID are required.' });
         }
 
-        // Check if the user already exists in User_Roles
+        // check if the user already exists in User_Roles
         const userInUsers_roles = await User_Roles.findOne({
             where: { user_id: user_id }
         });
 
         if (userInUsers_roles) {
-            // User exists, delete the record
+            // user exists, delete the record
             await User_Roles.destroy({
                 where: { user_id: user_id }
             });
@@ -468,8 +444,8 @@ exports.postNew_admin = async (req, res) => {
             user_id: user_id,
             role_id: role_id,
             organization_id: organization_id,
-            assigned_by: null, // Set to null
-            project_id: null   // Set to null
+            assigned_by: null,
+            project_id: null 
         });
 
         console.log('New user role assigned successfully');
