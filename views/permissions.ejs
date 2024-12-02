@@ -31,36 +31,63 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        width: 100%;
+        overflow-x: hidden; /* Prevents horizontal scroll */
+      }
+
+      body {
+        position: relative;
+        background: #0f2027;
+        background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+        min-height: 100vh;
+      }
+
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("/images/pattern.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        opacity: 0.3;
+        z-index: 1;
+        pointer-events: none;
+      }
+    </style>
   </head>
 
-  <body class="bg-gray-100 font-sans p-10">
+  <body class="font-sans p-10 h-screen">
     <!--Roles and env types wrapper -->
-    <div class="flex h-screen gap-10">
+    <div class="flex gap-10 h-full mx-auto justify-center">
       <!-- Burger Menu -->
       <button id="burger-menu" class="md:hidden absolute top-3 left-4 z-20">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"
-          />
-        </svg>
+        <i class="fa-solid fa-lg fa-bars text-white"></i>
       </button>
 
       <!-- Sidebar -->
       <aside
         id="sidebar"
-        class="fixed md:relative top-0 left-0 h-full w-80 md:w-4/12 bg-white shadow-md transform transition-transform duration-300 md:translate-x-0 -translate-x-full z-40 p-5"
+        class="fixed md:relative top-0 left-0 h-full w-80 md:w-5/12 max-w-[400px] bg-white shadow-md transform transition-transform duration-300 md:translate-x-0 -translate-x-full z-40 p-5 rounded-md"
       >
-        <p class="top-2 cursor-pointer p-1 mb-8 md:hidden" id="close-sidebar">
-          <i class="fa-solid fa-x"></i>
+        <p class="cursor-pointer p-1 mb-8 md:hidden" id="close-sidebar">
+          <i class="fa-solid fa-lg fa-x"></i>
         </p>
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-bold">Roles</h2>
@@ -98,22 +125,24 @@
       </aside>
 
       <!-- Main Content -->
-      <main class="bg-white shadow-md w-full md:w-8/12 p-5">
+      <main
+        class="shadow-md w-full md:w-7/12 max-w-[500px] p-3 sm:p-5 rounded-md bg-white z-20"
+      >
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-xl font-bold">Types of Envs</h2>
           <button
             id="open-modal-btn"
-            class="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-gray-200 hover:shadow-md active:bg-gray-300 transition flex items-center gap-2"
+            class="bg-gray-100 border border-gray-300 text-gray-700 font-semibold p-2 sm:px-4 sm:py-2 rounded-lg shadow-sm hover:bg-gray-200 hover:shadow-md active:bg-gray-300 transition flex items-center gap-2"
           >
             <span class="">Add Admin</span>
-            <i class="fa-solid fa-user-plus"></i>
+            <i class="fa-solid fa-user-plus hidden sm:block"></i>
           </button>
         </div>
 
         <!-- initially when we load env using fetchEnvTypes function the env-types-container is populated with env types, but initally none of the roles button is  selected, so if we try to check in the checkbox of can view or can edit it throws an error , and also its irrelevant to show a dummy env types without any role being selected -->
         <!-- so the env-types-container-wrapper is set to hidden and only the hidden class is removed when we select a any one of the roles and its been handled in rolebutton event listener -->
 
-        <div class="relative">
+        <div class="relative mt-20">
           <!-- empty envs message -->
           <p id="env-empty-message" class="text-center mt-60">
             Please select a role to display Env Types
@@ -122,11 +151,15 @@
           <div id="env-types-container-wrapper" class="hidden">
             <!-- Headers -->
 
-            <div class="grid grid-cols-3 gap-x-6 mb-4">
+            <div class="grid grid-cols-8 gap-x-6 mb-4">
               <!-- dummy div just for grid alignment -->
-              <div></div>
-              <div class="text-sm font-semibold text-gray-600">View</div>
-              <div class="text-sm font-semibold text-gray-600">Edit</div>
+              <div class="col-span-4"></div>
+              <div class="col-span-2 text-sm font-semibold text-gray-600">
+                View
+              </div>
+              <div class="col-span-2 text-sm font-semibold text-gray-600">
+                Edit
+              </div>
             </div>
 
             <!-- Row -->
@@ -192,19 +225,19 @@
               <option value="project">Project</option>
             </select>
           </div>
-          <div class="flex justify-between">
-            <button
-              type="submit"
-              class="bg-orange-400 text-white py-2 px-4 rounded-md hover:bg-orange-500"
-            >
-              Submit
-            </button>
+          <div class="flex justify-end gap-4">
             <button
               type="button"
               id="closeModal"
               class="bg-gray-300 text-black py-2 px-4 rounded-md hover:bg-gray-400"
             >
               Cancel
+            </button>
+            <button
+              type="submit"
+              class="bg-orange-400 text-white py-2 px-4 rounded-md hover:bg-orange-500"
+            >
+              Submit
             </button>
           </div>
         </form>
@@ -216,7 +249,7 @@
       id="env-modal"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
     >
-      <div class="bg-white w-[450px] rounded-lg p-6 shadow-lg">
+      <div class="bg-white w-11/12 md:w-[450px] rounded-lg p-6 shadow-lg">
         <h3 class="text-2xl font-semibold mb-4">Add admin</h3>
         <div class="mb-4">
           <label for="env-type" class="block text-sm font-medium text-gray-700"
@@ -287,11 +320,11 @@
           }
         });
 
-        window.addEventListener("resize", () => {
-          if (window.innerWidth < 768) {
-            overlay.classList.remove("hidden");
-          }
-        });
+        // window.addEventListener("resize", () => {
+        //   if (window.innerWidth < 768) {
+        //     overlay.classList.remove("hidden");
+        //   }
+        // });
       });
     </script>
 
@@ -427,20 +460,20 @@
           // populate environment types with checkboxes
           types.forEach((type) => {
             const div = document.createElement("div");
-            div.className = "grid grid-cols-3 gap-x-6 items-center mb-4";
+            div.className = "grid grid-cols-8 gap-x-6 items-center mb-4";
 
             div.innerHTML = `
-            <div class="text-base font-bold text-gray-800 capitalize" data-env-id="${type.env_id}">
+            <div class="text-base font-bold text-gray-800 capitalize col-span-4" data-env-id="${type.env_id}">
               ${type.env_type}
             </div>
             <input
               type="checkbox"
-              class="h-5 w-5 text-orange-400 focus:ring-orange-500 rounded"
+              class="h-5 w-5 text-orange-400 focus:ring-orange-500 rounded col-span-2"
               id="canView-${type.env_id}"
             />
             <input
               type="checkbox"
-              class="h-5 w-5 text-orange-400 focus:ring-orange-500 rounded"
+              class="h-5 w-5 text-orange-400 focus:ring-orange-500 rounded col-span-2"
               id="canEdit-${type.env_id}"
             />
           `;
