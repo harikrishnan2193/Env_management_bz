@@ -7,7 +7,6 @@ const Permission = require('../Models/permissionModel')
 const { Op } = require('sequelize');
 
 
-
 // get all users and roles in the environment page
 exports.getAllusers_Allroles = async (req, res) => {
     console.log('inside getAllusersAllroles Controller');
@@ -102,6 +101,8 @@ exports.postUser_roles = async (req, res) => {
 
 // controller to get the logged-in user's role_scope
 exports.getUserRoleScope = async (req, res) => {
+    console.log('inside getUserRoleScope controller');
+    
     const user_id = req.session.user_id; 
 
     if (!user_id) {
