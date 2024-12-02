@@ -37,17 +37,22 @@
   </style>
 </head>
 
-<body>
-  <main
-    class="nav-bar shadow-xl flex items-center justify-between text-orange-400 border-b-white border-b-2 py-4 px-10 z-50">
-    <div class="w-36">
-      <img src="/images/bq.png" alt="logo" />
-    </div>
-    <div class="">
-      <!-- User Icon  -->
-      <p onclick="openLogo()" class="cursor-pointer flex items-center justify-end">
-        <i class="fa-regular fa-user text-xl"></i>
-      </p>
+  <body>
+    <main
+      class="nav-bar shadow-xl flex items-center justify-between text-orange-400 border-b-white border-b-2 py-4 px-5 lg:px-10 z-50"
+    >
+      <div class="w-36">
+        <img src="/images/bq.png" alt="logo" />
+      </div>
+
+      <div class="">
+        <!-- User Icon  -->
+        <p
+          onclick="openLogo()"
+          class="cursor-pointer flex items-center justify-end"
+        >
+          <i class="fa-regular fa-user text-xl"></i>
+        </p>
 
       <!-- User Options Dropdown -->
       <div id="user-options"
@@ -61,9 +66,35 @@
           <span>Logout</span>
         </p>
       </div>
-
     </div>
   </main>
+
+    <script>
+      const userOptions = document.getElementById("user-options");
+
+      const userIcon = document.querySelector(".fa-user");
+
+      function openLogo(event) {
+        event.stopPropagation(); // Prevent the click event from propagating to the document
+        userOptions.classList.toggle("hidden");
+      }
+
+      // Close the dropdown if clicked outside
+      document.addEventListener("click", (event) => {
+        if (!userOptions.classList.contains("hidden")) {
+          const isClickInsideDropdown = userOptions.contains(event.target);
+          const isClickOnIcon = userIcon.contains(event.target);
+
+          if (!isClickInsideDropdown && !isClickOnIcon) {
+            userOptions.classList.add("hidden");
+          }
+        }
+      });
+
+      // Add click event to the user icon
+      userIcon.addEventListener("click", openLogo);
+    </script>
+
 
   <script>
     const userOptions = document.getElementById("user-options");
