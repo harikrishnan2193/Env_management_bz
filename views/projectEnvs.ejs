@@ -32,8 +32,6 @@
       referrerpolicy="no-referrer"
     />
 
-
-
     <style>
       body {
         background: #0f2027; /* fallback for old browsers */
@@ -75,18 +73,16 @@
         margin: 0 !important;
         padding: 0 !important;
       }
-
-
     </style>
   </head>
 
-  <body >
+  <body>
     <!-- SIDEBAR SECTION -->
     <section class="">
       <%- include('side', { roleDetails: roleDetails }) %>
     </section>
 
-    <div class="min-h-screen flex gap-1 ">
+    <div class="min-h-screen flex gap-1">
       <!-- CONTENT SECTION -->
       <section class="relative flex-1 z-10">
         <div class="flex flex-col items-center justify-center space-y-6 mt-10">
@@ -108,7 +104,7 @@
             <select
               id="options"
               name="env_id"
-              class="w-72 px-2 py-1 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              class="w-72 px-2 py-1 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 capitalize"
               onchange="this.form.submit()"
             >
               <option value="" disabled selected>Select Env</option>
@@ -124,34 +120,34 @@
           <div
             class="xs:w-11/12 sm:w-10/12 lg:w-7/12 bg-white text-black p-2 sm:p-6 shadow-lg rounded-lg relative"
           >
-            <h2 class="text-xl md:text-2xl font-bold mb-2 sm:mb-4 text-center text-gray-900">
-
+            <h2
+              class="text-xl md:text-2xl font-bold mb-2 sm:mb-4 text-center text-gray-900"
+            >
               Env Types
             </h2>
-            <!-- Form to handle environment updates -->
+                        <!-- Form to handle environment updates -->
             <form action="/project/updateEnvs" method="POST" id="envForm">
-              <!-- Display Envs -->
-              <% if (allEnvs && allEnvs.length> 0) { %>
-                <% allEnvs.forEach(env=> { %>
-                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[550px]">
-                      <textarea name="env_content"  class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdi!=='undefined' && !canEdit) ? 'readonly' : '' %> placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"><%= (typeof canView !== 'undefined' && canView) ? env.env_content || '' : '' %> ></textarea>
-                  </div>
-                <% }) %>
-                <% } else { %>
-                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[550px]">
-                      <textarea name="env_content "
-                      class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdit !=='undefined' && !canEdit) ? 'readonly' : '' %>
-                      placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"></textarea>
-                  </div>
-                <% } %>
-          
-                  <!-- Button -->
-                  <div class="text-center mb-2">
-                      <button type="submit" class="w-full bg-orange-400 text-white font-bold rounded-md py-2 hover:bg-orange-500" <%=(typeof canEdit !=='undefined' && !canEdit) ? 'disabled' : '' %>>Save Env</button>
-                  </div>
-              </form>
+                <!-- Display Envs -->
+                <% if (allEnvs && allEnvs.length> 0) { %>
+                    <% allEnvs.forEach(env=> { %>
+                      <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[650px]">
+                        <textarea name="env_content"  class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdi!=='undefined' && !canEdit) ? 'readonly' : '' %> placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"><%= (typeof canView !== 'undefined' && canView) ? env.env_content || '' : '' %> ></textarea>
+                        </div>
+                    <% }) %>
+                   <% } else { %>
+                      <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[650px]">
+                          <textarea name="env_content "
+                          class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdit !=='undefined' && !canEdit) ? 'readonly' : '' %>
+                          placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"></textarea>
+                      </div>
+                    <% } %>
+                      
+                    <!-- Button -->
+                        <div class="text-center mb-2">
+                          <button type="submit" class="w-full bg-orange-400 text-white font-bold rounded-md py-2 hover:bg-orange-500" <%=(typeof canEdit !=='undefined' && !canEdit) ? 'disabled' : '' %>>Save Env</button>
+                        </div>
+                </form>
           </div>
-
         </div>
       </section>
     </div>
@@ -161,7 +157,6 @@
       toastr.options = {
         timeOut: "2000",
       };
-
 
       //open main model
       async function openModal(event) {
@@ -236,7 +231,9 @@
 
         if (user_id === "Select a user" || role_id === "Select a role") {
           console.warn("Please select both a valid user and role.");
-          toastr.warning("Please select a valid user and role before submitting")
+          toastr.warning(
+            "Please select a valid user and role before submitting"
+          );
           return;
         }
 
@@ -258,17 +255,17 @@
           .then((data) => {
             if (data.success) {
               console.log("Success:", data);
-              toastr.success(data.message)
+              toastr.success(data.message);
               closeModal();
               location.reload(); // reload the current page
             } else {
               console.log("Error:", data);
-              toastr.error(data.message)
+              toastr.error(data.message);
             }
           })
           .catch((error) => {
             console.error("Error:", error);
-            toastr.error(error)
+            toastr.error(error);
           });
       }
 
@@ -279,5 +276,21 @@
       }
     </script>
 
+    <!-- save the selected option inside local storage so when it refreshes we can get it from local storage -->
+    <script>
+      const select = document.getElementById('options');
+    
+      // Load the previously selected option from localStorage
+      const savedEnvId = localStorage.getItem('selectedEnvId');
+      if (savedEnvId) {
+        select.value = savedEnvId;
+      }
+    
+      // Save the selected option to localStorage on change
+      select.addEventListener('change', (event) => {
+        localStorage.setItem('selectedEnvId', event.target.value);
+      });
+    </script>
+    
   </body>
 </html>
