@@ -32,7 +32,8 @@
       referrerpolicy="no-referrer"
     />
 
-
+    <!-- tailwind cdn -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
       body {
@@ -120,6 +121,25 @@
             </select>
           </form>
 
+          <!-- alert messages -->
+          <script>
+            const error =  <%- JSON.stringify(error) %>;
+            const success =  <%- JSON.stringify(success) %>;
+    
+            // success and error message using toastr
+            toastr.options = {
+              timeOut: "2000",
+            };
+    
+            if (success && success.length > 0) {
+              toastr.success(success[0]);
+            }
+    
+            if (error && error.length > 0) {
+              toastr.error(error[0]);
+            }
+          </script>
+
           <!-- Container -->
           <div
             class="xs:w-11/12 sm:w-10/12 lg:w-7/12 bg-white text-black p-2 sm:p-6 shadow-lg rounded-lg relative"
@@ -130,16 +150,16 @@
             </h2>
             <!-- Form to handle environment updates -->
             <form action="/project/updateEnvs" method="POST" id="envForm">
-              <!-- Display Envs -->
+              
               <% if (allEnvs && allEnvs.length> 0) { %>
                 <% allEnvs.forEach(env=> { %>
                   <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[550px]">
-                      <textarea name="env_content"  class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdi!=='undefined' && !canEdit) ? 'readonly' : '' %> placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"><%= (typeof canView !== 'undefined' && canView) ? env.env_content || '' : '' %> ></textarea>
+                      <textarea name="env_content"  class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdi!=='undefined' && !canEdit) ? 'readonly' : '' %> placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"><%= (typeof canView !== 'undefined' && canView) ? env.env_content || '' : '' %> </textarea>
                   </div>
                 <% }) %>
                 <% } else { %>
                   <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[550px]">
-                      <textarea name="env_content "
+                      <textarea name="env_content"
                       class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdit !=='undefined' && !canEdit) ? 'readonly' : '' %>
                       placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"></textarea>
                   </div>
@@ -278,6 +298,10 @@
         document.getElementById("modal").style.display = "none";
       }
     </script>
+
+    <!-- form submission alert -->
+  
+  
 
   </body>
 </html>

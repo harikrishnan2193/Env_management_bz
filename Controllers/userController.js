@@ -8,7 +8,7 @@ const User_Roles = require('../Models/user_rolesModel')
 const Permission = require('../Models/permissionModel')
 const Roles = require('../Models/rolesModel')
 
-// const { Op } = require('sequelize'); // Import Sequelize operators
+const { Op } = require('sequelize'); // Import Sequelize operators
 
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
@@ -323,13 +323,36 @@ exports.getEnvStatus = async (req, res) => {
 
 // Controller function to delete a project
 exports.deleteProject = async (req, res) => {
-    const { project_id } = req.body;
+    console.log('inside delete controller');
+    
+    const { project_id } = req.body;    
+
+    // console.log('User Role Details:', req.userRoleDetails);
 
     if (!project_id) {
         return res.status(400).send('Project ID is required');
     }
 
     try {
+        // middleware
+        const { role_id } = req.userRoleDetails;
+
+        // check the user's role matches 
+        const role = await Roles.findOne({
+            where: {
+                role_id,
+                [Op.or]: [
+                    { role_scope: 'organization' },
+                    { role_scope: 'project', role_name: 'project_admin' },//organization or project && project_admin
+                ],
+            },
+        });
+
+        if (!role) {
+            req.flash('error', 'You are not authorized to delete this project.');
+            return res.redirect('/projects');
+        }
+
         await Projects.destroy({
             where: { project_id },
         });
@@ -348,6 +371,7 @@ exports.deleteProject = async (req, res) => {
         res.status(500).send('Server Error');
     }
 }
+
 
 // Get all environments belonging to the selected type
 exports.getAllEnvs = async (req, res) => {
@@ -431,7 +455,8 @@ exports.updateEnvs = async (req, res) => {
         console.log('user_id:', user_id);
 
         if (!project_id || !env_id) {
-            return res.status(400).send('Project ID or Env ID is missing.');
+            req.flash('error', 'Env is missing. Please select an env type');
+            return res.redirect(`/project/envStatus?project_id=${project_id}`);
         }
 
         // check the record exists
@@ -506,4 +531,20 @@ exports.updateProjectDetails = async (req, res) => {
         res.status(500).send('Server Error');
     }
 }
+
+// Logout function
+exports.logout = (req, res) => {
+    console.log('inside logout controller');
+    
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Error destroying session:", err);
+            return res.redirect('/projects?message=Unable to logout. Please try again.');
+        }
+
+        res.clearCookie('connect.sid'); // clear the session cookie
+        return res.redirect('/');
+    });
+}
+
 

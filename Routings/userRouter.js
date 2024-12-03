@@ -30,7 +30,7 @@ router.get('/project/alldetils',checkUserAssociation(true), usersController.getP
 router.get('/project/envStatus',checkUserAssociation(true), usersController.getEnvStatus)
 
 //delete a project
-router.post('/project/delete',checkUserAssociation(true),checkRoleScope(['organization', 'project'], ['project_admin']), usersController.deleteProject)
+router.post('/project/delete',checkUserAssociation(true), usersController.deleteProject)
 
 //get all env belongs to the selected type
 router.get('/project/env_type/envs',checkUserAssociation(true), usersController.getAllEnvs);
@@ -41,7 +41,8 @@ router.post('/project/updateEnvs', usersController.updateEnvs);
 //update project details(update project - editProject)
 router.post('/project/update', usersController.updateProjectDetails)
 
-
+//logout
+router.get('/logout', usersController.logout);
 
 
 module.exports = router

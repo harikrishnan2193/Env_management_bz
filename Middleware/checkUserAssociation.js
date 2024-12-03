@@ -2,7 +2,7 @@ const User_Roles = require('../Models/user_rolesModel')
 const { Op } = require('sequelize');
 
 const checkUserAssociation = (checkOrgWide = true) => async (req, res, next) => {
-    console.log('inside checkUserAssociation middleware');
+    console.log('inside checkUserAssociation Middleware');
     
     try {
         const user_id = req.session.user_id;

@@ -2,6 +2,8 @@ const Roles = require('../Models/rolesModel')
 
 
 const checkRoleScope = (requiredScope, requiredRole) => {
+    console.log('inside checkRoleScope Middleware');
+    
     return async (req, res, next) => {
         try {
             // fetch role scope dynamically based on the inputs
@@ -11,6 +13,8 @@ const checkRoleScope = (requiredScope, requiredRole) => {
                     role_name: requiredRole,
                 },
             });
+            console.log('scope is:', scope);
+            
 
             if (!scope) {
                 return res.status(404).send(`Role scope for '${requiredRole}' not found.`);
