@@ -104,7 +104,7 @@
             <select
               id="options"
               name="env_id"
-              class="w-72 px-2 py-1 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              class="w-72 px-2 py-1 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 capitalize"
               onchange="this.form.submit()"
             >
               <option value="" disabled selected>Select Env</option>
@@ -130,12 +130,12 @@
                 <!-- Display Envs -->
                 <% if (allEnvs && allEnvs.length> 0) { %>
                     <% allEnvs.forEach(env=> { %>
-                      <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[550px]">
+                      <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[650px]">
                         <textarea name="env_content"  class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdi!=='undefined' && !canEdit) ? 'readonly' : '' %> placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"><%= (typeof canView !== 'undefined' && canView) ? env.env_content || '' : '' %> ></textarea>
                         </div>
                     <% }) %>
                    <% } else { %>
-                      <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[550px]">
+                      <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[650px]">
                           <textarea name="env_content "
                           class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm" <%=(typeof canEdit !=='undefined' && !canEdit) ? 'readonly' : '' %>
                           placeholder="<%= (typeof canView !== 'undefined' && !canView) ? 'No access to view content' : 'No env available. Type here...' %>"></textarea>

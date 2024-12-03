@@ -1,178 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sidebar Example</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link href="/css/tailwind.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Add jQuery -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+      integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+      integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sidebar Example</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link href="/css/tailwind.css" rel="stylesheet" />
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- Add jQuery -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
-    integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
-    integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <style>
-    @media (max-width: 1535px) {
-      #sidebar {
-        background: #0f2027;
-        /* fallback for old browsers */
-        background: -webkit-linear-gradient(to right,
+    <style>
+      @media (max-width: 1535px) {
+        #sidebar {
+          background: #0f2027;
+          /* fallback for old browsers */
+          background: -webkit-linear-gradient(
+            to right,
             #2c5364,
             #203a43,
-            #0f2027);
-        /* Chrome 10-25, Safari 5.1-6 */
-        background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+            #0f2027
+          );
+          /* Chrome 10-25, Safari 5.1-6 */
+          background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+        }
       }
-    }
-  </style>
-</head>
 
-<body class="">
-  <!-- Burger Menu Button -->
-  <% if (typeof roleDetails !=='undefined' && (roleDetails.role_scope==='organization' ||
-    (roleDetails.role_name==='project_admin' && roleDetails.role_scope==='project' ))) { %>
+      @media (width>1535px) {
+        #overlay {
+          display: none;
+          /* background-color: transparent; */
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Burger Menu Button -->
+    <% if (typeof roleDetails !=='undefined' &&
+    (roleDetails.role_scope==='organization' ||
+    (roleDetails.role_name==='project_admin' &&
+    roleDetails.role_scope==='project' ))) { %>
+
     <div class="fixed top-4 left-4 z-50">
       <button id="toggleMenu" class="text-white p-2 rounded focus:outline-none">
-        <span id="burgerIcon" class="block"><i class="fa fa-bars fa-lg"></i></span>
-        <span id="closeIcon" class="hidden"><i class="fa-solid fa-x fa-lg"></i></span>
+        <span id="burgerIcon" class="block"
+          ><i class="fa fa-bars fa-lg"></i
+        ></span>
+        <span id="closeIcon" class="hidden"
+          ><i class="fa-solid fa-x fa-lg"></i
+        ></span>
       </button>
     </div>
     <% } %>
 
-      <!-- Sidebar -->
-      <div id="sidebar"
-        class="fixed top-0 left-0 h-full w-72 text-white transform -translate-x-full transition-transform duration-300 z-20 2xl:bg-transparent">
-        <!-- Users Content -->
-        <div class="p-4">
-          <div class="border rounded-lg shadow w-full mx-auto mt-20">
-            <h3 class="w-full px-4 py-2 text-left text-lg font-medium flex justify-between">
-              Users
-            </h3>
+    <!-- Overlay -->
+    <div
+      id="overlay"
+      class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden"
+    ></div>
 
-            <div id="accordionContent"
-              class="hidden border-t overflow-hidden transition-[max-height] duration-500 ease-in-out"
-              style="max-height: 0">
-              <ul id="userList" class="px-4 py-2">
-                <!-- List items -->
-              </ul>
-            </div>
+    <!-- Sidebar -->
+    <div
+      id="sidebar"
+      class="fixed top-0 left-0 h-full text-white transform -translate-x-full transition-transform duration-300 z-20 2xl:bg-transparent w-80"
+    >
+      <!-- Users Content -->
+      <div class="p-7">
+        <div class="border rounded-lg shadow w-full mx-auto mt-20">
+          <h3
+            class="w-full px-4 py-2 text-left text-lg font-medium flex justify-between"
+          >
+            Users
+          </h3>
 
-            <% if (typeof roleDetails !=='undefined' && ((roleDetails.role_scope==='organization' ) ||
-                (roleDetails.role_name==='project_admin' && roleDetails.role_scope==='project' ))) { %>
-                <p class="text-center text-white mt-4">
-                  Add new users?
-                  <a href="/getAllUsers_AllRoles" class="text-orange-500 hover:underline"
-                    onclick="openModal(event)">Click here</a>
-                </p>
-                <% } %>
-
+          <div
+            id="accordionContent"
+            class="hidden border-t overflow-hidden transition-[max-height] duration-500 ease-in-out"
+            style="max-height: 0"
+          >
+            <ul id="userList" class="px-4 py-2">
+              <!-- List items -->
+            </ul>
           </div>
+
+          <% if (typeof roleDetails !=='undefined' &&
+          ((roleDetails.role_scope==='organization' ) ||
+          (roleDetails.role_name==='project_admin' &&
+          roleDetails.role_scope==='project' ))) { %>
+          <div class="text-center mt-10 mb-5">
+            <a
+              href="/getAllUsers_AllRoles"
+              class="bg-orange-400 text-white px-4 py-1 rounded hover:bg-orange-500 inline-block"
+              onclick="openModal(event)"
+            >
+              Add new users
+            </a>
+          </div>
+
+          <% } %>
         </div>
       </div>
+    </div>
 
-      <!-- model -->
-      <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden"
-        style="margin: 0">
-        <div class="bg-white rounded-lg shadow-lg max-w-md text-black w-full p-6">
-          <!-- Modal Header -->
-          <h2 class="text-lg font-semibold text-gray-700 mb-4">
-            Add New User
-          </h2>
+    <!-- model -->
+    <div
+      id="modal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden"
+      style="margin: 0"
+    >
+      <div class="bg-white rounded-lg shadow-lg max-w-md text-black w-full p-6">
+        <!-- Modal Header -->
+        <h2 class="text-lg font-semibold text-gray-700 mb-4">Add New User</h2>
 
-          <!-- Username Dropdown -->
-          <div class="mb-4">
-            <label class="block text-gray-600">Username</label>
-            <select id="username"
-              class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500">
-              <option disabled selected>Loading...</option>
-            </select>
-          </div>
+        <!-- Username Dropdown -->
+        <div class="mb-4">
+          <label class="block text-gray-600">Username</label>
+          <select
+            id="username"
+            class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          >
+            <option disabled selected>Loading...</option>
+          </select>
+        </div>
 
-          <div class="mb-4">
-            <label class="block text-gray-600">Role</label>
-            <select id="userrole"
-              class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500">
-              <option disabled selected>Loading...</option>
-            </select>
-          </div>
+        <div class="mb-4">
+          <label class="block text-gray-600">Role</label>
+          <select
+            id="userrole"
+            class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          >
+            <option disabled selected>Loading...</option>
+          </select>
+        </div>
 
-          <div class="flex justify-end space-x-2 mt-10">
-            <button onclick="closeModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-              Cancel
-            </button>
-            <button onclick="submitModal()" class="px-4 py-2 bg-orange-400 text-white rounded-md hover:bg-orange-500">
-              Submit
-            </button>
-          </div>
+        <div class="flex justify-end space-x-2 mt-10">
+          <button
+            onclick="closeModal()"
+            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+          >
+            Cancel
+          </button>
+          <button
+            onclick="submitModal()"
+            class="px-4 py-2 bg-orange-400 text-white rounded-md hover:bg-orange-500"
+          >
+            Submit
+          </button>
         </div>
       </div>
+    </div>
 
-
-      <script>
-        const toggleMenuButton = document.getElementById("toggleMenu");
+    <!-- Sidebar Functionality   -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const toggleMenu = document.getElementById("toggleMenu");
         const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("overlay");
         const burgerIcon = document.getElementById("burgerIcon");
         const closeIcon = document.getElementById("closeIcon");
 
-        toggleMenuButton.addEventListener("click", () => {
-          sidebar.classList.toggle("-translate-x-full");
+        // Function to open sidebar
+        function openSidebar() {
+          sidebar.classList.remove("-translate-x-full");
+          overlay.classList.remove("hidden");
+          burgerIcon.classList.add("hidden");
+          closeIcon.classList.remove("hidden");
+        }
 
-          burgerIcon.classList.toggle("hidden");
-          closeIcon.classList.toggle("hidden");
+        // Function to close sidebar
+        function closeSidebar() {
+          sidebar.classList.add("-translate-x-full");
+          overlay.classList.add("hidden");
+          burgerIcon.classList.remove("hidden");
+          closeIcon.classList.add("hidden");
+        }
+
+        // Toggle button click event
+        toggleMenu.addEventListener("click", () => {
+          if (sidebar.classList.contains("-translate-x-full")) {
+            openSidebar();
+          } else {
+            closeSidebar();
+          }
         });
 
-        // Function to fetch data
-        async function fetchAssociatedUsers() {
-          try {
-            const response = await fetch("/users/associated");
+        // Close sidebar when overlay is clicked
+        overlay.addEventListener("click", closeSidebar);
+      });
+    </script>
 
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+    <script>
+      // Function to fetch data
+      async function fetchAssociatedUsers() {
+        try {
+          const response = await fetch("/users/associated");
 
-            const data = await response.json();
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
 
-            // console.log("Associated Users:", data);
+          const data = await response.json();
 
-            if (data.success && data.data.length > 0) {
-              // response data
-              const users = data.data;
+          // console.log("Associated Users:", data);
 
-              // reference the UL inside the #accordionContent div
-              const userList = document.querySelector("#accordionContent ul");
+          if (data.success && data.data.length > 0) {
+            // response data
+            const users = data.data;
 
-              userList.innerHTML = "";
+            // reference the UL inside the #accordionContent div
+            const userList = document.querySelector("#accordionContent ul");
 
-              // Populate the list with fetched data
-              users.forEach((user) => {
-                const listItem = document.createElement("li");
-                listItem.classList.add(
-                  "py-3",
-                  "flex",
-                  "flex-col",
-                  "items-start",
-                  "space-y-2"
-                );
+            userList.innerHTML = "";
 
-                // create the content HTML without the trash button initially
-                let contentHTML = `
-                  <span class="font-semibold">${user.username}</span>  
-                  <p class="text-sm text-gray-500">${user.role_name}</p>
-                `;
+            // Populate the list with fetched data
+            users.forEach((user) => {
+              const listItem = document.createElement("li");
+              listItem.classList.add(
+                "py-3",
+                "flex",
+                "flex-col",
+                "items-start",
+                "space-y-2"
+              );
 
-                // conditionally render the trash button based on the user's role
-                if (user.role_name !== "project_admin") {
-                  contentHTML += `
+              // create the content HTML without the trash button initially
+              let contentHTML = `
+              <div class="flex gap-3 capitalize">
+                  <p class="font-semibold capitalize">${user.username} : </p>  
+                  <p class="text-gray-500">${user.role_name}</p>
+               </div> `;
+
+              // conditionally render the trash button based on the user's role
+              if (user.role_name !== "project_admin") {
+                contentHTML += `
                     <span class="ml-auto"> 
                     <button
                       class="text-red-500 delete-button"
@@ -182,178 +268,175 @@
                     </button>
                     </span>
                   `;
-                }
-
-                // Set the innerHTML of the listItem
-                listItem.innerHTML = contentHTML;
-
-                // attach delete functionality to the button
-                const deleteButton = listItem.querySelector(".delete-button");
-                if (deleteButton) {
-                  deleteButton.addEventListener("click", async (event) => {
-                    const userId = event.target
-                      .closest("button")
-                      .getAttribute("data-user-id");
-
-                    try {
-                      const response = await fetch(`/users/delete/${userId}`, {
-                        method: "DELETE",
-                      });
-                      if (!response.ok)
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                      alert("User successfully deleted!");
-                      listItem.remove(); // remove the user from the DOM
-                    } catch (error) {
-                      console.error("Error deleting user:", error);
-                      alert("Error deleting user.");
-                    }
-                  });
-                }
-
-                // ensure the userList element exists and then append the item
-                const userList = document.getElementById("userList");
-                if (userList) {
-                  userList.appendChild(listItem);
-                } else {
-                  console.error("userList element not found!");
-                }
-              });
-
-              // make accordion visible
-              const accordionContent =
-                document.querySelector("#accordionContent");
-              accordionContent.classList.remove("hidden");
-              accordionContent.style.maxHeight = `${accordionContent.scrollHeight}px`;
-            } else {
-              console.log("No associated users found.");
-            }
-          } catch (error) {
-            console.error("Error fetching associated users:", error);
-          }
-        }
-
-        // Call the function when the page loads
-        window.onload = fetchAssociatedUsers;
-      </script>
-
-      <!-- model -->
-      <script>
-        let loggedInUserId;
-
-        //open main model
-        async function openModal(event) {
-          event.preventDefault();
-
-          try {
-            // fetch user and role data from server
-            const response = await fetch("/getAllUsers_AllRoles");
-            if (response.ok) {
-              const data = await response.json();
-              const {
-                users,
-                roles,
-                loggedInUserId: fetchedLoggedInUserId,
-                selectedProjectId: fetchedSelectedProjectId,
-              } = data;
-
-              // store loggedInUserId globally to use in submitModal
-              loggedInUserId = fetchedLoggedInUserId;
-              selectedProjectId = fetchedSelectedProjectId;
-
-              // dropdown with usernames
-              const usernameSelect = document.getElementById("username");
-              usernameSelect.innerHTML =
-                "<option disabled selected>Select a user</option>";
-              console.log("users are:", users);
-
-              users.forEach((user) => {
-                if (
-                  user.user_id !== loggedInUserId &&
-                  user.role_scope !== "organization"
-                ) {
-                  const option = document.createElement("option");
-                  option.value = user.user_id;
-                  option.textContent = user.username;
-                  usernameSelect.appendChild(option);
-                }
-              });
-
-              // dropdown with roles
-              const userroleSelect = document.getElementById("userrole");
-              userroleSelect.innerHTML =
-                "<option disabled selected>Select a role</option>";
-              console.log("roles are:", roles);
-
-              roles
-                .filter((role) => role.role_scope === "project") // filter roles based on role_scope
-                .forEach((role) => {
-                  const option = document.createElement("option");
-                  option.value = role.role_id;
-                  option.textContent = role.role_name;
-                  userroleSelect.appendChild(option);
-                });
-            } else {
-              console.error("Failed to fetch user and role data");
-            }
-          } catch (error) {
-            console.error("Error:", error);
-          }
-
-          // open modal
-          document.getElementById("modal").style.display = "flex";
-        }
-
-        //submit main model
-        function submitModal() {
-          const userSelect = document.getElementById("username");
-          const roleSelect = document.getElementById("userrole");
-
-          const user_id = userSelect.value;
-          const role_id = roleSelect.value;
-
-          if (user_id === "Select a user" || role_id === "Select a role") {
-            console.error("Please select both a valid user and role.");
-            alert("Please select a valid user and role before submitting.");
-            return;
-          }
-
-          const data = {
-            user_id: user_id,
-            role_id: role_id,
-            loggedInUserId: loggedInUserId,
-            selectedProjectId: selectedProjectId,
-          };
-
-          fetch("/postUser_roles", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.success) {
-                console.log("Success:", data);
-                alert(data.message);
-                closeModal();
-                location.reload(); // reload the current page
-              } else {
-                console.log("Error:", data);
-                // alert(data.message)
               }
-            })
-            .catch((error) => {
-              console.error("Error:", error);
+
+              // Set the innerHTML of the listItem
+              listItem.innerHTML = contentHTML;
+
+              // attach delete functionality to the button
+              const deleteButton = listItem.querySelector(".delete-button");
+              if (deleteButton) {
+                deleteButton.addEventListener("click", async (event) => {
+                  const userId = event.target
+                    .closest("button")
+                    .getAttribute("data-user-id");
+
+                  try {
+                    const response = await fetch(`/users/delete/${userId}`, {
+                      method: "DELETE",
+                    });
+                    if (!response.ok)
+                      throw new Error(`HTTP error! Status: ${response.status}`);
+                    alert("User successfully deleted!");
+                    listItem.remove(); // remove the user from the DOM
+                  } catch (error) {
+                    console.error("Error deleting user:", error);
+                    alert("Error deleting user.");
+                  }
+                });
+              }
+
+              // ensure the userList element exists and then append the item
+              const userList = document.getElementById("userList");
+              if (userList) {
+                userList.appendChild(listItem);
+              } else {
+                console.error("userList element not found!");
+              }
             });
+
+            // make accordion visible
+            const accordionContent =
+              document.querySelector("#accordionContent");
+            accordionContent.classList.remove("hidden");
+            accordionContent.style.maxHeight = `${accordionContent.scrollHeight}px`;
+          } else {
+            console.log("No associated users found.");
+          }
+        } catch (error) {
+          console.error("Error fetching associated users:", error);
+        }
+      }
+
+      // Call the function when the page loads
+      window.onload = fetchAssociatedUsers;
+    </script>
+
+    <!-- Model Functionality   -->
+    <script>
+      //open main model
+      async function openModal(event) {
+        event.preventDefault();
+
+        try {
+          // fetch user and role data from server
+          const response = await fetch("/getAllUsers_AllRoles");
+          if (response.ok) {
+            const data = await response.json();
+            const {
+              users,
+              roles,
+              loggedInUserId: fetchedLoggedInUserId,
+              selectedProjectId: fetchedSelectedProjectId,
+            } = data;
+
+            // store loggedInUserId globally to use in submitModal
+            loggedInUserId = fetchedLoggedInUserId;
+            selectedProjectId = fetchedSelectedProjectId;
+
+            // dropdown with usernames
+            const usernameSelect = document.getElementById("username");
+            usernameSelect.innerHTML =
+              "<option disabled selected>Select a user</option>";
+            console.log("users are:", users);
+
+            users.forEach((user) => {
+              if (
+                user.user_id !== loggedInUserId &&
+                user.role_scope !== "organization"
+              ) {
+                const option = document.createElement("option");
+                option.value = user.user_id;
+                option.textContent = user.username;
+                usernameSelect.appendChild(option);
+              }
+            });
+
+            // dropdown with roles
+            const userroleSelect = document.getElementById("userrole");
+            userroleSelect.innerHTML =
+              "<option disabled selected>Select a role</option>";
+            console.log("roles are:", roles);
+
+            roles
+              .filter((role) => role.role_scope === "project") // filter roles based on role_scope
+              .forEach((role) => {
+                const option = document.createElement("option");
+                option.value = role.role_id;
+                option.textContent = role.role_name;
+                userroleSelect.appendChild(option);
+              });
+          } else {
+            console.error("Failed to fetch user and role data");
+          }
+        } catch (error) {
+          console.error("Error:", error);
         }
 
-        function closeModal() {
-          //close main model
-          // document.getElementById("modal").classList.add("hidden");
-          document.getElementById("modal").style.display = "none";
-        }
-      </script>
-</body>
+        // open modal
+        document.getElementById("modal").style.display = "flex";
+      }
 
+      //submit main model
+      function submitModal() {
+        const userSelect = document.getElementById("username");
+        const roleSelect = document.getElementById("userrole");
+
+        const user_id = userSelect.value;
+        const role_id = roleSelect.value;
+
+        if (user_id === "Select a user" || role_id === "Select a role") {
+          console.error("Please select both a valid user and role.");
+          alert("Please select a valid user and role before submitting.");
+          return;
+        }
+
+        const data = {
+          user_id: user_id,
+          role_id: role_id,
+          loggedInUserId: loggedInUserId,
+          selectedProjectId: selectedProjectId,
+        };
+
+        fetch("/postUser_roles", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              console.log("Success:", data);
+              alert(data.message);
+              closeModal();
+              location.reload(); // reload the current page
+            } else {
+              console.log("Error:", data);
+              // alert(data.message)
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      function closeModal() {
+        //close main model
+        // document.getElementById("modal").classList.add("hidden");
+        document.getElementById("modal").style.display = "none";
+      }
+    </script>
+  </body>
 </html>
