@@ -275,20 +275,19 @@
         document.getElementById("modal").style.display = "none";
       }
     </script>
-
-    <!-- save the selected option inside local storage so when it refreshes we can get it from local storage -->
+   <!-- save the selected option inside local storage so when it refreshes we can get it from session storage -->
     <script>
       const select = document.getElementById('options');
-    
-      // Load the previously selected option from localStorage
-      const savedEnvId = localStorage.getItem('selectedEnvId');
+
+      // Load the previously selected option from sessionStorage
+      const savedEnvId = sessionStorage.getItem('selectedEnvId');
       if (savedEnvId) {
         select.value = savedEnvId;
       }
-    
-      // Save the selected option to localStorage on change
+
+      // Save the selected option to sessionStorage on change
       select.addEventListener('change', (event) => {
-        localStorage.setItem('selectedEnvId', event.target.value);
+        sessionStorage.setItem('selectedEnvId', event.target.value);
       });
     </script>
     
