@@ -159,7 +159,9 @@ exports.addNewProject = async (req, res) => {
     const user_id = req.session.user_id;
 
     if (!organization_id) {
-        return res.status(401).send('Session expired. Please log in again.');
+        console.log('Session expired. Please log in again.'); 
+        req.flash('error', 'Invalid Please login again.');
+        return res.redirect('/');
     }
 
     if (!name || !description || !technology || !status) {
@@ -232,8 +234,9 @@ exports.getAllProjects = async (req, res) => {
     const organization_id = req.session.organization_id;
 
     if (!organization_id) {
-        console.log("Organization ID is undefined in session");
-        return res.status(401).send('Organization ID not found in session. Please login again');
+        console.log("Organization ID is not found in session");
+        req.flash('error', 'Please login again.');
+        return res.redirect('/');
     }
     else {
         try {
@@ -259,7 +262,8 @@ exports.getProjectAllDetils = async (req, res) => {
 
     if (!project_id) {
         console.log("project_id is not provided");
-        return res.status(401).send('project_id is not provided');
+        req.flash('error', 'Please select a project.');
+        return res.redirect('/projects');
     }
 
     try {
@@ -288,6 +292,11 @@ exports.getProjectAllDetils = async (req, res) => {
 //get env status from environments table ,check user in user_roles ,check role_scope
 exports.getEnvStatus = async (req, res) => {
     console.log('Inside getEnvStatus controller');
+
+    // remove the env_id from session
+    if (req.session.env_id) {
+        delete req.session.env_id;
+    }
 
     const { project_id } = req.query;
     req.session.project_id = project_id; // store selected project's project_id in session
@@ -372,7 +381,6 @@ exports.deleteProject = async (req, res) => {
     }
 }
 
-
 // Get all environments belonging to the selected type
 exports.getAllEnvs = async (req, res) => {
     console.log('Inside getAllEnvs controller');
@@ -386,7 +394,8 @@ exports.getAllEnvs = async (req, res) => {
 
     if (!env_id || !project_id) {
         console.log('env_id or project_id is not available');
-        return res.status(400).send('env_id or project_id is not available. Please login again...');
+        req.flash('error', 'Please select the project.');
+        return res.redirect('/projects');
     }
 
     try {
@@ -410,6 +419,10 @@ exports.getAllEnvs = async (req, res) => {
         // Check if the user has view/edit permissions
         const canView = permission ? permission.can_view === 1 : false;
         const canEdit = permission ? permission.can_edit === 1 : false;
+        console.log('env_id is:', env_id);
+        console.log('canView is:',canView);
+        console.log('canEdit is:',canEdit);
+        
 
         // fetch all environments for the project and env_id
         const allEnvs = await Project_env.findAll({
@@ -455,7 +468,7 @@ exports.updateEnvs = async (req, res) => {
         console.log('user_id:', user_id);
 
         if (!project_id || !env_id) {
-            req.flash('error', 'Env is missing. Please select an env type');
+            req.flash('error', 'Enveronment is missing. Please select an Env type');
             return res.redirect(`/project/envStatus?project_id=${project_id}`);
         }
 
@@ -505,9 +518,13 @@ exports.updateEnvs = async (req, res) => {
 
 // Controller function to update project details(editProject)
 exports.updateProjectDetails = async (req, res) => {
+    console.log('inside updateProjectDetails controller'); 
     const { name, description, technology, status, project_id } = req.body;
+    
     if (!project_id) {
-        return res.status(400).send('Project ID is required');
+        console.log('Project ID is required');      
+        req.flash('error', 'Please select a project.');
+        return res.redirect('/projects');
     }
 
     try {

@@ -105,7 +105,7 @@
         const response = await fetch("/getUserRoleScope");
         if (response.ok) {
           const data = await response.json();
-          console.log("User Role Scope:", data.role_scope);
+          // console.log("User Role Scope:", data.role_scope);
 
           // check role_scope is a string and render the button if it's 'organization'
           if (

@@ -68,13 +68,13 @@
             </div>
 
             <% if (typeof roleDetails !=='undefined' && ((roleDetails.role_scope==='organization' ) ||
-                (roleDetails.role_name==='project_admin' && roleDetails.role_scope==='project' ))) { %>
-                <p class="text-center text-white mt-4">
-                  Add new users?
-                  <a href="/getAllUsers_AllRoles" class="text-orange-500 hover:underline"
-                    onclick="openModal(event)">Click here</a>
-                </p>
-                <% } %>
+              (roleDetails.role_name==='project_admin' && roleDetails.role_scope==='project' ))) { %>
+              <p class="text-center text-white mt-4">
+                Add new users?
+                <a href="/getAllUsers_AllRoles" class="text-orange-500 hover:underline" onclick="openModal(event)">Click
+                  here</a>
+              </p>
+              <% } %>
 
           </div>
         </div>
@@ -124,12 +124,13 @@
         const burgerIcon = document.getElementById("burgerIcon");
         const closeIcon = document.getElementById("closeIcon");
 
-        toggleMenuButton.addEventListener("click", () => {
-          sidebar.classList.toggle("-translate-x-full");
-
-          burgerIcon.classList.toggle("hidden");
-          closeIcon.classList.toggle("hidden");
-        });
+        if (toggleMenuButton) {
+          toggleMenuButton.addEventListener("click", () => {
+            sidebar.classList.toggle("-translate-x-full");
+            burgerIcon.classList.toggle("hidden");
+            closeIcon.classList.toggle("hidden");
+          });
+        }
 
         // Function to fetch data
         async function fetchAssociatedUsers() {
@@ -148,13 +149,19 @@
               // response data
               const users = data.data;
 
+              // sort users: first 'project_admin' then those without it
+              const sortedUsers = [
+                ...users.filter((user) => user.role_name === "project_admin"),
+                ...users.filter((user) => user.role_name !== "project_admin"),
+              ];
+
               // reference the UL inside the #accordionContent div
               const userList = document.querySelector("#accordionContent ul");
 
               userList.innerHTML = "";
 
               // Populate the list with fetched data
-              users.forEach((user) => {
+              sortedUsers.forEach((user) => {
                 const listItem = document.createElement("li");
                 listItem.classList.add(
                   "py-3",
