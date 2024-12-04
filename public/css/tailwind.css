@@ -755,6 +755,10 @@ video {
   margin-top: 0.75rem;
 }
 
+.mt-4 {
+  margin-top: 1rem;
+}
+
 .mt-5 {
   margin-top: 1.25rem;
 }
@@ -815,8 +819,8 @@ video {
   min-height: 5rem;
 }
 
-.min-h-\[650px\] {
-  min-height: 650px;
+.min-h-\[550px\] {
+  min-height: 550px;
 }
 
 .min-h-screen {
@@ -889,6 +893,10 @@ video {
 
 .min-w-36 {
   min-width: 9rem;
+}
+
+.max-w-\[400px\] {
+  max-width: 400px;
 }
 
 .max-w-\[500px\] {

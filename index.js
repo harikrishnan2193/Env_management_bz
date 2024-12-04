@@ -54,3 +54,9 @@ envServer.get("/", (req, res) => {
   // res.send(`<h1>Server running successfully and ready to accept client request </h1>`)
   res.render("auth", { isRegisterPath: false });
 });
+
+
+// 404 handler
+envServer.use((req, res, next) => {
+  res.status(404).render('404');
+});

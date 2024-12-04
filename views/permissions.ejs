@@ -14,6 +14,7 @@
       referrerpolicy="no-referrer"
     />
 
+
     <link href="/css/tailwind.css" rel="stylesheet" />
 
     <!-- Add jQuery -->
@@ -607,7 +608,7 @@
           }
 
           const data = await response.json(); // parse response data
-          console.log("Permissions Response:", data);
+          // console.log("Permissions Response:", data);
 
           if (data.success && data.permissions) {
             data.permissions.forEach((permission) => {
@@ -736,7 +737,7 @@
           }
 
           const result = await response.json();
-          console.log("Post result:", result);
+          // console.log("Post result:", result);
 
           // alert("Admin added successfully!");
           toastr.success("Admin added successfully!");
@@ -820,5 +821,6 @@
         }
       });
     </script>
+    
   </body>
 </html>

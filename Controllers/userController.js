@@ -8,7 +8,7 @@ const User_Roles = require('../Models/user_rolesModel')
 const Permission = require('../Models/permissionModel')
 const Roles = require('../Models/rolesModel')
 
-// const { Op } = require('sequelize'); // Import Sequelize operators
+const { Op } = require('sequelize'); // Import Sequelize operators
 
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
@@ -159,7 +159,9 @@ exports.addNewProject = async (req, res) => {
     const user_id = req.session.user_id;
 
     if (!organization_id) {
-        return res.status(401).send('Session expired. Please log in again.');
+        console.log('Session expired. Please log in again.'); 
+        req.flash('error', 'Invalid Please login again.');
+        return res.redirect('/');
     }
 
     if (!name || !description || !technology || !status) {
@@ -231,8 +233,9 @@ exports.getAllProjects = async (req, res) => {
     const organization_id = req.session.organization_id;
 
     if (!organization_id) {
-        console.log("Organization ID is undefined in session");
-        return res.status(401).send('Organization ID not found in session. Please login again');
+        console.log("Organization ID is not found in session");
+        req.flash('error', 'Please login again.');
+        return res.redirect('/');
     }
     else {
         try {
@@ -258,7 +261,8 @@ exports.getProjectAllDetils = async (req, res) => {
 
     if (!project_id) {
         console.log("project_id is not provided");
-        return res.status(401).send('project_id is not provided');
+        req.flash('error', 'Please select a project.');
+        return res.redirect('/projects');
     }
 
     try {
@@ -287,14 +291,17 @@ exports.getProjectAllDetils = async (req, res) => {
 exports.getEnvStatus = async (req, res) => {
     console.log('Inside getEnvStatus controller');
 
+    // remove the env_id from session
+    if (req.session.env_id) {
+        delete req.session.env_id;
+    }
+
     const { project_id } = req.query;
     req.session.project_id = project_id; // store selected project's project_id in session
 
     try {
-        // Middleware
         const userRoleDetails = req.userRoleDetails;
 
-        // fetch all environments
         const envStatus = await Environments.findAll();
 
         // fetch role_scope and role_name from the Roles table
@@ -323,13 +330,36 @@ exports.getEnvStatus = async (req, res) => {
 
 // Controller function to delete a project
 exports.deleteProject = async (req, res) => {
-    const { project_id } = req.body;
+    console.log('inside delete controller');
+    
+    const { project_id } = req.body;    
+
+    // console.log('User Role Details:', req.userRoleDetails);
 
     if (!project_id) {
         return res.status(400).send('Project ID is required');
     }
 
     try {
+        // middleware
+        const { role_id } = req.userRoleDetails;
+
+        // check the user's role matches 
+        const role = await Roles.findOne({
+            where: {
+                role_id,
+                [Op.or]: [
+                    { role_scope: 'organization' },
+                    { role_scope: 'project', role_name: 'project_admin' },//organization or project && project_admin
+                ],
+            },
+        });
+
+        if (!role) {
+            req.flash('error', 'You are not authorized to delete this project.');
+            return res.redirect('/projects');
+        }
+
         await Projects.destroy({
             where: { project_id },
         });
@@ -362,7 +392,8 @@ exports.getAllEnvs = async (req, res) => {
 
     if (!env_id || !project_id) {
         console.log('env_id or project_id is not available');
-        return res.status(400).send('env_id or project_id is not available. Please login again...');
+        req.flash('error', 'Please select the project.');
+        return res.redirect('/projects');
     }
 
     try {
@@ -380,7 +411,6 @@ exports.getAllEnvs = async (req, res) => {
             return res.status(403).send('Role details not found.');
         }
 
-        // fetch permissions for the user's role and environment
         const permission = await Permission.findOne({
             where: { role_id, env_id },
         });
@@ -388,6 +418,10 @@ exports.getAllEnvs = async (req, res) => {
         // check if the user has view/edit permissions
         const canView = permission ? permission.can_view === 1 : false;
         const canEdit = permission ? permission.can_edit === 1 : false;
+        console.log('env_id is:', env_id);
+        console.log('canView is:',canView);
+        console.log('canEdit is:',canEdit);
+        
 
         // fetch all environments for the project and env_id
         const allEnvs = await Project_env.findAll({
@@ -433,7 +467,8 @@ exports.updateEnvs = async (req, res) => {
         console.log('user_id:', user_id);
 
         if (!project_id || !env_id) {
-            return res.status(400).send('Project ID or Env ID is missing.');
+            req.flash('error', 'Enveronment is missing. Please select an Env type');
+            return res.redirect(`/project/envStatus?project_id=${project_id}`);
         }
 
         // check the record exists
@@ -482,9 +517,13 @@ exports.updateEnvs = async (req, res) => {
 
 // Controller function to update project details(editProject)
 exports.updateProjectDetails = async (req, res) => {
+    console.log('inside updateProjectDetails controller'); 
     const { name, description, technology, status, project_id } = req.body;
+    
     if (!project_id) {
-        return res.status(400).send('Project ID is required');
+        console.log('Project ID is required');      
+        req.flash('error', 'Please select a project.');
+        return res.redirect('/projects');
     }
 
     try {
@@ -508,4 +547,20 @@ exports.updateProjectDetails = async (req, res) => {
         res.status(500).send('Server Error');
     }
 }
+
+// Logout function
+exports.logout = (req, res) => {
+    console.log('inside logout controller');
+    
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Error destroying session:", err);
+            return res.redirect('/projects?message=Unable to logout. Please try again.');
+        }
+
+        res.clearCookie('connect.sid'); // clear the session cookie
+        return res.redirect('/');
+    });
+}
+
 

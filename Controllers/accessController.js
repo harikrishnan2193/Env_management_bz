@@ -106,7 +106,9 @@ exports.getUserRoleScope = async (req, res) => {
     const user_id = req.session.user_id; 
 
     if (!user_id) {
-        return res.status(401).json({ error: 'User not logged in' });
+        // return res.status(401).json({ error: 'User not logged in' });
+        req.flash('error', 'User not logged in.');
+        return res.status(401).redirect('/');
     }
 
     try {
@@ -359,12 +361,12 @@ exports.users_Associated = async (req, res) => {
             include: [
                 {
                     model: User,
-                    as: 'user', 
+                    as: 'user',
                     attributes: ['username'], // fetch username from the Roles table
                 },
                 {
                     model: Roles,
-                    as: 'role', 
+                    as: 'role',
                     attributes: ['role_name'], // fetch role_name from the Roles table
                 },
             ],
@@ -380,7 +382,7 @@ exports.users_Associated = async (req, res) => {
 
         const responseData = userRoles.map(role => ({
             user_id: role.user_id,
-            username: role.user?.username || 'Unknown', 
+            username: role.user?.username || 'Unknown',
             role_name: role.role?.role_name || 'Unknown',
         }));
 
@@ -399,6 +401,8 @@ exports.users_Associated = async (req, res) => {
 
 //remove a user from user_rols table
 exports.remove_Auser = async (req, res) => {
+    console.log('inside remove_Auser controller');
+    
     const userId = req.params.id;
 
     try {
