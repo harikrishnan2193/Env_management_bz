@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Projects</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/css/tailwind.css" rel="stylesheet" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
@@ -9,8 +13,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-
-    <link href="/css/tailwind.css" rel="stylesheet" />
+    <!-- <link href="/css/tailwind.css" rel="stylesheet" /> -->
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Add jQuery -->
@@ -29,7 +32,6 @@
     />
 
     <style>
-      /* Add these at the top of your CSS */
       * {
         margin: 0;
         padding: 0;
@@ -67,6 +69,7 @@
         z-index: 1;
         pointer-events: none;
       }
+
       .main-content {
         position: relative;
         z-index: 2;
@@ -75,59 +78,6 @@
       #sidebar {
         background: #0f2027;
         background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
-      }
-
-      .custom-dropdown {
-        position: relative;
-        width: 200px;
-        cursor: pointer;
-        font-family: Arial, sans-serif;
-      }
-
-      /* Displayed selected value */
-      .selected {
-        padding: 10px 15px;
-        border: 2px solid orange;
-        border-radius: 5px;
-        background-color: white;
-        font-size: 16px;
-        color: black;
-      }
-
-      /* Dropdown options container */
-      .dropdown-options {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background-color: white;
-        border: 2px solid orange;
-        border-top: none;
-        border-radius: 0 0 5px 5px;
-        max-height: 150px; /* Scrollable dropdown */
-        overflow-y: auto;
-        display: none; /* Initially hidden */
-        z-index: 1000;
-      }
-
-      /* Individual options */
-      .dropdown-option {
-        padding: 10px 15px;
-        font-size: 16px;
-        color: black;
-        border-bottom: 1px solid #ddd;
-        background-color: white;
-      }
-
-      /* Highlight option on hover */
-      .dropdown-option:hover {
-        background-color: orange;
-        color: white;
-      }
-
-      /* Show options when dropdown is active */
-      .custom-dropdown.active .dropdown-options {
-        display: block;
       }
     </style>
   </head>
@@ -148,7 +98,7 @@
             <!-- Search Box -->
             <div class="relative flex items-center gap-4">
               <input
-                class="border border-gray-400 p-2 pl-10 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-800 text-black md:w-[500px]"
+                class="border border-gray-400 p-2 pl-10 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400 text-black w-full lg:w-[500px]"
                 type="text"
                 placeholder="Search projects"
                 id="search-bar"
@@ -158,7 +108,7 @@
               </span>
               <button
                 id="search-btn"
-                class="bg-white text-gray-800 px-4 py-2 rounded-md hover:text-orange-500 min-w-24"
+                class="bg-white text-gray-800 px-4 py-2 rounded-md hover:bg-orange-500 hover:text-white min-w-24"
               >
                 Search
               </button>
@@ -166,9 +116,9 @@
 
             <p
               id="openModalBtn"
-              class="bg-white text-gray-800 px-4 py-2 rounded-md hover:text-orange-500"
+              class="bg-white text-gray-800 px-2 py-2 rounded-md hover:bg-orange-500 hover:text-white min-w-36"
             >
-              <a href="/project/status" class="flex gap-3">
+              <a href="/project/status" class="flex justify-between">
                 <span>Add Project</span>
                 <span><i class="fa-solid fa-plus"></i></span>
               </a>
@@ -187,7 +137,7 @@
         <!-- Sidebar -->
         <aside
           id="sidebar"
-          class="hidden fixed top-0 right-0 h-full w-full sm:w-7/12 lg:w-4/12 xl:w-3/12 shadow-lg p-6 border-l z-10"
+          class="hidden fixed top-0 right-0 h-full w-10/12 sm:w-6/12 lg:w-4/12 xl:w-3/12 shadow-lg p-6 border-l z-10"
         >
           <div class="flex justify-end items-center">
             <!-- <h2 id="sidebarTitle" class="text-2xl font-bold capitalize">
@@ -206,53 +156,57 @@
         </aside>
       </main>
       <div id="permissions-container"></div>
+    </div>
 
-      <script>
-        // Initialize projects,success,error array with data from server
-        const projects = <%- JSON.stringify(projects) %>;
-        const error =  <%- JSON.stringify(error) %>;
-        const success =  <%- JSON.stringify(success) %>;
+    <script>
+      // Initialize projects,success,error array with data from server
+      const projects = <%- JSON.stringify(projects) %>;
+      const error =  <%- JSON.stringify(error) %>;
+      const success =  <%- JSON.stringify(success) %>;
 
-        // success and error message using toastr
-        toastr.options = {
-          timeOut: "1000",
-        };
+      console.log(success);
+      console.log(error);
+      console.log(projects);
+      // success and error message using toastr
+      toastr.options = {
+        timeOut: "2000",
+      };
 
-        if (success && success.length > 0) {
-          toastr.success(success[0]);
-        }
+      if (success && success.length > 0) {
+        toastr.success(success[0]);
+      }
 
-        if (error && error.length > 0) {
-          toastr.error(error[0]);
-        }
-      </script>
+      if (error && error.length > 0) {
+        toastr.error(error[0]);
+      }
+    </script>
 
-      <script>
-        const searchBar = document.querySelector("#search-bar");
-        const searchBtn = document.querySelector("#search-btn");
-        const projectsContainer = document.querySelector("#projectsContainer");
+    <script>
+      const searchBar = document.querySelector("#search-bar");
+      const searchBtn = document.querySelector("#search-btn");
+      const projectsContainer = document.querySelector("#projectsContainer");
 
-        const statusCodes = {
-          1: "Active",
-          2: "InActive",
-          3: "Completed",
-        };
+      const statusCodes = {
+        1: "Active",
+        2: "InActive",
+        3: "Completed",
+      };
 
-        //Sidebar Functionality
+      //Sidebar Functionality
 
-        // Sidebar open
-        function openSidebar(project) {
-          console.log(project); // To check the object in the console
+      // Sidebar open
+      function openSidebar(project) {
+        // console.log(project); // To check the object in the console
 
-          // Show the sidebar and update the title
-          const sidebar = document.getElementById("sidebar");
-          const sidebarTitle = document.getElementById("sidebarTitle");
-          sidebar.classList.remove("hidden");
-          // sidebarTitle.textContent = project.project_name; // Set the title
+        // Show the sidebar and update the title
+        const sidebar = document.getElementById("sidebar");
+        const sidebarTitle = document.getElementById("sidebarTitle");
+        sidebar.classList.remove("hidden");
+        // sidebarTitle.textContent = project.project_name; // Set the title
 
-          // You can also set other details in the sidebar for future use
-          const sidebarContent = document.getElementById("sidebarContent");
-          sidebarContent.innerHTML = `
+        // You can also set other details in the sidebar for future use
+        const sidebarContent = document.getElementById("sidebarContent");
+        sidebarContent.innerHTML = `
               <div class="p-4 space-y-6">
                 <!-- Details Section -->
                 <div>
@@ -298,24 +252,24 @@
                  </form>
                 </div>
               </div>`;
-        }
+      }
 
-        //Sidebar close
-        function closeSidebar() {
-          // Hide the sidebar
-          const sidebar = document.getElementById("sidebar");
-          sidebar.classList.add("hidden");
-        }
+      //Sidebar close
+      function closeSidebar() {
+        // Hide the sidebar
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.add("hidden");
+      }
 
-        // Function to create a project card
-        function createProjectCard(project) {
-          const statusColors = {
-            1: "bg-green-500",
-            2: "bg-red-500",
-            3: "bg-blue-500",
-          };
+      // Function to create a project card
+      function createProjectCard(project) {
+        const statusColors = {
+          1: "bg-green-500",
+          2: "bg-red-500",
+          3: "bg-blue-500",
+        };
 
-          return `
+        return `
           <div class="bg-gray-200 text-black shadow-md border border-gray-300 rounded-lg p-4 relative">
           <p onclick='openSidebar(${JSON.stringify(project)})'>
               <i class="fa-solid fa-circle-info cursor-pointer hover:text-orange-500 absolute right-2 top-2"></i>
@@ -340,95 +294,50 @@
             </div>
           </div>
         `;
-        }
+      }
 
-        // Function to search project
-        function searchProjects() {
-          const searchTerm = searchBar.value.toLowerCase();
-          projectsContainer.innerHTML = ""; // Clear previous results
+      // Function to search project
+      function searchProjects() {
+        const searchTerm = searchBar.value.toLowerCase();
+        projectsContainer.innerHTML = "";
 
-          const filteredProjects = projects.filter((project) => {
-            return (
-              project.project_name.toLowerCase().includes(searchTerm) ||
-              project.description.toLowerCase().includes(searchTerm) ||
-              project.technology.toLowerCase().includes(searchTerm)
-            );
-          });
+        const filteredProjects = projects.filter((project) => {
+          return (
+            project.project_name.toLowerCase().includes(searchTerm) ||
+            project.description.toLowerCase().includes(searchTerm) ||
+            project.technology.toLowerCase().includes(searchTerm)
+          );
+        });
 
-          if (filteredProjects.length > 0) {
-            const gridHTML = filteredProjects
-              .map((project) => createProjectCard(project))
-              .join("");
-            projectsContainer.innerHTML = gridHTML;
-          } else {
-            projectsContainer.innerHTML = `
-            <div class="col-span-full text-center py-8 text-gray-500">
+        if (filteredProjects.length > 0) {
+          const gridHTML = filteredProjects
+            .map((project) => createProjectCard(project))
+            .join("");
+          projectsContainer.innerHTML = gridHTML;
+        } else {
+          projectsContainer.innerHTML = `
+            <div class="col-span-full py-8 text-xl text-center">
               No projects found.
             </div>
           `;
-          }
         }
+      }
 
-        // Event listeners
-        document.addEventListener("DOMContentLoaded", () => {
+      // Event listeners
+      document.addEventListener("DOMContentLoaded", () => {
+        searchProjects();
+      });
+
+      searchBtn.addEventListener("click", searchProjects);
+
+      searchBar.addEventListener("keyup", (e) => {
+        if (e.key === "Enter") {
           searchProjects();
-        });
-
-        searchBtn.addEventListener("click", searchProjects);
-
-        searchBar.addEventListener("keyup", (e) => {
-          if (e.key === "Enter") {
-            searchProjects();
-          }
-          if (searchBar.value === "") {
-            searchProjects();
-          }
-        });
-
-        // Function to fetch user role_scope and conditionally render a button
-        async function fetchUserRoleScope() {
-          try {
-            const response = await fetch("/getUserRoleScope");
-            if (response.ok) {
-              const data = await response.json();
-              console.log("User Role Scope:", data.role_scope);
-
-              // check role_scope is a string and render the button if it's 'organization'
-              if (
-                typeof data.role_scope === "string" &&
-                data.role_scope === "organization"
-              ) {
-                const container = document.getElementById(
-                  "permissions-container"
-                );
-
-                // the permissions button HTML
-                const permissionsButton = `
-                            <p class="absolute -bottom-12 text-center text-lg font-semibold text-gray-700">
-                                View Permissions?
-                                <a href="/superadmin/permission"
-                                    class="text-blue-600 font-semibold hover:text-blue-800 hover:underline decoration-transparent">
-                                    Click Here
-                                </a>
-                            </p>
-                        `;
-                // append the button to the container
-                container.innerHTML = permissionsButton;
-              }
-            } else {
-              console.error(
-                "Failed to fetch user role scope:",
-                response.statusText
-              );
-            }
-          } catch (error) {
-            console.error("Error fetching user role scope:", error.message);
-          }
         }
-
-        // call the function when page loads
-        window.onload = fetchUserRoleScope;
-      </script>
-    </div>
+        if (searchBar.value === "") {
+          searchProjects();
+        }
+      });
+    </script>
   </body>
 </html>

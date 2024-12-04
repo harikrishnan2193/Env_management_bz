@@ -100,12 +100,13 @@
               >Project Description</label
             >
             <textarea
-              id="description"
-              name="description"
-              required
-              class="w-full border border-gray-300 rounded-md h-32"
-            >
-            <%= project.description %></textarea>
+            id="description"
+            name="description"
+            required
+            class="w-full border border-gray-300 rounded-md h-32 px-4 py-2"
+          >
+          </textarea>
+          
           </div>
 
           <!-- Technology Input -->
@@ -168,5 +169,13 @@
       </div>
     </div>
   </div>
+
+
+  <!-- Trimming Description -->
+  <script>
+    const  originalDescription = <%- JSON.stringify(projectDetils[0].description) %>;
+    const trimmedDescription = originalDescription.trim();
+    document.getElementById("description").textContent = trimmedDescription;
+</script>
   </body>
 </html>

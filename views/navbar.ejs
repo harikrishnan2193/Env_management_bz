@@ -2,8 +2,6 @@
 <html>
   <head>
     <title>Projects</title>
-    <!-- Tailwind CSS -->
-    <!-- FontAwesome -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
@@ -37,30 +35,29 @@
 
     <style>
       .nav-bar {
-        background: #0f2027; /* fallback for old browsers */
+        background: #0f2027;
+        /* fallback for old browsers */
         background: -webkit-linear-gradient(
           to right,
           #2c5364,
           #203a43,
           #0f2027
-        ); /* Chrome 10-25, Safari 5.1-6 */
-        background: linear-gradient(
-          to right,
-          #2c5364,
-          #203a43,
-          #0f2027
-        ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        );
+        /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
       }
     </style>
   </head>
 
   <body>
     <main
-      class="nav-bar shadow-xl flex items-center justify-between text-orange-400 border-b-white mt-9 border-b-2 py-4 px-10 z-50"
+      class="nav-bar shadow-xl flex items-center justify-between text-orange-400 border-b-white border-b-2 py-4 px-5 lg:px-10 z-50"
     >
       <div class="w-36">
         <img src="/images/bq.png" alt="logo" />
       </div>
+
       <div class="">
         <!-- User Icon  -->
         <p
@@ -73,24 +70,18 @@
         <!-- User Options Dropdown -->
         <div
           id="user-options"
-          class="hidden bg-white text-black mt-3 rounded-md shadow-lg divide-y absolute right-0 w-40"
+          class="hidden bg-white text-black mt-3 rounded-md shadow-lg absolute right-0 w-40"
         >
           <p
-            class="flex items-center px-4 py-2 space-x-2 cursor-pointer hover:bg-orange-400"
+            class="flex items-center p-2 space-x-2 cursor-pointer hover:bg-orange-400 hover:rounded-t-md"
           >
-            <i class="fa-solid fa-user"></i>&nbsp;
+            <i class="fa-solid fa-user"></i>
             <span>Profile</span>
           </p>
           <p
-            class="flex items-center px-4 py-2 space-x-2 cursor-pointer hover:bg-orange-400"
+            class="flex items-center p-2 space-x-2 cursor-pointer hover:bg-orange-400"
           >
-            <i class="fa-solid fa-gear"></i>&nbsp;
-            <span href="/settings">Settings</span>
-          </p>
-          <p
-            class="flex items-center px-4 py-2 space-x-2 cursor-pointer hover:bg-orange-400"
-          >
-            <i class="fa-solid fa-right-from-bracket"></i>&nbsp;
+            <i class="fa-solid fa-right-from-bracket"></i>
             <span>Logout</span>
           </p>
         </div>
@@ -99,9 +90,78 @@
 
     <script>
       const userOptions = document.getElementById("user-options");
+
+      const userIcon = document.querySelector(".fa-user");
+
+      function openLogo(event) {
+        event.stopPropagation(); // Prevent the click event from propagating to the document
+        userOptions.classList.toggle("hidden");
+      }
+
+      // Close the dropdown if clicked outside
+      document.addEventListener("click", (event) => {
+        if (!userOptions.classList.contains("hidden")) {
+          const isClickInsideDropdown = userOptions.contains(event.target);
+          const isClickOnIcon = userIcon.contains(event.target);
+
+          if (!isClickInsideDropdown && !isClickOnIcon) {
+            userOptions.classList.add("hidden");
+          }
+        }
+      });
+
+      // Add click event to the user icon
+      userIcon.addEventListener("click", openLogo);
+    </script>
+
+    <script>
+      // const userOptions = document.getElementById("user-options");
       function openLogo() {
         userOptions.classList.toggle("hidden");
       }
+
+      // Function to fetch user role_scope and conditionally render a button
+      async function fetchUserRoleScope() {
+        try {
+          const response = await fetch("/getUserRoleScope");
+          if (response.ok) {
+            const data = await response.json();
+            console.log("User Role Scope:", data.role_scope);
+            console.log("User Role Scope:", data.role_scope);
+
+            // check role_scope is a string and render the button if it's 'organization'
+            if (
+              typeof data.role_scope === "string" &&
+              data.role_scope === "organization"
+            ) {
+              // settings option HTML
+
+              // changed this so that anchor tag covers the entire optinon, which makes the user to reroute to admin page properly
+              const settingsOption = `
+                  <a href="/superadmin/permission">
+                    <p class="p-2 cursor-pointer hover:bg-orange-400 hover:rounded-b-md">
+                      <i class="fa-solid fa-gear"></i>&nbsp;
+                     <span>Settings</span>
+                     </p>
+                  </a>
+            `;
+
+              // append settings option
+              userOptions.innerHTML += settingsOption;
+            }
+          } else {
+            console.error(
+              "Failed to fetch user role scope:",
+              response.statusText
+            );
+          }
+        } catch (error) {
+          console.error("Error fetching user role scope:", error.message);
+        }
+      }
+
+      // call the function when page loads
+      window.onload = fetchUserRoleScope;
     </script>
   </body>
 </html>

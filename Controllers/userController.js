@@ -114,14 +114,14 @@ exports.login = async (req, res) => {
                         req.flash('error', 'Something went wrong. Please try again.');
                         return res.redirect('/');
                     }
-                
+
                     req.session.user_id = user.user_id;
                     req.session.organization_id = user.organization_id; // set organisation_id in session
-                
+
                     // token for authentication
                     // const token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET);
                     // console.log("JWT Token:", token);
-                
+
                     req.flash('success', 'Login successful!');
                     return res.redirect('/projects');
                 });
@@ -167,7 +167,7 @@ exports.addNewProject = async (req, res) => {
     }
 
     try {
-        // Generate a unique project_id
+        // generate a unique project_id
         const project_id = uuidv4();
 
         await Projects.create({
@@ -185,11 +185,10 @@ exports.addNewProject = async (req, res) => {
             user_id,
             organization_id,
             project_id,
-            role_id: scope.role_id, // Dynamically assign role_id
+            role_id: scope.role_id, 
             assigned_by: user_id,
         });
 
-        // get all env_id values from the Environments table
         const allEnvs = await Environments.findAll();
 
         for (const env of allEnvs) {
@@ -210,16 +209,15 @@ exports.addNewProject = async (req, res) => {
                     can_edit: 1,
                 });
             } else {
-                // Insert new permission if it does not exist
                 await Permission.create({
-                    role_id: scope.role_id, 
+                    role_id: scope.role_id,
                     env_id,
                     can_view: 1,
                     can_edit: 1,
                 });
             }
         }
-        
+
         res.redirect('/projects');
     } catch (error) {
         console.error("Error creating project:", error);
@@ -256,7 +254,7 @@ exports.getProjectAllDetils = async (req, res) => {
     console.log('Inside getProjectAllDetils Controller');
 
     const { project_id } = req.query;
-    req.session.project_id_edit = project_id; // Store project_id in session as project_id_edit
+    req.session.project_id_edit = project_id; // store project_id in session as project_id_edit
 
     if (!project_id) {
         console.log("project_id is not provided");
@@ -266,7 +264,7 @@ exports.getProjectAllDetils = async (req, res) => {
     try {
         const userRoleDetails = req.userRoleDetails;
         console.log('userRoleDetails is:', userRoleDetails);
-        
+
 
         const projectDetils = await Projects.findAll({
             where: { project_id },
@@ -290,7 +288,7 @@ exports.getEnvStatus = async (req, res) => {
     console.log('Inside getEnvStatus controller');
 
     const { project_id } = req.query;
-    req.session.project_id = project_id; // Store selected project's project_id in session
+    req.session.project_id = project_id; // store selected project's project_id in session
 
     try {
         // Middleware
@@ -404,7 +402,7 @@ exports.getAllEnvs = async (req, res) => {
 
         if (allEnvs.length > 0) {
             const project_env_id = allEnvs[0].project_env_id;
-            req.session.project_env_id = project_env_id; // Store project_env_id in the session
+            req.session.project_env_id = project_env_id; // store project_env_id in the session
         }
 
         return res.render('projectEnvs', {
@@ -412,7 +410,7 @@ exports.getAllEnvs = async (req, res) => {
             allEnvs,
             canView,
             canEdit,
-            roleDetails 
+            roleDetails
         });
     } catch (error) {
         console.error('Error fetching all environments:', error.message);
@@ -434,8 +432,6 @@ exports.updateEnvs = async (req, res) => {
         console.log("Env ID:", env_id);
         console.log('user_id:', user_id);
 
-
-        // validate IDs
         if (!project_id || !env_id) {
             return res.status(400).send('Project ID or Env ID is missing.');
         }
@@ -449,7 +445,6 @@ exports.updateEnvs = async (req, res) => {
         });
 
         if (existingEnv) {
-            // If found, update it
             await Project_env.update(
                 {
                     env_content: envData.env_content,
@@ -465,7 +460,6 @@ exports.updateEnvs = async (req, res) => {
             );
             req.flash('success', 'Your environment was updated successfully!');
         } else {
-            // If not found, create a new entry with a new uuid
             const newProjectEnvId = uuidv4();
 
             await Project_env.create({
@@ -514,3 +508,4 @@ exports.updateProjectDetails = async (req, res) => {
         res.status(500).send('Server Error');
     }
 }
+

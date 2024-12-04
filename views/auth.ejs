@@ -3,21 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <!-- <title><%= isRegisterPath ? 'Register' : 'Login' %></title> -->
+
+    <link href="/css/tailwind.css" rel="stylesheet" />
+    <!-- Add jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+      integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+      integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link href="/css/tailwind.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Add jQuery -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    
     <style>
       body {
         position: relative;
@@ -34,7 +41,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url("/images/k.svg");
+        background-image: url("/images/pattern.svg");
         background-repeat: no-repeat;
         background-position: center;
         background-size: cover;
@@ -53,25 +60,7 @@
 
   <body class="h-screen">
     <div class="main-content">
-      <!-- Back to Home Link -->
-      <!-- <% if (!isRegisterPath) { %>
-    <div class="absolute top-5 left-0 w-full flex justify-center">
-      <a href="/" class="flex items-center text-gray-700 hover:text-purple-500">
-        <i class="fa-solid fa-angle-down w-5 h-5 mr-1 mt-2"></i>
-        <span>Back to Home</span>
-      </a>
-    </div>
-
-    <% } %> -->
-      <!-- <main class="relative h-screen overflow-hidden bg-gray-800">
-      <div class="opacity-40 filter brightness-50">
-        <img src="/assets/team.png" />
-        <img src="/assets/team.png" />
-      </div> -->
-
       <main class="relative h-screen overflow-hidden">
-        <!-- Background Images -->
-
         <!-- FORM -->
         <div
           class="auth-container absolute inset-0 flex justify-center items-center z-10"
@@ -89,12 +78,12 @@
 
               <!-- Login or Register Form -->
               <form
+                id="authForm"
                 action="<%= isRegisterPath ? '/register' : '/login' %>"
                 method="POST"
+                onsubmit="return validateForm()"
               >
-                <% if (error) { %>
-                <div class="error-message text-red-600"><%= error %></div>
-                <% } %> <% if (isRegisterPath) { %>
+                <% if (isRegisterPath) { %>
                 <div class="input-group mb-4">
                   <label
                     for="username"
@@ -109,6 +98,9 @@
                     placeholder="Enter your name"
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
+                  <span id="usernameError" class="text-red-500 hidden text-sm"
+                    >Username cannot exceed 30 characters</span
+                  >
                 </div>
                 <% } %>
 
@@ -126,24 +118,38 @@
                     placeholder="Enter your email"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
+                  <span id="emailError" class="text-red-500 hidden text-sm"
+                    >Invalid email format</span
+                  >
                 </div>
 
-                                            <% if (isRegisterPath) { %>
-                                                <div class="input-group mb-6">
-                                                    <label for="organization" class="block text-gray-700 font-semibold">
-                                                        Organization Name
-                                                    </label>
-                                                    <input type="text" name="organization" id="organization" required
-                                                        placeholder="Enter your organization"
-                                                        value="<%= organization ? organization.organization_name : '' %>"
-                                                        readonly
-                                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                                </div>
+                <% if (isRegisterPath) { %>
+                <div class="input-group mb-6">
+                  <label
+                    for="organization"
+                    class="block text-gray-700 font-semibold"
+                  >
+                    Organization Name
+                  </label>
+                  <input
+                    type="text"
+                    name="organization"
+                    id="organization"
+                    required
+                    placeholder="Enter your organization"
+                    value="<%= organization ? organization.organization_name : '' %>"
+                    readonly
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  />
+                </div>
 
-                                                <!-- hidden-organization id -->
-                                                <input type="hidden" name="organization_id"
-                                                    value="<%= organization ? organization.organization_id : '' %>">
-                                                <% } %>
+                <!-- hidden-organization id -->
+                <input
+                  type="hidden"
+                  name="organization_id"
+                  value="<%= organization ? organization.organization_id : '' %>"
+                />
+                <% } %>
 
                 <div class="input-group mb-6">
                   <label
@@ -159,6 +165,9 @@
                     placeholder="Enter your password"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
+                  <span id="passwordError" class="text-red-500 hidden text-sm"
+                    >Password must be at least 8 characters long</span
+                  >
                 </div>
 
                 <div class="flex justify-center mb-6">
@@ -170,30 +179,86 @@
                   </button>
                 </div>
 
-                                                    <p class="text-center text-gray-600">
-                                                        <% if (isRegisterPath) { %>
-                                                            Already have an account? <a href="/"
-                                                                class="text-purple-500 hover:underline">Login</a>
-                                                            <% } else { %>
-                                                                Don't have an account? <a href="/register"
-                                                                    class="text-purple-500 hover:underline">Sign
-                                                                    Up</a>
-                                                                <% } %>
-                                                    </p>
-                        </form>
-                    </div>
-                </div>
+                <p class="text-center text-gray-600">
+                  <% if (isRegisterPath) { %> Already have an account?
+                  <a href="/" class="text-orange-500 hover:underline">Login</a>
+                  <% } else { %> Don't have an account?
+                  <a href="/register" class="text-orange-500 hover:underline"
+                    >Sign Up</a
+                  >
+                  <% } %>
+                </p>
+              </form>
             </div>
-            <% if (typeof organization !=='undefined' && organization) { %>
-                <script>
-                    const organizationId = "<%= organization.organization_id %>";
-                    if (organizationId) {
-                        sessionStorage.setItem("organization_id", organizationId);
-                    }
-                </script>
-                <% } %>
+          </div>
+        </div>
+      </main>
+    </div>
+    <% if (typeof organization !=='undefined' && organization) { %>
+    <script>
+      const organizationId = "<%= organization.organization_id %>";
+      if (organizationId) {
+        sessionStorage.setItem("organization_id", organizationId);
+      }
+    </script>
+    <% } %>
 
+    <script>
+      const error =  <%- JSON.stringify(error) %>;
+      const success =  <%- JSON.stringify(success) %>;
 
-</body>
+      // success and error message using toastr
+      toastr.options = {
+        timeOut: "1000",
+      };
 
+      if (success && success.length > 0) {
+        toastr.success(success[0]);
+      }
+
+      if (error && error.length > 0) {
+        toastr.error(error[0]);
+      }
+    </script>
+
+    <script>
+      function validateForm() {
+        const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        const usernameError = document.getElementById("usernameError");
+        const emailError = document.getElementById("emailError");
+        const passwordError = document.getElementById("passwordError");
+
+        let isValid = true;
+
+        // Reset error messages
+        usernameError.classList.add("hidden");
+        emailError.classList.add("hidden");
+        passwordError.classList.add("hidden");
+
+        //validate username
+        if (username.length > 30) {
+          usernameError.classList.remove("hidden");
+          isValid = false;
+        }
+
+        // Validate email
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+          emailError.classList.remove("hidden");
+          isValid = false;
+        }
+
+        // Validate password length
+        if (password.length < 8) {
+          passwordError.classList.remove("hidden");
+          isValid = false;
+        }
+
+        return isValid; // Prevent form submission if invalid
+      }
+    </script>
+  </body>
 </html>

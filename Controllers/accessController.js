@@ -101,6 +101,8 @@ exports.postUser_roles = async (req, res) => {
 
 // controller to get the logged-in user's role_scope
 exports.getUserRoleScope = async (req, res) => {
+    console.log('inside getUserRoleScope controller');
+    
     const user_id = req.session.user_id; 
 
     if (!user_id) {
@@ -439,13 +441,12 @@ exports.postNew_admin = async (req, res) => {
             console.log('Existing user role deleted successfully');
         }
 
-        // Create a new role assignment for the user
         await User_Roles.create({
             user_id: user_id,
             role_id: role_id,
             organization_id: organization_id,
-            assigned_by: null,
-            project_id: null 
+            assigned_by: null, 
+            project_id: null   
         });
 
         console.log('New user role assigned successfully');
