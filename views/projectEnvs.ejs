@@ -75,21 +75,33 @@
     <%- include('side', { roleDetails: roleDetails }) %>
   </section>
 
-  <div class="min-h-screen flex gap-1 ">
-    <!-- CONTENT SECTION -->
-    <section class="relative flex-1 z-10">
-      <div class="flex flex-col items-center justify-center space-y-6 mt-10">
-        <!-- back to project -->
-        <a href="/projects" class="text-white absolute top-3 z-0 hover:text-orange-500">
-          <i class="fa-solid fa-arrow-left"></i>&nbsp;&nbsp;<span>Back to project</span>
-        </a>
+    <div class="min-h-screen flex gap-1">
+      <!-- CONTENT SECTION -->
+      <section class="relative flex-1 z-10">
+        <div class="flex flex-col items-center justify-center space-y-6 mt-10">
+          <!-- back to project -->
+          <a
+            href="/projects"
+            class="text-white absolute top-3 z-0 hover:text-orange-500"
+          >
+            <i class="fa-solid fa-arrow-left"></i>&nbsp;&nbsp;<span
+              >Back to project</span
+            >
+          </a>
 
-        <form id="projectEnvForm" action="/project/env_type/envs" method="GET">
-          <select id="options" name="env_id"
-            class="w-72 px-2 py-1 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            onchange="this.form.submit()">
-            <option value="" disabled selected>Select Env</option>
-            <% envStatus.forEach(project=> { %>
+          <form
+            id="projectEnvForm"
+            action="/project/env_type/envs"
+            method="GET"
+          >
+            <select
+              id="options"
+              name="env_id"
+              class="w-72 px-2 py-1 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 capitalize"
+              onchange="this.form.submit()"
+            >
+              <option value="" disabled selected>Select Env</option>
+              <% envStatus.forEach(project=> { %>
               <option value="<%= project.env_id %>">
                 <%= project.env_type %>
               </option>

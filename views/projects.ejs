@@ -298,10 +298,10 @@
         `;
       }
 
-        // Function to search project
-        function searchProjects() {
-          const searchTerm = searchBar.value.toLowerCase();
-          projectsContainer.innerHTML = ""; 
+      // Function to search project
+      function searchProjects() {
+        const searchTerm = searchBar.value.toLowerCase();
+        projectsContainer.innerHTML = "";
 
         const filteredProjects = projects.filter((project) => {
           return (
@@ -311,13 +311,13 @@
           );
         });
 
-          if (filteredProjects.length > 0) {
-            const gridHTML = filteredProjects
-              .map((project) => createProjectCard(project))
-              .join("");
-            projectsContainer.innerHTML = gridHTML;
-          } else {
-            projectsContainer.innerHTML = `
+        if (filteredProjects.length > 0) {
+          const gridHTML = filteredProjects
+            .map((project) => createProjectCard(project))
+            .join("");
+          projectsContainer.innerHTML = gridHTML;
+        } else {
+          projectsContainer.innerHTML = `
             <div class="col-span-full py-8 text-xl text-center">
               No projects found.
             </div>
