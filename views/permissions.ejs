@@ -1,86 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Env Project</title>
-
-    <!-- font awsome  -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
-      integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-
-    <link href="/css/tailwind.css" rel="stylesheet" />
-
-    <!-- Add jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
-      integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
-      integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
+    <%- include('partials/head', { title: "Permissions"}) %>
 
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-        width: 100%;
-        overflow-x: hidden; /* Prevents horizontal scroll */
-      }
-
-      body {
-        position: relative;
-        background: #0f2027;
-        background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
-        min-height: 100vh;
-      }
-
-      body::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("/images/pattern.svg");
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: cover;
-        opacity: 0.3;
-        z-index: 1;
-        pointer-events: none;
-      }
-
       #back-to-projects {
-        left: 50%; /* Horizontally center it */
-        transform: translateX(
-          -50%
-        ); /* Offset by half of its width to achieve perfect centering */
+        left: 50%;
+        transform: translateX(-50%);
       }
     </style>
   </head>
 
   <body class="font-sans p-16 h-screen">
+    <%- include('partials/loading-indicator') %>
+
     <a
       href="/projects"
       id="back-to-projects"
@@ -157,7 +90,6 @@
 
         <!-- initially when we load env using fetchEnvTypes function the env-types-container is populated with env types, but initally none of the roles button is  selected, so if we try to check in the checkbox of can view or can edit it throws an error , and also its irrelevant to show a dummy env types without any role being selected -->
         <!-- so the env-types-container-wrapper is set to hidden and only the hidden class is removed when we select a any one of the roles and its been handled in rolebutton event listener -->
-
         <div class="relative mt-20">
           <!-- empty envs message -->
           <p id="env-empty-message" class="text-center mt-60">
@@ -189,12 +121,11 @@
 
     <!-- MODALS  -->
 
-    <!-- Add Role Modal -->
+    <!-- Modal to create new role -->
     <div
       id="roleModal"
       class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden"
     >
-      <!--Modal Content -->
       <div
         class="bg-white w-[300px] sm:w-1/2 lg:w-1/3 p-6 rounded-lg shadow-lg"
       >
@@ -262,14 +193,14 @@
       </div>
     </div>
 
-    <!-- Modal for add new admin -->
+    <!-- Modal to create new admin -->
     <div
       id="env-modal"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
     >
       <div class="bg-white w-11/12 md:w-[450px] rounded-lg p-6 shadow-lg">
         <h3 class="text-2xl font-semibold mb-4">Add admin</h3>
-        <div class="mb-4">
+        <form class="mb-4" id="env-form">
           <label for="env-type" class="block text-sm font-medium text-gray-700"
             >Select a person</label
           >
@@ -279,25 +210,27 @@
           >
             <option id="modal-content" value="env1"></option>
           </select>
-        </div>
-        <div class="flex justify-end">
-          <button
-            id="close-modal-btn"
-            class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow mr-2 hover:bg-gray-400 transition"
-          >
-            Cancel
-          </button>
-          <button
-            id="submit-modal-btn"
-            class="bg-orange-400 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-500 transition"
-            onclick="submitAdmin()"
-          >
-            Submit
-          </button>
-        </div>
+
+          <div class="flex justify-end mt-4">
+            <button
+              id="close-modal-btn"
+              class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow mr-2 hover:bg-gray-400 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="submit-modal-btn"
+              class="bg-orange-400 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-500 transition"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
+    <!-- Sidebar functionality -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const burgerMenu = document.getElementById("burger-menu");
@@ -337,12 +270,6 @@
             overlay.classList.add("hidden");
           }
         });
-
-        // window.addEventListener("resize", () => {
-        //   if (window.innerWidth < 768) {
-        //     overlay.classList.remove("hidden");
-        //   }
-        // });
       });
     </script>
 
@@ -649,23 +576,17 @@
         await fetchAndDisplayRoles();
         await fetchEnvTypes();
       });
+    </script>
 
-      //add new admin - model
+    <!-- Add New Admin -->
+    <script>
       const openEnvModalBtn = document.getElementById("open-modal-btn");
       const closeEnveModalBtn = document.getElementById("close-modal-btn");
       const envModal = document.getElementById("env-modal");
       const modalContent = document.getElementById("modal-content");
+      const envForm = document.getElementById("env-form");
 
-      function openModal() {
-        envModal.classList.remove("hidden");
-        fetchData();
-      }
-
-      function closeModal() {
-        envModal.classList.add("hidden");
-      }
-
-      // Function to fetch data and display on modal
+      // Function to fetch roles and display on admin modal
       async function fetchData() {
         try {
           const response = await fetch("/getAllUsers_AllRoles", {
@@ -711,7 +632,8 @@
       }
 
       // submitAdmin function
-      async function submitAdmin() {
+      envForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
         try {
           // get selected user_id from the dropdown
           const selectElement = document.getElementById("env-type");
@@ -736,16 +658,25 @@
           }
 
           const result = await response.json();
-          // console.log("Post result:", result);
-
-          // alert("Admin added successfully!");
           toastr.success("Admin added successfully!");
+          document
+            .getElementById("pageLoadingIndicator")
+            .classList.add("hidden");
           document.getElementById("env-modal").classList.add("hidden"); // close modal
         } catch (error) {
           console.error("Error posting new admin:", error);
           // alert("Failed to add admin. Please try again");
           toastr.error("Failed to add admin. Please try again");
         }
+      });
+
+      function openModal() {
+        envModal.classList.remove("hidden");
+        fetchData();
+      }
+
+      function closeModal() {
+        envModal.classList.add("hidden");
       }
 
       //event listener
@@ -760,28 +691,12 @@
       });
     </script>
 
-    <!-- add roles -->
+    <!-- Add New Roles -->
     <script>
       const openRoleModalButton = document.getElementById("openModalButton");
       const closeRoleModalButton = document.getElementById("closeModal");
       const roleModal = document.getElementById("roleModal");
       const roleForm = document.getElementById("roleForm");
-
-      // Function to open the modal
-      openRoleModalButton.addEventListener("click", () => {
-        roleModal.classList.remove("hidden");
-      });
-
-      // Function to close the modal
-      closeRoleModalButton.addEventListener("click", () => {
-        roleModal.classList.add("hidden");
-      });
-
-      roleModal.addEventListener("click", (event) => {
-        if (event.target === roleModal) {
-          roleModal.classList.add("hidden");
-        }
-      });
 
       // Handle form submission
       roleForm.addEventListener("submit", async (event) => {
@@ -805,7 +720,7 @@
 
           if (response.ok) {
             const result = await response.json();
-            // alert(result.message || "Role added successfully!");
+            roleModal.classList.add("hidden");
             toastr.success(result.message || "Role added successfully!");
             location.reload(); // Refresh the page after the alert
           } else {
@@ -815,10 +730,26 @@
           }
         } catch (error) {
           console.error("Error during form submission:", error);
-          // alert("An unexpected error occurred. Please try again");
           toastr.error("An unexpected error occurred. Please try again");
         }
       });
+
+      // Function to open the modal
+      openRoleModalButton.addEventListener("click", () => {
+        roleModal.classList.remove("hidden");
+      });
+
+      // Function to close the modal
+      closeRoleModalButton.addEventListener("click", () => {
+        roleModal.classList.add("hidden");
+      });
+
+      roleModal.addEventListener("click", (event) => {
+        if (event.target === roleModal) {
+          roleModal.classList.add("hidden");
+        }
+      });
     </script>
+    <script src="/js/loading-indicator.js"></script>
   </body>
 </html>

@@ -1,51 +1,18 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Projects</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <link href="/css/tailwind.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Add jQuery -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
-      integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
-      integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
+    <%- include('partials/head', { title: "Projects"}) %>
 
     <style>
       .nav-bar {
         background: #0f2027;
-        /* fallback for old browsers */
         background: -webkit-linear-gradient(
           to right,
           #2c5364,
           #203a43,
           #0f2027
         );
-        /* Chrome 10-25, Safari 5.1-6 */
         background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
-        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
       }
     </style>
   </head>
@@ -80,7 +47,7 @@
           </p>
           <a
             href="/logout"
-            class="flex items-center p-2 space-x-2 cursor-pointer hover:bg-orange-400"
+            class="flex items-center p-2 space-x-2 cursor-pointer hover:bg-orange-400 hover:rounded-b-md"
           >
             <i class="fa-solid fa-right-from-bracket"></i>&nbsp;
             <span>Logout</span>

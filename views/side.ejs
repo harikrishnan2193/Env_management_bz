@@ -1,53 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sidebar Example</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link href="/css/tailwind.css" rel="stylesheet" />
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- Add jQuery -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
-    integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
-    integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <style>
-    @media (max-width: 1535px) {
-      #sidebar {
-        background: #0f2027;
-        /* fallback for old browsers */
-        background: -webkit-linear-gradient(to right,
+  <head>
+    <style>
+      @media (max-width: 1535px) {
+        #sidebar {
+          background: #0f2027;
+          background: -webkit-linear-gradient(
+            to right,
             #2c5364,
             #203a43,
-            #0f2027);
-        /* Chrome 10-25, Safari 5.1-6 */
-        background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+            #0f2027
+          );
+          background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+        }
       }
     }
 
-    @media (width>1535px) {
-      #overlay {
-        display: none;
-        /* background-color: transparent; */
+      @media (width>1535px) {
+        #overlay {
+          display: none;
+        }
+
       }
     }
   </style>
 </head>
 
-<body>
-  <!-- Burger Menu Button -->
-  <% if (typeof roleDetails !=='undefined' && (roleDetails.role_scope==='organization' ||
-    (roleDetails.role_name==='project_admin' && roleDetails.role_scope==='project' ))) { %>
+  <body>
+    <%- include('partials/loading-indicator') %>
+    <!-- Burger Menu Button -->
+    <% if (typeof roleDetails !=='undefined' &&
+    (roleDetails.role_scope==='organization' ||
+    (roleDetails.role_name==='project_admin' &&
+    roleDetails.role_scope==='project' ))) { %>
+
 
     <div class="fixed top-4 left-4 z-50">
       <button id="toggleMenu" class="text-white p-2 rounded focus:outline-none">
@@ -185,31 +172,31 @@
 
             // console.log("Associated Users:", data);
 
-            if (data.success && data.data.length > 0) {
-              // response data
-              const users = data.data;
+          if (data.success && data.data.length > 0) {
+            // response data
+            const users = data.data;
 
-              // sort users: first 'project_admin' then those without it
-              const sortedUsers = [
-                ...users.filter((user) => user.role_name === "project_admin"),
-                ...users.filter((user) => user.role_name !== "project_admin"),
-              ];
+            // sort users: first 'project_admin' then those without it
+            const sortedUsers = [
+              ...users.filter((user) => user.role_name === "project_admin"),
+              ...users.filter((user) => user.role_name !== "project_admin"),
+            ];
 
               // reference the UL inside the #accordionContent div
               const userList = document.querySelector("#accordionContent ul");
 
               userList.innerHTML = "";
 
-              // Populate the list with fetched data
-              sortedUsers.forEach((user) => {
-                const listItem = document.createElement("li");
-                listItem.classList.add(
-                  "py-3",
-                  "flex",
-                  "flex-col",
-                  "items-start",
-                  "space-y-2"
-                );
+            // Populate the list with fetched data
+            sortedUsers.forEach((user) => {
+              const listItem = document.createElement("li");
+              listItem.classList.add(
+                "py-3",
+                "flex",
+                "flex-col",
+                "items-start",
+                "space-y-2"
+              );
 
                 // create the content HTML without the trash button initially
                 let contentHTML = `
@@ -402,4 +389,14 @@
       </script>
 </body>
 
+      function closeModal() {
+        //close main model
+        // document.getElementById("modal").classList.add("hidden");
+        document.getElementById("modal").style.display = "none";
+      }
+    </script>
+
+    <script src="/js/loading-indicator.js"></script>
+  </body>
 </html>
+
