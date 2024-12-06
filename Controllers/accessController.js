@@ -102,8 +102,8 @@ exports.postUser_roles = async (req, res) => {
 // controller to get the logged-in user's role_scope
 exports.getUserRoleScope = async (req, res) => {
     console.log('inside getUserRoleScope controller');
-    
-    const user_id = req.session.user_id; 
+
+    const user_id = req.session.user_id;
 
     if (!user_id) {
         // return res.status(401).json({ error: 'User not logged in' });
@@ -282,7 +282,7 @@ exports.getSelectedPermissions = async (req, res) => {
             where: {
                 role_id: role_id,
                 env_id: {
-                    [Op.in]: envIds 
+                    [Op.in]: envIds
                 }
             }
         });
@@ -402,11 +402,17 @@ exports.users_Associated = async (req, res) => {
 //remove a user from user_rols table
 exports.remove_Auser = async (req, res) => {
     console.log('inside remove_Auser controller');
-    
+
     const userId = req.params.id;
+    const projectId = req.session.project_id;
 
     try {
-        const result = await User_Roles.destroy({ where: { user_id: userId } });
+        const result = await User_Roles.destroy({
+            where: {
+                user_id: userId,
+                project_id: projectId
+            }
+        });
 
         if (result) {
             res.status(200).json({ success: true, message: 'User deleted successfully' });
@@ -449,8 +455,8 @@ exports.postNew_admin = async (req, res) => {
             user_id: user_id,
             role_id: role_id,
             organization_id: organization_id,
-            assigned_by: null, 
-            project_id: null   
+            assigned_by: null,
+            project_id: null
         });
 
         console.log('New user role assigned successfully');
