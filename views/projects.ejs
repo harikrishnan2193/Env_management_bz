@@ -1,80 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Projects</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="/css/tailwind.css" rel="stylesheet" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <!-- <link href="/css/tailwind.css" rel="stylesheet" /> -->
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Add jQuery -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
-      integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
-      integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
+    <%- include('partials/head', { title: "Projects"}) %>
 
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-        width: 100%;
-        overflow-x: hidden; /* Prevents horizontal scroll */
-      }
-
-      body {
-        position: relative;
-        background: #0f2027;
-        background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
-        min-height: 100vh;
-      }
-
-      body::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("/images/pattern.svg");
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: cover;
-        opacity: 0.3;
-        z-index: 1;
-        pointer-events: none;
-      }
-
-      .main-content {
-        position: relative;
-        z-index: 2;
-      }
-
       #sidebar {
         background: #0f2027;
         background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
@@ -83,6 +12,8 @@
   </head>
 
   <body class="text-white">
+    <%- include('partials/loading-indicator') %>
+
     <div class="main-content">
       <!-- Navbar -->
       <header><%- include('navbar') %></header>
@@ -128,7 +59,7 @@
           <!-- Projects Grid -->
           <div
             id="projectsContainer"
-            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-16"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-16 p-4"
           >
             <!-- Projects will be populated using JS -->
           </div>
@@ -140,9 +71,6 @@
           class="hidden fixed top-0 right-0 h-full w-10/12 sm:w-6/12 lg:w-4/12 xl:w-3/12 shadow-lg p-6 border-l z-10"
         >
           <div class="flex justify-end items-center">
-            <!-- <h2 id="sidebarTitle" class="text-2xl font-bold capitalize">
-            Project Title
-          </h2> -->
             <button
               onclick="closeSidebar()"
               class="text-white hover:text-orange-500"
@@ -164,9 +92,6 @@
       const error =  <%- JSON.stringify(error) %>;
       const success =  <%- JSON.stringify(success) %>;
 
-      console.log(success);
-      console.log(error);
-      console.log(projects);
       // success and error message using toastr
       toastr.options = {
         timeOut: "2000",
@@ -193,18 +118,13 @@
       };
 
       //Sidebar Functionality
-
       // Sidebar open
       function openSidebar(project) {
-        // console.log(project); // To check the object in the console
-
         // Show the sidebar and update the title
         const sidebar = document.getElementById("sidebar");
         const sidebarTitle = document.getElementById("sidebarTitle");
         sidebar.classList.remove("hidden");
-        // sidebarTitle.textContent = project.project_name; // Set the title
 
-        // You can also set other details in the sidebar for future use
         const sidebarContent = document.getElementById("sidebarContent");
         sidebarContent.innerHTML = `
               <div class="p-4 space-y-6">
@@ -242,7 +162,7 @@
                      > <span class="flex gap-1 items-center hover:text-gray-400"><i class="fas fa-edit"></i>Edit Project</span></a>
                   </button>
                   <!-- Delete Button -->
-                  <form action="/project/delete" method="POST" class="inline-block">
+                  <form action="/project/delete" method="POST" class="inline-block delete-form">
                     <input
                       type="hidden"
                       name="project_id"
@@ -275,8 +195,8 @@
               <i class="fa-solid fa-circle-info cursor-pointer hover:text-orange-500 absolute right-2 top-2"></i>
             </p>
 
-            <div class="flex flex-col gap-3">
-              <div class="flex gap-2 items-center flex-wrap">
+            <div class="flex flex-col gap-3 justify-between h-full">
+              <div class="flex gap-2 items-center flex-wrap ">
                 <p>
                   <a href="/project/envStatus?project_id=${
                     project.project_id
@@ -356,5 +276,7 @@
         window.location.href = `/project/envStatus?project_id=${projectId}`;
       }
     </script>
+
+    <script src="/js/loading-indicator.js"></script>
   </body>
 </html>
