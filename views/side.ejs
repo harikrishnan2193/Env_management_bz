@@ -79,7 +79,7 @@
           roleDetails.role_scope==='project' ))) { %>
           <div class="text-center mt-10 mb-5">
             <p class="text-center text-white mt-4">
-              Add new users?
+              Add new users ?
               <a
                 href="/getAllUsers_AllRoles"
                 class="text-orange-500 hover:underline"
@@ -134,7 +134,7 @@
           </button>
           <button
             onclick="submitModal()"
-            class="px-4 py-2 bg-orange-400 text-white rounded-md hover:bg-orange-500"
+            class="px-4 py-2 bg-orange-400 text-white rounded-md hover:bg-orange-500 font-semibold"
           >
             Submit
           </button>
@@ -220,24 +220,24 @@
               listItem.classList.add(
                 "py-3",
                 "flex",
-                "flex-col",
-                "items-start",
-                "space-y-2"
+                "space-y-2",
+                "items-center",
+                "justify-between"
               );
 
               // create the content HTML without the trash button initially
               let contentHTML = `
               <div class="flex gap-3 capitalize">
-                  <p class="font-semibold capitalize">${user.username} : </p>  
-                  <p class="text-gray-500">${user.role_name}</p>
+                  <p class="capitalize">${user.username} : </p>  
+                  <p class="font-semibold ">${user.role_name}</p>
                </div> `;
 
               // conditionally render the trash button based on the user's role
               if (user.role_name !== "project_admin") {
                 contentHTML += `
-                    <span class="ml-auto"> 
+                    <span class=""> 
                     <button
-                      class="text-red-500 delete-button"
+                      class="text-red-500 delete-button mb-1"
                       data-user-id="${user.user_id}"
                     >
                       <i class="fa-solid fa-trash"></i>
@@ -304,6 +304,11 @@
       async function openModal(event) {
         event.preventDefault();
 
+        //in this page that indicator causes error so just removing the indicator after 1 second
+        setTimeout(() => {
+          pageLoadingIndicator.classList.add("hidden");
+        }, 1000);
+
         try {
           // fetch user and role data from server
           const response = await fetch("/getAllUsers_AllRoles");
@@ -363,7 +368,6 @@
         document.getElementById("modal").style.display = "flex";
       }
 
-      //submit main model
       function submitModal() {
         const userSelect = document.getElementById("username");
         const roleSelect = document.getElementById("userrole");
@@ -372,8 +376,10 @@
         const role_id = roleSelect.value;
 
         if (user_id === "Select a user" || role_id === "Select a role") {
-          console.error("Please select both a valid user and role.");
-          alert("Please select a valid user and role before submitting.");
+          console.warn("Please select both a valid user and role.");
+          toastr.warning(
+            "Please select a valid user and role before submitting"
+          );
           return;
         }
 
@@ -395,16 +401,17 @@
           .then((data) => {
             if (data.success) {
               console.log("Success:", data);
-              alert(data.message);
+              toastr.success(data.message);
               closeModal();
               location.reload(); // reload the current page
             } else {
               console.log("Error:", data);
-              // alert(data.message)
+              toastr.error(data.message);
             }
           })
           .catch((error) => {
             console.error("Error:", error);
+            toastr.error(error);
           });
       }
 
@@ -414,7 +421,5 @@
         document.getElementById("modal").style.display = "none";
       }
     </script>
-
-    <script src="/js/loading-indicator.js"></script>
   </body>
 </html>
