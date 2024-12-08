@@ -145,132 +145,13 @@
     </section>
   </div>
 
+
+    <!-- save the selected option inside local storage so when it refreshes we can get it from session storage -->
     <script>
-      // let loggedInUserId;
       toastr.options = {
         timeOut: "2000",
       };
 
-      //open main model
-      async function openModal(event) {
-        event.preventDefault();
-
-        try {
-          // fetch user and role data from server
-          const response = await fetch("/getAllUsers_AllRoles");
-          if (response.ok) {
-            const data = await response.json();
-            const {
-              users,
-              roles,
-              loggedInUserId: fetchedLoggedInUserId,
-              selectedProjectId: fetchedSelectedProjectId,
-            } = data;
-
-            // store loggedInUserId globally to use in submitModal
-            loggedInUserId = fetchedLoggedInUserId;
-            selectedProjectId = fetchedSelectedProjectId;
-
-            // dropdown with usernames
-            const usernameSelect = document.getElementById("username");
-            usernameSelect.innerHTML =
-              "<option disabled selected>Select a user</option>";
-            console.log("users are:", users);
-
-            users.forEach((user) => {
-              if (
-                user.user_id !== loggedInUserId &&
-                user.role_scope !== "organization"
-              ) {
-                const option = document.createElement("option");
-                option.value = user.user_id;
-                option.textContent = user.username;
-                usernameSelect.appendChild(option);
-              }
-            });
-
-            // dropdown with roles
-            const userroleSelect = document.getElementById("userrole");
-            userroleSelect.innerHTML =
-              "<option disabled selected>Select a role</option>";
-            console.log("roles are:", roles);
-
-            roles
-              .filter((role) => role.role_scope === "project") // filter roles based on role_scope
-              .forEach((role) => {
-                const option = document.createElement("option");
-                option.value = role.role_id;
-                option.textContent = role.role_name;
-                userroleSelect.appendChild(option);
-              });
-          } else {
-            console.error("Failed to fetch user and role data");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        }
-
-        // open modal
-        document.getElementById("modal").style.display = "flex";
-      }
-
-      //submit main model
-      function submitModal() {
-        const userSelect = document.getElementById("username");
-        const roleSelect = document.getElementById("userrole");
-
-        const user_id = userSelect.value;
-        const role_id = roleSelect.value;
-
-        if (user_id === "Select a user" || role_id === "Select a role") {
-          console.warn("Please select both a valid user and role.");
-          toastr.warning(
-            "Please select a valid user and role before submitting"
-          );
-          return;
-        }
-
-        const data = {
-          user_id: user_id,
-          role_id: role_id,
-          loggedInUserId: loggedInUserId,
-          selectedProjectId: selectedProjectId,
-        };
-
-        fetch("/postUser_roles", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              console.log("Success:", data);
-              toastr.success(data.message);
-              closeModal();
-              location.reload(); // reload the current page
-            } else {
-              console.log("Error:", data);
-              toastr.error(data.message);
-            }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            toastr.error(error);
-          });
-      }
-
-      function closeModal() {
-        //close main model
-        // document.getElementById("modal").classList.add("hidden");
-        document.getElementById("modal").style.display = "none";
-      }
-    </script>
-
-    <!-- save the selected option inside local storage so when it refreshes we can get it from session storage -->
-    <script>
       const select = document.getElementById("options");
 
       // Load the previously selected option from sessionStorage
