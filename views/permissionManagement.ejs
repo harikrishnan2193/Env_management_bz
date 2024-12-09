@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: "Permissions"}) %>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+  </head>
+  <body class="p-4 md:p-0" style="z-index: 100">
+    <!--!Modal -->
+    <div
+      id="edit-modal"
+      class="fixed inset-0 z-50 hidden flex items-center justify-center bg-gray-800 bg-opacity-50"
+    >
+      <div class="bg-white w-96 p-6 rounded-lg shadow-lg">
+        <h2 class="text-lg font-semibold mb-4 text-gray-700">
+          Edit Permission
+        </h2>
+        <form id="edit-form">
+          <div class="mb-4">
+            <label
+              for="modal-envType"
+              class="block text-sm font-medium text-gray-700"
+              >Environment Type</label
+            >
+            <input
+              id="modal-envType"
+              name="modal-envType"
+              type="text"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="modal-description"
+              class="block text-sm font-medium text-gray-700"
+              >Description</label
+            >
+            <input
+              id="modal-description"
+              name="modal-description"
+              type="text"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
+            />
+          </div>
+          <div class="flex justify-end">
+            <button
+              type="button"
+              id="close-modal"
+              class="mr-4 px-4 py-2 bg-gray-500 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="update-permission-btn"
+              class="px-4 py-2 bg-orange-400 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-300"
+            >
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add Permissions -->
+    <div
+      class="max-w-4xl mx-auto mt-10 p-5 bg-gray-400 shadow-md text-black border border-gray-300 rounded-lg relative z-1"
+    >
+      <div class="flex items-center gap-4">
+        <input
+          type="text"
+          placeholder="Enter permission type"
+          class="add-permission-input w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-oranage-400 focus:border-transparent"
+        />
+        <button
+          class="add-permission-btn px-6 py-2 bg-orange-400 hover:bg-orange-500 text-white text-sm font-semibold rounded-lg shadow-md focus:outline-none"
+        >
+          Add Permission
+        </button>
+      </div>
+    </div>
+
+    <!-- Render Permissions Dynamically -->
+    <% if (data && data.length > 0) { %>
+    <div
+      class="max-w-4xl mx-auto mt-10 p-2 sm:p-5 bg-gray-400 shadow-md text-black border border-gray-300 rounded-lg relative z-10 capitalize"
+    >
+      <h1 class="text-2xl font-bold mb-5 text-center">Permissions</h1>
+      <ul class="space-y-4">
+        <% data.forEach(permission => { %>
+        <div
+          class="flex items-center justify-between p-4 bg-gray-100 rounded-lg shadow-md"
+        >
+          <div>
+            <span class="block text-lg font-medium text-gray-800"
+              ><%= permission.env_type %></span
+            >
+            <span class="text-sm text-gray-600 hidden sm:block"
+              ><%= permission.description %></span
+            >
+          </div>
+
+          <div>
+            <button
+              class="edit-permission-btn px-4 py-2 bg-orange-400 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-300"
+              data-id="<%= permission.env_id %>"
+              data-env-type="<%= permission.env_type %>"
+              data-description="<%= permission.description %>"
+            >
+              Edit
+            </button>
+            <button
+              class="delete-permission-btn px-4 py-2 bg-white text-sm font-semibold rounded-lg shadow-md hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-300"
+              data-id="<%= permission.env_id %>"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+        <% }) %>
+      </ul>
+    </div>
+
+    <% } else { %>
+    <p class="text-2xl font-semibold">No permissions found.</p>
+    <% } %>
+  </body>
+
+  <!--!Permission Adding & Deleting Functionality -->
+  <script>
+    const addPermissionBtn = document.querySelector(".add-permission-btn");
+    const deletePermissionBtns = document.querySelectorAll(
+      ".delete-permission-btn"
+    );
+
+    deletePermissionBtns.forEach((button) => {
+      button.addEventListener("click", () => {
+        const id = button.getAttribute("data-id"); // get env_id from data attribute
+        handleDeletePermission(id);
+      });
+    });
+
+    addPermissionBtn.addEventListener("click", () => {
+      if (document.querySelector(".add-permission-input").value === "") {
+        toastr.error("Permission input is empty! Try again!");
+        return;
+      }
+      handleAddPermission();
+    });
+
+    // handle Delete request
+    async function handleDeletePermission(id) {
+      console.log("Deleting permission with ID:", id);
+
+      try {
+        const response = await fetch(`/deletePermission/${id}`, {
+          method: "DELETE",
+        });
+
+        const result = await response.json();
+        console.log(result);
+
+        if (response.ok) {
+          // alert("Permission deleted successfully!");
+          toastr.success("Permission deleted successfully!");
+          setTimeout(() => {
+            location.reload(); // Reload the page to reflect the deletion
+          }, 2000);
+          // location.reload(); // Reload the page to reflect the deletion
+        } else {
+          // alert("Failed to delete permission. Please try again.");
+          toastr.error("Failed to delete permission. Please try again.");
+        }
+      } catch (error) {
+        console.log("Error deleting permission:", error);
+      }
+    }
+
+    // handle add request
+    async function handleAddPermission() {
+      const permissionInput = document.querySelector(
+        ".add-permission-input"
+      ).value;
+
+      console.log(permissionInput);
+
+      try {
+        const response = await fetch("/addNewPermission", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ permissionType: permissionInput }),
+        });
+
+        const result = await response.json();
+        console.log(result);
+
+        if (response.ok) {
+          // alert("Permission added successfully!");
+          toastr.success("Permission added successfully!");
+          setTimeout(() => {
+            location.reload();
+          }, 2000);
+          // location.reload(); // Reload the page to reflect the addition
+        } else {
+          toastr.error("Failed to add permission. Please try again.");
+          // alert("Failed to add permission. Please try again.");
+        }
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    }
+  </script>
+
+  <!--!Permission Updating Functionality -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const modal = document.getElementById("edit-modal");
+      const closeModalBtn = document.getElementById("close-modal");
+      const modalEnvTypeInput = document.getElementById("modal-envType");
+      const modaldescriptionInput =
+        document.getElementById("modal-description");
+      const updatePermissionBtn = document.getElementById(
+        "update-permission-btn"
+      );
+      let currentPermissionId = null; // id of the permission that we want to edit
+
+      document.querySelectorAll(".edit-permission-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          const envType = button.getAttribute("data-env-type");
+          const description = button.getAttribute("data-description");
+          currentPermissionId = button.getAttribute("data-id");
+
+          // Populate the modal inputs with current values
+          modalEnvTypeInput.value = envType;
+          modaldescriptionInput.value = description;
+
+          modal.classList.remove("hidden");
+        });
+      });
+
+      closeModalBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+      });
+
+      // Handle update request
+      updatePermissionBtn.addEventListener("click", async (e) => {
+        e.preventDefault(); // Prevent default form submission
+
+        const updatedEnvType = modalEnvTypeInput.value;
+        const updatedDescription = modaldescriptionInput.value;
+
+        try {
+          const response = await fetch(
+            `/updatePermission/${currentPermissionId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                env_type: updatedEnvType,
+                description: updatedDescription,
+              }),
+            }
+          );
+
+          if (response.ok) {
+            // alert("Permission updated successfully!");
+            toastr.success("Permission updated successfully!");
+            modal.classList.add("hidden"); //close modal after updation
+            setTimeout(() => {
+              window.location.reload(); // Reload the page to reflect changes
+            }, 2000);
+            // window.location.reload(); // Reload the page to reflect changes
+          } else {
+            const errorData = await response.json();
+            toastr.error(`Error: ${errorData.error}`);
+            // alert(`Error: ${errorData.error}`);
+          }
+        } catch (error) {
+          console.error("Error updating permission:", error);
+        }
+      });
+
+      // handle outside click of the modal
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.classList.add("hidden");
+        }
+      });
+    });
+  </script>
+</html>
