@@ -1,8 +1,9 @@
 const express = require('express')
 const router = new express.Router()
 
-const accessController = require('../Controllers/accessController')
-const checkRoleScope = require('../Middleware/checkRole_scope')
+const accessController = require('../app/controllers/accessController')
+const checkRoleScope = require('../app/middlewares/checkRole_scope')
+const checkUserRoleScope = require('../app/middlewares/checkUserRoleScope');
 
 
 //route to get all users and all roles
@@ -15,7 +16,7 @@ router.post('/postUser_roles', accessController.postUser_roles) //
 router.get('/getUserRoleScope', accessController.getUserRoleScope);
 
 //Render roles managing page
-router.get('/superadmin/permission', accessController.renderPermissions)
+router.get('/superadmin/permission', checkUserRoleScope('organization'), accessController.renderPermissions)
 
 //get all roles to permission page
 router.get('/getAllRoles_toPermision', accessController.getAllRoles_toPermision);
@@ -27,7 +28,7 @@ router.delete('/removeRole/:roleId', accessController.removeRole);
 router.get('/getenv/typs', accessController.getAllEnvTypes);
 
 // get update permission
-router.post('/updatePermission',accessController.getUpdatedPermission) //
+router.post('/updatePermission', accessController.getUpdatedPermission) //
 
 // fetch selected permission for a given role and environment
 router.post('/getselected/permissions', accessController.getSelectedPermissions) //
@@ -36,12 +37,12 @@ router.post('/getselected/permissions', accessController.getSelectedPermissions)
 router.post('/addNewRoles', accessController.addNewRoles);
 
 //get user associated with that project
-router.get('/users/associated',accessController.users_Associated );
+router.get('/users/associated', accessController.users_Associated);
 
 //remove a user from user_rols table
-router.delete('/users/delete/:id',accessController.remove_Auser)
+router.delete('/users/delete/:id', accessController.remove_Auser)
 
 //add super admin
-router.post('/postnew_admin',checkRoleScope(['organization'], ['admin']),accessController.postNew_admin)
+router.post('/postnew_admin', checkRoleScope(['organization'], ['admin']), accessController.postNew_admin)
 
 module.exports = router

@@ -1,10 +1,13 @@
-const Roles = require('../Models/rolesModel')
-const User = require('../Models/usersModel')
-const User_Roles = require('../Models/user_rolesModel')
-const Environments = require('../Models/environmentsModel')
-const Permission = require('../Models/permissionModel')
+require('dotenv').config()
+
+const Roles = require('../models/rolesModel')
+const User = require('../models/usersModel')
+const User_Roles = require('../models/user_rolesModel')
+const Environments = require('../models/environmentsModel')
+const Permission = require('../models/permissionModel')
 
 const { Op } = require('sequelize');
+const nodemailer = require('nodemailer');
 
 
 
@@ -53,12 +56,20 @@ exports.getAllusers_Allroles = async (req, res) => {
     }
 }
 
+// nodemailer transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+});
 
 // add or update user in user_roles table
 exports.postUser_roles = async (req, res) => {
     console.log('Inside postUser_roles controller');
 
-    const { user_id, role_id, loggedInUserId, selectedProjectId } = req.body;
+    const { user_id, role_id, loggedInUserId, selectedProjectId, currentPath } = req.body;
     const organization_id = req.session.organization_id;
 
     if (!user_id || !role_id) {
@@ -66,10 +77,22 @@ exports.postUser_roles = async (req, res) => {
     }
 
     try {
+        // user email from users table
+        const user = await User.findOne({ where: { user_id: user_id } });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const userEmail = user.email;
+        console.log('userEmail is :', userEmail);
+        console.log('currentPath is :', currentPath);
+
+        let message;
         const existingRole = await User_Roles.findOne({
             where: {
                 user_id: user_id,
-                project_id: selectedProjectId
+                project_id: selectedProjectId,
             }
         });
 
@@ -79,9 +102,7 @@ exports.postUser_roles = async (req, res) => {
                 organization_id: organization_id,
                 assigned_by: loggedInUserId,
             });
-
-            res.status(200).json({ success: true, message: 'User role updated successfully' });
-
+            message = 'User role updated successfully';
         } else {
             await User_Roles.create({
                 user_id: user_id,
@@ -90,9 +111,28 @@ exports.postUser_roles = async (req, res) => {
                 project_id: selectedProjectId,
                 assigned_by: loggedInUserId,
             });
-
-            res.status(200).json({ success: true, message: 'User role added successfully' });
+            message = 'User role added successfully';
         }
+
+        // send email notification
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: userEmail,
+            subject: 'Project Role Assignment',
+            text: `You have been assigned a new role in the project. ${currentPath}.
+            Please login and check your dashboard for more details.`,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+            } else {
+                console.log('Email sent:', info.response);
+            }
+        });
+
+        res.status(200).json({ success: true, message });
+
     } catch (error) {
         console.error("Error processing User_Roles:", error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -137,7 +177,7 @@ exports.getUserRoleScope = async (req, res) => {
 }
 
 //render roles managing page
-exports.renderPermissions = (req, res) => {
+exports.renderPermissions = (req, res) => {      
     res.render('permissions');
 }
 

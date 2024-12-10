@@ -1,19 +1,19 @@
-const Organization = require('../Models/organizationsModel')
-const User = require('../Models/usersModel')
-const Projects = require('../Models/projectsModel')
-const Project_env = require('../Models/project_envModel')
-const Satuses = require('../Models/statusModel')
-const Environments = require('../Models/environmentsModel')
-const User_Roles = require('../Models/user_rolesModel')
-const Permission = require('../Models/permissionModel')
-const Roles = require('../Models/rolesModel')
+const Organization = require('../models/organizationsModel')
+const User = require('../models/usersModel')
+const Projects = require('../models/projectsModel')
+const Project_env = require('../models/project_envModel')
+const Satuses = require('../models/statusModel')
+const Environments = require('../models/environmentsModel')
+const User_Roles = require('../models/user_rolesModel')
+const Permission = require('../models/permissionModel')
+const Roles = require('../models/rolesModel')
 
 const { Op } = require('sequelize'); // Import Sequelize operators
 
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const { v4: uuidv4 } = require('uuid')
-//sesion - organization_id , project_id , user_id , env_id , project_env_id , project_id_edit
+//sesion - organization_id , project_id , user_id , env_id , project_env_id , project_id_edit 
 
 //get Organisation_id in register page
 exports.getOrganisationId = async (req, res) => {

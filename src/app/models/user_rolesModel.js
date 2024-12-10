@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../DB/connection');
-const User = require('./usersModel');
-const Roles = require('./rolesModel');
-const Organization = require('./organizationsModel'); 
+const sequelize = require('../../core/db/connection');
+const User = require('../models/usersModel');
+const Roles = require('../models/rolesModel');
+const Organization = require('../models/organizationsModel'); 
 
 
 // Create user_roles model 
