@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../DB/connection');
+const sequelize = require('../../core/db/connection');
 
 // Create ProjectEnv model
 const ProjectEnv = sequelize.define('ProjectEnv', {

@@ -1,4 +1,4 @@
-const Roles = require('../Models/rolesModel')
+const Roles = require('../models/rolesModel')
 
 
 const checkRoleScope = (requiredScope, requiredRole) => {

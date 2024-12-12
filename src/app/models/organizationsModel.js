@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize')
-const sequelize = require('../DB/connection')
+const sequelize = require('../../core/db/connection')
 
 //Create Organization model 
 const Organization = sequelize.define('Organization', {

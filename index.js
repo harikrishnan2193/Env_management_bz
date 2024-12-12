@@ -4,12 +4,11 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
 
-require("./DB/connection");
+require("./src/core/db/connection");
 
 //Routs
-//cgitonst authRouts = require('./Routings/authRouter')
-const userRouts = require("./Routings/userRouter");
-const accessRouts = require("./Routings/accessRouter");
+const userRouts = require("./src/routes/userRouter");
+const accessRouts = require("./src/routes/accessRouter");
 
 const envServer = express();
 

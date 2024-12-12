@@ -1,4 +1,4 @@
-const User_Roles = require('../Models/user_rolesModel')
+const User_Roles = require('../models/user_rolesModel')
 const { Op } = require('sequelize');
 
 const checkUserAssociation = (checkOrgWide = true) => async (req, res, next) => {
