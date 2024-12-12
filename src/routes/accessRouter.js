@@ -1,9 +1,11 @@
 const express = require('express')
 const router = new express.Router()
 
-const accessController = require('../app/controllers/accessController')
 const checkRoleScope = require('../app/middlewares/checkRole_scope')
-const checkUserRoleScope = require('../app/middlewares/checkUserRoleScope');
+const checkUserRoleScope = require('../app/middlewares/checkUserRoleScope')
+
+const AccessController = require('../app/controllers/accessController')
+const accessController = new AccessController() //instance
 
 
 //route to get all users and all roles

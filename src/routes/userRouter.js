@@ -1,9 +1,11 @@
 const express = require('express')
 const router = new express.Router()
 
-const usersController = require('../app/controllers/userController')
 const checkRoleScope = require('../app/middlewares/checkRole_scope')
-const checkUserAssociation = require('../app/middlewares/checkUserAssociation');
+const checkUserAssociation = require('../app/middlewares/checkUserAssociation')
+
+const UsersController = require('../app/controllers/userController')
+const usersController = new UsersController() //instance
 
 //get the Organization
 router.get('/register', usersController.getOrganisationId)
