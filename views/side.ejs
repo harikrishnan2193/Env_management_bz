@@ -96,49 +96,57 @@
 
     <!-- model -->
     <div
-      id="modal"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden"
+      class="fixed inset-0 z-50 items-center justify-center bg-opacity-50 hidden bg-black modal-wrapper"
       style="margin: 0"
     >
-      <div class="bg-white rounded-lg shadow-lg max-w-md text-black w-full p-6">
-        <!-- Modal Header -->
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Add New User</h2>
+      <div
+        class="bg-white rounded-lg shadow-lg max-w-md text-black w-full p-6 modal-content text-left"
+      >
+        <form onsubmit="submitModal(event)">
+          <!-- Modal Header -->
 
-        <!-- Username Dropdown -->
-        <div class="mb-4">
-          <label class="block text-gray-600">Username</label>
-          <select
-            id="username"
-            class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
-          >
-            <option disabled selected>Loading...</option>
-          </select>
-        </div>
+          <h2 class="text-lg font-semibold text-gray-700 mb-4">Add New User</h2>
 
-        <div class="mb-4">
-          <label class="block text-gray-600">Role</label>
-          <select
-            id="userrole"
-            class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
-          >
-            <option disabled selected>Loading...</option>
-          </select>
-        </div>
+          <!-- Username Dropdown -->
 
-        <div class="flex justify-end space-x-2 mt-10">
-          <button
-            onclick="closeModal()"
-            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-          >
-            Cancel
-          </button>
-          <button
-            onclick="submitModal()"
-            class="px-4 py-2 bg-orange-400 text-white rounded-md hover:bg-orange-500 font-semibold"
-          >
-            Submit
-          </button>
-        </div>
+          <div class="mb-4">
+            <label class="block text-gray-600">Username</label>
+            <select
+              required
+              id="username"
+              class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <option disabled selected>Loading...</option>
+            </select>
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-gray-600">Role</label>
+            <select
+              required
+              id="userrole"
+              class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <option disabled selected>Loading...</option>
+            </select>
+          </div>
+
+          <div class="flex justify-end space-x-2 mt-10">
+            <button
+              type="button"
+              onclick="closeModal()"
+              class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 bg-orange-400 text-white rounded-md hover:bg-orange-500 font-semibold"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -182,10 +190,6 @@
     </script>
 
     <script>
-      toastr.options = {
-        timeOut: "2000",
-      };
-
       // Function to fetch data
       async function fetchAssociatedUsers() {
         try {
@@ -300,9 +304,22 @@
 
     <!-- Model Functionality   -->
     <script>
-      //open main model
+      const modal = document.querySelector(".modal-wrapper");
+
+      // handle outside modal click
+
+      modal.addEventListener("click", (e) => {
+        if (e.target.classList.contains("modal-wrapper")) {
+          modal.style.display = "none";
+        }
+      });
+
+      // open main model
       async function openModal(event) {
         event.preventDefault();
+
+        // open modal
+        modal.style.display = "flex";
 
         //in this page that indicator causes error so just removing the indicator after 1 second
         setTimeout(() => {
@@ -363,14 +380,30 @@
         } catch (error) {
           console.error("Error:", error);
         }
-
-        // open modal
-        document.getElementById("modal").style.display = "flex";
       }
 
-      function submitModal() {
+      function submitModal(event) {
+        event.preventDefault();
+
         const userSelect = document.getElementById("username");
         const roleSelect = document.getElementById("userrole");
+
+        // Validate the select values
+        if (userSelect.value === "" || userSelect.selectedIndex === 0) {
+          setTimeout(() => {
+            pageLoadingIndicator.classList.add("hidden");
+          });
+          toastr.error("Please select a valid username");
+          return;
+        }
+
+        if (roleSelect.value === "" || roleSelect.selectedIndex === 0) {
+          setTimeout(() => {
+            pageLoadingIndicator.classList.add("hidden");
+          });
+          toastr.warning("Please select a valid role.");
+          return;
+        }
 
         const user_id = userSelect.value;
         const role_id = roleSelect.value;
@@ -407,18 +440,18 @@
             } else {
               console.log("Error:", data);
               toastr.error(data.message);
+              pageLoadingIndicator.classList.add("hidden");
             }
           })
           .catch((error) => {
             console.error("Error:", error);
             toastr.error(error);
+            pageLoadingIndicator.classList.add("hidden");
           });
       }
 
       function closeModal() {
-        //close main model
-        // document.getElementById("modal").classList.add("hidden");
-        document.getElementById("modal").style.display = "none";
+        modal.style.display = "none";
       }
     </script>
   </body>

@@ -3,9 +3,9 @@ const User = require("../Models/usersModel");
 const User_Roles = require("../Models/user_rolesModel");
 const Environments = require("../Models/environmentsModel");
 const Permission = require("../Models/permissionModel");
+const ProjectEnv = require("../Models/project_envModel");
 
 const { Op } = require("sequelize");
-const Environment = require("../Models/environmentsModel");
 
 // get all users and roles in the environment page
 exports.getAllusers_Allroles = async (req, res) => {
@@ -512,12 +512,12 @@ exports.addPermission = async (req, res) => {
   console.log(req.body);
 
   try {
-    const { permissionType } = req.body; // getting permission data
+    const { permissionType, descriptionInput } = req.body; // getting permission data
 
     // Adding to Db
     const newPermission = await Environments.create({
       env_type: permissionType,
-      description: "added dynamically",
+      description: descriptionInput,
     });
 
     res
@@ -530,21 +530,34 @@ exports.addPermission = async (req, res) => {
 };
 
 exports.deletePermission = async (req, res) => {
-  const { id } = req.params; //extracing id from params
+  const { id } = req.params; // Extracting id from params
 
   try {
-    const deletedCount = await Environment.destroy({
+    // Check if the env_id exists in the ProjectEnv table
+    const projectEnvExists = await ProjectEnv.findOne({
+      where: { env_id: id },
+    });
+
+    if (projectEnvExists) {
+      return res.status(400).json({
+        error: "already in use",
+        msg: "Permission cannot be deleted as it is in use.",
+      });
+    }
+
+    // If not in use, proceed to delete from Environments
+    const deletedCount = await Environments.destroy({
       where: { env_id: id },
     });
 
     if (deletedCount > 0) {
-      res.status(200).json({ message: "permission deleted successfully" });
+      res.status(200).json({ message: "Permission deleted successfully" });
     } else {
-      res.status(404).json({ error: "permission not found" });
+      res.status(404).json({ error: "Permission not found" });
     }
   } catch (error) {
-    console.error("error deleting permission:", error);
-    res.status(500).json({ error: "failed to delete permissionn" });
+    console.error("Error deleting permission:", error);
+    res.status(500).json({ error: "Failed to delete permission" });
   }
 };
 
@@ -553,7 +566,7 @@ exports.updatePermission = async (req, res) => {
   const { env_type, description } = req.body; // get updated data from req body
 
   try {
-    const updated = await Environment.update(
+    const updated = await Environments.update(
       { env_type, description },
       { where: { env_id: id } }
     );

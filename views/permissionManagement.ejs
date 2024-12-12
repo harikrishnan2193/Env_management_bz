@@ -65,12 +65,20 @@
     <div
       class="max-w-4xl mx-auto mt-10 p-5 bg-gray-400 shadow-md text-black border border-gray-300 rounded-lg relative z-1"
     >
-      <div class="flex items-center gap-4">
-        <input
-          type="text"
-          placeholder="Enter permission type"
-          class="add-permission-input w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-oranage-400 focus:border-transparent"
-        />
+      <div class="flex justify-between gap-4">
+        <div class="flex flex-col gap-2 grow">
+          <input
+            type="text"
+            placeholder="Enter permission type"
+            class="add-permission-input w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-oranage-400 focus:border-transparent"
+          />
+          <input
+            type="text"
+            placeholder="Enter permission description"
+            class="add-description-input w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-oranage-400 focus:border-transparent"
+          />
+        </div>
+
         <button
           class="add-permission-btn px-6 py-2 bg-orange-400 hover:bg-orange-500 text-white text-sm font-semibold rounded-lg shadow-md focus:outline-none"
         >
@@ -144,13 +152,18 @@
         toastr.error("Permission input is empty! Try again!");
         return;
       }
+
+      if (document.querySelector(".add-description-input").value === "") {
+        toastr.error("Description input is empty! Try again!");
+        return;
+      }
+
       handleAddPermission();
     });
 
     // handle Delete request
     async function handleDeletePermission(id) {
-      console.log("Deleting permission with ID:", id);
-
+      console.log("checking the id passed correctly");
       try {
         const response = await fetch(`/deletePermission/${id}`, {
           method: "DELETE",
@@ -167,11 +180,17 @@
           }, 2000);
           // location.reload(); // Reload the page to reflect the deletion
         } else {
-          // alert("Failed to delete permission. Please try again.");
-          toastr.error("Failed to delete permission. Please try again.");
+          //server errors
+          if (result.error === "already in use") {
+            toastr.error(result.msg);
+          } else {
+            // alert("Failed to delete permission. Please try again.");
+            toastr.error("Failed to delete permission. Please try again.");
+          }
         }
       } catch (error) {
-        console.log("Error deleting permission:", error);
+        // console.log("An unexpected error occurred. Please try again.", error);
+        toastr.error("An unexpected error occurred. Please try again.");
       }
     }
 
@@ -179,6 +198,10 @@
     async function handleAddPermission() {
       const permissionInput = document.querySelector(
         ".add-permission-input"
+      ).value;
+
+      const descriptionInput = document.querySelector(
+        ".add-description-input"
       ).value;
 
       console.log(permissionInput);
@@ -189,7 +212,10 @@
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ permissionType: permissionInput }),
+          body: JSON.stringify({
+            permissionType: permissionInput,
+            descriptionInput: descriptionInput,
+          }),
         });
 
         const result = await response.json();

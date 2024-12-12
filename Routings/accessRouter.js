@@ -22,17 +22,6 @@ router.get(
   accessController.getAllRoles_toPermision
 );
 
-//!Permisson Management
-router.get("/permissionManagement", accessController.getAllPermissions);
-
-router.post("/addNewPermission", accessController.addPermission);
-
-router.delete("/deletePermission/:id", accessController.deletePermission);
-
-router.put("/updatePermission/:id", accessController.updatePermission);
-
-// !///////////////////////////
-
 // remove a role
 router.delete("/removeRole/:roleId", accessController.removeRole);
 
@@ -63,5 +52,14 @@ router.post(
   checkRoleScope(["organization"], ["admin"]),
   accessController.postNew_admin
 );
+
+//!Permisson Management
+router.get("/permissionManagement", accessController.getAllPermissions);
+
+router.post("/addNewPermission", accessController.addPermission);
+
+router.delete("/deletePermission/:id", accessController.deletePermission);
+
+router.put("/updatePermission/:id", accessController.updatePermission);
 
 module.exports = router;

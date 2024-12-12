@@ -114,6 +114,16 @@
             <div id="env-types-container" class="grid gap-y-4">
               <!-- Data -->
             </div>
+
+            <!-- Redirect to permission management page -->
+            <div class="mt-7 text-lg">
+              <a
+                href="/permissionManagement"
+                class="cursor-pointer text-orange-400 hover:text-orange-500 font-medium underline hover:no-underline transition duration-300"
+              >
+                Manage Permissions
+              </a>
+            </div>
           </div>
         </div>
       </main>
@@ -205,6 +215,7 @@
             >Select a person</label
           >
           <select
+            required
             id="env-type"
             class="w-full border border-gray-300 rounded-md p-2 mt-1"
           >
@@ -363,6 +374,7 @@
           });
         } catch (error) {
           console.error("Error fetching roles:", error);
+          pageLoadingIndicator.classList.add("hidden");
         }
       }
 
@@ -381,11 +393,13 @@
             const error = await response.json();
             // alert(error.message || "Error removing role");
             toastr.error(error.message || "Error removing role");
+            pageLoadingIndicator.classList.add("hidden");
           }
         } catch (error) {
           console.error("Error removing role:", error);
           // alert("An error occurred while trying to remove the role.");
           toastr.error("An error occurred while trying to remove the role.");
+          pageLoadingIndicator.classList.add("hidden");
         }
       }
 
@@ -456,6 +470,7 @@
           });
         } catch (error) {
           console.error("Error fetching environment types:", error);
+          pageLoadingIndicator.classList.add("hidden");
         }
       }
 
@@ -488,11 +503,13 @@
           } else {
             // alert("Error: " + data.error);
             toastr.error(data.error);
+            pageLoadingIndicator.classList.add("hidden");
           }
         } catch (error) {
           console.error("Error updating permission:", error);
           // alert("An error occurred while updating the permission");
           toastr.error("An error occurred while updating the permission");
+          pageLoadingIndicator.classList.add("hidden");
         }
       }
 
@@ -532,6 +549,7 @@
 
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
+            pageLoadingIndicator.classList.add("hidden");
           }
 
           const data = await response.json(); // parse response data
@@ -569,6 +587,7 @@
           }
         } catch (error) {
           console.error("Error fetching permissions:", error);
+          pageLoadingIndicator.classList.add("hidden");
         }
       }
 
@@ -599,6 +618,7 @@
 
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
+            pageLoadingIndicator.classList.add("hidden");
           }
 
           const data = await response.json();
@@ -629,6 +649,7 @@
         } catch (error) {
           console.error("Error fetching data:", error);
           modalContent.textContent = "Failed to fetch data.";
+          pageLoadingIndicator.classList.add("hidden");
         }
       }
 
@@ -643,6 +664,7 @@
           if (!selectedUserId) {
             // alert("Please select an organizer.");
             toastr.warning("Please select an organizer");
+
             return;
           }
 
@@ -656,6 +678,7 @@
 
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
+            pageLoadingIndicator.classList.add("hidden");
           }
 
           const result = await response.json();
@@ -668,6 +691,7 @@
           console.error("Error posting new admin:", error);
           // alert("Failed to add admin. Please try again");
           toastr.error("Failed to add admin. Please try again");
+          pageLoadingIndicator.classList.add("hidden");
         }
       });
 
@@ -728,10 +752,12 @@
             const error = await response.json();
             alert(error.message || "Error adding role.");
             toastr.error(error.message || "Error adding role");
+            pageLoadingIndicator.classList.add("hidden");
           }
         } catch (error) {
           console.error("Error during form submission:", error);
           toastr.error("An unexpected error occurred. Please try again");
+          pageLoadingIndicator.classList.add("hidden");
         }
       });
 
