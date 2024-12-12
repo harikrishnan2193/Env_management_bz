@@ -48,7 +48,7 @@ router.delete('/users/delete/:id', accessController.remove_Auser)
 router.post('/postnew_admin', checkRoleScope(['organization'], ['admin']), accessController.postNew_admin)
 
 //!Permisson Management
-router.get("/permissionManagement", accessController.getAllPermissions);
+router.get("/permissionManagement", checkUserRoleScope('organization'), accessController.getAllPermissions);
 
 router.post("/addNewPermission", accessController.addPermission);
 
