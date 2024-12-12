@@ -7,7 +7,7 @@ const flash = require("connect-flash");
 require("./DB/connection");
 
 //Routs
-// const authRouts = require('./Routings/authRouter')
+//cgitonst authRouts = require('./Routings/authRouter')
 const userRouts = require("./Routings/userRouter");
 const accessRouts = require("./Routings/accessRouter");
 
@@ -15,6 +15,7 @@ const envServer = express();
 
 envServer.set("view engine", "ejs");
 envServer.use(express.static("public"));
+
 // Express-session middleware
 envServer.use(
   session({
@@ -55,8 +56,7 @@ envServer.get("/", (req, res) => {
   res.render("auth", { isRegisterPath: false });
 });
 
-
 // 404 handler
 envServer.use((req, res, next) => {
-  res.status(404).render('404');
+  res.status(404).render("404");
 });
