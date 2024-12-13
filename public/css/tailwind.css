@@ -1290,6 +1290,11 @@ video {
   padding-bottom: 1rem;
 }
 
+.py-5 {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
@@ -1508,22 +1513,6 @@ video {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  width: 100%;
-  overflow-x: hidden;
-  /* Prevents horizontal scroll */
-}
-
 body {
   position: relative;
   background: #0f2027;
@@ -1545,6 +1534,7 @@ body::before {
   opacity: 0.3;
   z-index: 0;
   pointer-events: none;
+  min-height: 100vh;
 }
 
 .main-content {
