@@ -1,0 +1,14 @@
+PORT=3000
+
+DB_NAME=envproject_bz
+DB_USER=root
+DB_PASSWORD=''
+DB_HOST=localhost
+DB_DIALECT=mysql
+
+SECRET_KEY=2736$3usy7@6eneh
+
+JWT_SECRET=supersecretkey2u3@hry
+
+EMAIL_USER=
+EMAIL_PASS=

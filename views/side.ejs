@@ -421,6 +421,7 @@
           role_id: role_id,
           loggedInUserId: loggedInUserId,
           selectedProjectId: selectedProjectId,
+          currentPath: window.location.href,
         };
 
         fetch("/postUser_roles", {
