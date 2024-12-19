@@ -652,6 +652,7 @@ class AccessController {
             res.status(500).json({ error: "Failed to update permission" });
         }
     }
+    
 
 }
 module.exports = AccessController

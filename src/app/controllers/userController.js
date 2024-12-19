@@ -220,27 +220,52 @@ class UserController {
     }
   }
 
-  //get all project
+  // get all projects
   async getAllProjects(req, res) {
-    console.log("inside getAllProject Controller");
+    console.log("Inside getAllProjects Controller");
     const organization_id = req.session.organization_id;
+    const user_id = req.session.user_id;
 
-    if (!organization_id) {
-      console.log("Organization ID is not found in session");
+    if (!organization_id || !user_id) {
+      console.log("Organization ID or User ID is not found in session");
       req.flash("error", "Please login again.");
       return res.redirect("/");
-    } else {
-      try {
-        const projects = await Projects.findAll({
+    }
+
+    try {
+      const userRoles = await User_Roles.findAll({
+        where: { user_id, organization_id },
+      });
+
+      let projects = []
+
+      if (userRoles.length === 0) {
+        console.log("User has no roles assigned and is not a admin privilage");
+        return res.render("projects", { projects })
+      }
+
+      if (userRoles.some((role) => role.project_id === null)) {
+        console.log("User is a superadmin");
+        projects = await Projects.findAll({
           where: { organization_id },
         });
+      } else {
+        const projectIds = userRoles.map((role) => role.project_id);
 
-        res.render("projects", { projects });
-      } catch (error) {
-        console.error("Error fetching projects:", error.message);
-        res.status(500).send("Server Error");
+        projects = await Projects.findAll({
+          where: {
+            organization_id,
+            project_id: projectIds,
+          },
+        })
       }
+
+      res.render("projects", { projects })
+    } catch (error) {
+      console.error("Error fetching projects:", error.message);
+      res.status(500).send("Server Error");
     }
+
   }
 
   // get selected project all detils (edit button)
