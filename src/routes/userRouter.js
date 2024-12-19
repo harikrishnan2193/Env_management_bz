@@ -72,4 +72,7 @@ router.get("/profile", usersController.renderProfile);
 // api endpoint to fetch profile data
 router.get("/api/profile", usersController.getProfileData);
 
+//change password
+router.put("/api/change-password", usersController.changePassword);
+
 module.exports = router;

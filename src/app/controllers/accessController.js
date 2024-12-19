@@ -1,116 +1,128 @@
-require('dotenv').config()
+require("dotenv").config();
 
-const Roles = require('../models/rolesModel')
-const User = require('../models/usersModel')
-const User_Roles = require('../models/user_rolesModel')
-const Environments = require('../models/environmentsModel')
-const Permission = require('../models/permissionModel')
-const Project_env = require('../models/project_envModel')
+const Roles = require("../models/rolesModel");
+const User = require("../models/usersModel");
+const User_Roles = require("../models/user_rolesModel");
+const Environments = require("../models/environmentsModel");
+const Permission = require("../models/permissionModel");
+const Project_env = require("../models/project_envModel");
 
-const { Op } = require('sequelize');
-const transporter = require('../../core/nodeMailer/mailer')
-
+const { Op } = require("sequelize");
+const transporter = require("../../core/nodeMailer/mailer");
 
 class AccessController {
+  // get all users and roles in the environment page
+  async getAllusers_Allroles(req, res) {
+    console.log("inside getAllusersAllroles Controller");
+    try {
+      const users = await User.findAll();
+      console.log("Fetched users:", users);
 
-    // get all users and roles in the environment page
-    async getAllusers_Allroles(req, res) {
-        console.log('inside getAllusersAllroles Controller');
-        try {
-            const users = await User.findAll();
-            console.log('Fetched users:', users);
+      // map through the users to fetch their roles and role scopes
+      const usersWithRoleScopes = await Promise.all(
+        users.map(async (user) => {
+          // find the role associated with the user
+          const userRole = await User_Roles.findOne({
+            where: { user_id: user.user_id },
+          });
+          if (!userRole) {
+            console.log(`No role found for user ID: ${user.user_id}`);
+            return { ...user.dataValues, role_scope: null };
+          }
 
-            // map through the users to fetch their roles and role scopes
-            const usersWithRoleScopes = await Promise.all(
-                users.map(async (user) => {
-                    // find the role associated with the user
-                    const userRole = await User_Roles.findOne({ where: { user_id: user.user_id } });
-                    if (!userRole) {
-                        console.log(`No role found for user ID: ${user.user_id}`);
-                        return { ...user.dataValues, role_scope: null };
-                    }
+          // find role scope associated with the role
+          const role = await Roles.findOne({
+            where: { role_id: userRole.role_id },
+          });
+          const roleScope = role ? role.role_scope : null;
 
-                    // find role scope associated with the role
-                    const role = await Roles.findOne({ where: { role_id: userRole.role_id } });
-                    const roleScope = role ? role.role_scope : null;
+          // add role_scope to the user object
+          return { ...user.dataValues, role_scope: roleScope };
+        })
+      );
 
-                    // add role_scope to the user object
-                    return { ...user.dataValues, role_scope: roleScope };
-                })
-            );
+      console.log("Users with role scopes:", usersWithRoleScopes);
 
-            console.log('Users with role scopes:', usersWithRoleScopes);
+      // get all roles (no filter on role_scope)
+      const roles = await Roles.findAll();
+      console.log("All roles:", roles);
 
-            // get all roles (no filter on role_scope)
-            const roles = await Roles.findAll();
-            console.log('All roles:', roles);
+      const loggedInUserId = req.session.user_id;
+      console.log("Logged-in user ID is", loggedInUserId);
+      const selectedProjectId = req.session.project_id;
+      console.log("Selected project ID is", selectedProjectId);
 
-            const loggedInUserId = req.session.user_id;
-            console.log('Logged-in user ID is', loggedInUserId);
-            const selectedProjectId = req.session.project_id;
-            console.log('Selected project ID is', selectedProjectId);
+      res.json({
+        users: usersWithRoleScopes,
+        roles,
+        loggedInUserId,
+        selectedProjectId,
+      });
+    } catch (error) {
+      console.error("Error fetching users and roles:", error.message);
+      res.status(500).send("Server Error");
+    }
+  }
 
-            res.json({ users: usersWithRoleScopes, roles, loggedInUserId, selectedProjectId });
-        } catch (error) {
-            console.error('Error fetching users and roles:', error.message);
-            res.status(500).send('Server Error');
-        }
+  // add or update user in user_roles table
+  async postUser_roles(req, res) {
+    console.log("Inside postUser_roles controller");
+
+    const { user_id, role_id, loggedInUserId, selectedProjectId, currentPath } =
+      req.body;
+    const organization_id = req.session.organization_id;
+
+    if (!user_id || !role_id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please select both user and role" });
     }
 
-    // add or update user in user_roles table
-    async postUser_roles(req, res) {
-        console.log('Inside postUser_roles controller');
+    try {
+      // user email from users table
+      const user = await User.findOne({ where: { user_id: user_id } });
 
-        const { user_id, role_id, loggedInUserId, selectedProjectId, currentPath } = req.body;
-        const organization_id = req.session.organization_id;
+      if (!user) {
+        return res
+          .status(404)
+          .json({ success: false, message: "User not found" });
+      }
 
-        if (!user_id || !role_id) {
-            return res.status(400).json({ success: false, message: 'Please select both user and role' });
-        }
+      const userEmail = user.email;
+      console.log("userEmail is :", userEmail);
+      console.log("currentPath is :", currentPath);
 
-        try {
-            // user email from users table
-            const user = await User.findOne({ where: { user_id: user_id } });
+      let message;
+      const existingRole = await User_Roles.findOne({
+        where: {
+          user_id: user_id,
+          project_id: selectedProjectId,
+        },
+      });
 
-            if (!user) {
-                return res.status(404).json({ success: false, message: 'User not found' });
-            }
+      if (existingRole) {
+        await existingRole.update({
+          role_id: role_id,
+          organization_id: organization_id,
+          assigned_by: loggedInUserId,
+        });
+        message = "User role updated successfully";
+      } else {
+        await User_Roles.create({
+          user_id: user_id,
+          role_id: role_id,
+          organization_id: organization_id,
+          project_id: selectedProjectId,
+          assigned_by: loggedInUserId,
+        });
+        message = "User role added successfully";
+      }
 
-            const userEmail = user.email;
-            console.log('userEmail is :', userEmail);
-            console.log('currentPath is :', currentPath);
-
-            let message;
-            const existingRole = await User_Roles.findOne({
-                where: {
-                    user_id: user_id,
-                    project_id: selectedProjectId,
-                }
-            });
-
-            if (existingRole) {
-                await existingRole.update({
-                    role_id: role_id,
-                    organization_id: organization_id,
-                    assigned_by: loggedInUserId,
-                });
-                message = 'User role updated successfully';
-            } else {
-                await User_Roles.create({
-                    user_id: user_id,
-                    role_id: role_id,
-                    organization_id: organization_id,
-                    project_id: selectedProjectId,
-                    assigned_by: loggedInUserId,
-                });
-                message = 'User role added successfully';
-            }
-
-            const mailOptions = {
-                from: process.env.EMAIL_USER,
-                to: userEmail,
-                subject: 'Project Role Assignment',
-                html: `<!DOCTYPE html>
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: userEmail,
+        subject: "Project Role Assignment",
+        html: `<!DOCTYPE html>
                 <html lang="en">
                 <head>
                     <meta charset="UTF-8">
@@ -180,478 +192,493 @@ class AccessController {
                     </div>
                 </body>
                 </html>`,
-            };
+      };
 
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    console.error('Error sending email:', error);
-                } else {
-                    console.log('Email sent:', info.response);
-                }
-            });
-
-            res.status(200).json({ success: true, message });
-
-        } catch (error) {
-            console.error("Error processing User_Roles:", error);
-            res.status(500).json({ success: false, message: "Internal Server Error" });
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error("Error sending email:", error);
+        } else {
+          console.log("Email sent:", info.response);
         }
+      });
+
+      res.status(200).json({ success: true, message });
+    } catch (error) {
+      console.error("Error processing User_Roles:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    }
+  }
+
+  // controller to get the logged-in user's role_scope
+  async getUserRoleScope(req, res) {
+    console.log("inside getUserRoleScope controller");
+
+    const user_id = req.session.user_id;
+
+    if (!user_id) {
+      // return res.status(401).json({ error: 'User not logged in' });
+      req.flash("error", "User not logged in.");
+      return res.status(401).redirect("/");
     }
 
-    // controller to get the logged-in user's role_scope
-    async getUserRoleScope(req, res) {
-        console.log('inside getUserRoleScope controller');
+    try {
+      // get user's role_id from User_Roles table
+      const userRole = await User_Roles.findOne({
+        where: { user_id },
+      });
 
-        const user_id = req.session.user_id;
+      if (!userRole) {
+        return res.status(404).json({ error: "User role not found" });
+      }
 
-        if (!user_id) {
-            // return res.status(401).json({ error: 'User not logged in' });
-            req.flash('error', 'User not logged in.');
-            return res.status(401).redirect('/');
+      const roleDetails = await Roles.findOne({
+        where: { role_id: userRole.role_id },
+      });
+
+      if (!roleDetails) {
+        return res.status(404).json({ error: "Role details not found" });
+      }
+
+      res.json({ role_scope: roleDetails.role_scope });
+    } catch (error) {
+      console.error("Error fetching user role scope:", error.message);
+      res.status(500).json({ error: "Server error" });
+    }
+  }
+
+  //render roles managing page
+  async renderPermissions(req, res) {
+    res.render("permissions");
+  }
+
+  //get all roles to permission page
+  async getAllRoles_toPermision(req, res) {
+    console.log("inside getAllRoles_toPermision controller");
+
+    try {
+      const roles = await Roles.findAll();
+      console.log(roles);
+
+      res.json(roles);
+    } catch (error) {
+      console.error("Error fetching roles:", error.message);
+      res.status(500).send("Server Error");
+    }
+  }
+
+  // remove a role
+  async removeRole(req, res) {
+    console.log("inside removeRole controller");
+
+    const { roleId } = req.params;
+
+    try {
+      // check if the role is in use in the user_roles table
+      const roleInUse = await User_Roles.findOne({
+        where: { role_id: roleId },
+      });
+
+      if (roleInUse) {
+        return res.status(400).json({
+          message:
+            "This role cannot be removed as it is in use by one or more users.",
+        });
+      } else {
+        // find the role by ID
+        const role = await Roles.findByPk(roleId);
+        if (!role) {
+          return res.status(404).json({ message: "Role not found" });
         }
 
-        try {
-            // get user's role_id from User_Roles table
-            const userRole = await User_Roles.findOne({
-                where: { user_id },
-            });
+        // destroy the role if it is not in use
+        await role.destroy();
+        res.status(200).json({ message: "Role removed successfully" });
+      }
+    } catch (error) {
+      console.error("Error removing role:", error);
+      res.status(500).json({ message: "Error removing role" });
+    }
+  }
 
-            if (!userRole) {
-                return res.status(404).json({ error: 'User role not found' });
-            }
+  //get all env_typs
+  async getAllEnvTypes(req, res) {
+    console.log("inside getAllEnvTypes controller");
 
-            const roleDetails = await Roles.findOne({
-                where: { role_id: userRole.role_id },
-            });
+    try {
+      const types = await Environments.findAll();
+      res.status(200).json(types);
+    } catch (error) {
+      console.error("Error fetching environment types:", error);
+      res.status(500).send("Server Error");
+    }
+  }
 
-            if (!roleDetails) {
-                return res.status(404).json({ error: 'Role details not found' });
-            }
+  // get update permission
+  async getUpdatedPermission(req, res) {
+    console.log("Inside getUpdatedPermission controller");
 
-            res.json({ role_scope: roleDetails.role_scope });
-        } catch (error) {
-            console.error('Error fetching user role scope:', error.message);
-            res.status(500).json({ error: 'Server error' });
+    const { role_id, env_id, permission_type, value } = req.body;
+
+    try {
+      let permission = await Permission.findOne({
+        where: {
+          role_id: role_id,
+          env_id: env_id,
+        },
+      });
+
+      const permissionValue = value ? 1 : 0;
+
+      if (!permission) {
+        permission = await Permission.create({
+          role_id: role_id,
+          env_id: env_id,
+          [permission_type]: permissionValue, // dynamically set the permission
+        });
+
+        // fetch the environment type from the environments table using env_id
+        const environment = await Environments.findOne({
+          where: { env_id: env_id },
+        });
+
+        if (!environment) {
+          return res
+            .status(404)
+            .json({ success: false, error: "Environment not found" });
         }
-    }
 
-    //render roles managing page
-    async renderPermissions(req, res) {
-        res.render('permissions');
-    }
+        return res.json({
+          success: true,
+          message: `${permission_type} created successfully for environment : ${environment.env_type}`,
+        });
+      } else {
+        // dynamically update the permission field (can_view or can_edit) based on the permission_type
+        const updatedData = {};
+        updatedData[permission_type] = permissionValue;
 
-    //get all roles to permission page
-    async getAllRoles_toPermision(req, res) {
-        console.log('inside getAllRoles_toPermision controller');
+        // update the permission record
+        await permission.update(updatedData);
 
-        try {
-            const roles = await Roles.findAll();
-            console.log(roles);
+        // fetch the environment type from the environments table using env_id
+        const environment = await Environments.findOne({
+          where: { env_id: env_id },
+        });
 
-            res.json(roles)
-        } catch (error) {
-            console.error('Error fetching roles:', error.message);
-            res.status(500).send('Server Error');
+        if (!environment) {
+          return res
+            .status(404)
+            .json({ success: false, error: "Environment not found" });
         }
+
+        res.json({
+          success: true,
+          message: `${permission_type} updated successfully for environment : ${environment.env_type}`,
+        });
+      }
+    } catch (error) {
+      console.error("Error updating permission:", error);
+      res
+        .status(500)
+        .json({ success: false, error: "Error updating permission" });
     }
+  }
 
-    // remove a role
-    async removeRole(req, res) {
-        console.log('inside removeRole controller');
+  // fetch selected permission for a given role and environment
+  async getSelectedPermissions(req, res) {
+    console.log("inside getSelectedPermissions controller");
 
-        const { roleId } = req.params;
+    const { role_id, env_details } = req.body;
+    console.log(role_id);
+    console.log(env_details);
 
-        try {
-            // check if the role is in use in the user_roles table
-            const roleInUse = await User_Roles.findOne({
-                where: { role_id: roleId },
-            });
+    // extract the env_ids from env_details array
+    const envIds = env_details.map((env) => env.env_id);
 
-            if (roleInUse) {
-                return res.status(400).json({ message: 'This role cannot be removed as it is in use by one or more users.' });
-            }
-            else {
-                // find the role by ID
-                const role = await Roles.findByPk(roleId);
-                if (!role) {
-                    return res.status(404).json({ message: 'Role not found' });
-                }
+    try {
+      // fetch permissions for the given role_id and env_ids
+      const permissions = await Permission.findAll({
+        where: {
+          role_id: role_id,
+          env_id: {
+            [Op.in]: envIds,
+          },
+        },
+      });
 
-                // destroy the role if it is not in use
-                await role.destroy();
-                res.status(200).json({ message: 'Role removed successfully' });
-            }
-        } catch (error) {
-            console.error('Error removing role:', error);
-            res.status(500).json({ message: 'Error removing role' });
-        }
+      // check if found any permissions
+      if (permissions.length > 0) {
+        // map the results
+        const result = permissions.map((permission) => ({
+          env_id: permission.env_id,
+          can_view: permission.can_view,
+          can_edit: permission.can_edit,
+        }));
+        // console.log(result);
+
+        res.status(200).json({
+          success: true,
+          permissions: result,
+        });
+      } else {
+        // if no permissions are found, return empty checkboxes for all environments
+        const result = env_details.map((env) => ({
+          env_id: env.env_id,
+          can_view: null,
+          can_edit: null,
+        }));
+
+        res.status(200).json({
+          success: true,
+          permissions: result,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching selected permissions:", error.message);
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch selected permissions",
+      });
     }
+  }
 
-    //get all env_typs
-    async getAllEnvTypes(req, res) {
-        console.log('inside getAllEnvTypes controller');
+  // add New Role
+  async addNewRoles(req, res) {
+    console.log("inside addNewRoles controller");
 
-        try {
-            const types = await Environments.findAll();
-            res.status(200).json(types);
-        } catch (error) {
-            console.error("Error fetching environment types:", error);
-            res.status(500).send("Server Error");
-        }
+    const { roleName, roleDescription, roleScope } = req.body;
+
+    try {
+      if (!roleName || !roleDescription || !roleScope) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      const newRole = await Roles.create({
+        role_name: roleName,
+        description: roleDescription,
+        role_scope: roleScope,
+      });
+
+      return res
+        .status(200)
+        .json({ message: "Role added successfully!", newRole });
+    } catch (error) {
+      console.error("Error adding role:", error.message);
+
+      return res
+        .status(500)
+        .json({ message: "Error adding role. Please try again." });
     }
+  }
 
-    // get update permission
-    async getUpdatedPermission(req, res) {
-        console.log('Inside getUpdatedPermission controller');
+  // get users associated with the project
+  async users_Associated(req, res) {
+    console.log("Inside users_Associated controller");
 
-        const { role_id, env_id, permission_type, value } = req.body;
+    const project_id = req.session.project_id;
 
-        try {
-            let permission = await Permission.findOne({
-                where: {
-                    role_id: role_id,
-                    env_id: env_id,
-                },
-            });
+    try {
+      const userRoles = await User_Roles.findAll({
+        where: { project_id },
+        attributes: ["user_id", "role_id"], // fetch user_id and role_id
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: ["username"], // fetch username from the Roles table
+          },
+          {
+            model: Roles,
+            as: "role",
+            attributes: ["role_name"], // fetch role_name from the Roles table
+          },
+        ],
+      });
 
-            const permissionValue = value ? 1 : 0;
+      if (!userRoles.length) {
+        return res.status(200).json({
+          success: true,
+          data: [],
+          message: "No users associated with this project.",
+        });
+      }
 
-            if (!permission) {
-                permission = await Permission.create({
-                    role_id: role_id,
-                    env_id: env_id,
-                    [permission_type]: permissionValue,  // dynamically set the permission
-                });
+      const responseData = userRoles.map((role) => ({
+        user_id: role.user_id,
+        username: role.user?.username || "Unknown",
+        role_name: role.role?.role_name || "Unknown",
+      }));
 
-                // fetch the environment type from the environments table using env_id
-                const environment = await Environments.findOne({
-                    where: { env_id: env_id }
-                });
-
-                if (!environment) {
-                    return res.status(404).json({ success: false, error: 'Environment not found' });
-                }
-
-                return res.json({
-                    success: true,
-                    message: `${permission_type} created successfully for environment : ${environment.env_type}`,
-                });
-            }
-
-            else {
-                // dynamically update the permission field (can_view or can_edit) based on the permission_type
-                const updatedData = {};
-                updatedData[permission_type] = permissionValue;
-
-                // update the permission record
-                await permission.update(updatedData);
-
-                // fetch the environment type from the environments table using env_id
-                const environment = await Environments.findOne({
-                    where: { env_id: env_id }
-                });
-
-                if (!environment) {
-                    return res.status(404).json({ success: false, error: 'Environment not found' });
-                }
-
-                res.json({
-                    success: true,
-                    message: `${permission_type} updated successfully for environment : ${environment.env_type}`
-                });
-            }
-
-        } catch (error) {
-            console.error('Error updating permission:', error);
-            res.status(500).json({ success: false, error: 'Error updating permission' });
-        }
+      res.status(200).json({
+        success: true,
+        data: responseData,
+      });
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error fetching user details",
+      });
     }
+  }
 
-    // fetch selected permission for a given role and environment
-    async getSelectedPermissions(req, res) {
-        console.log('inside getSelectedPermissions controller');
+  //remove a user from user_rols table
+  async remove_Auser(req, res) {
+    console.log("inside remove_Auser controller");
 
-        const { role_id, env_details } = req.body;
-        console.log(role_id);
-        console.log(env_details);
+    const userId = req.params.id;
+    const projectId = req.session.project_id;
 
-        // extract the env_ids from env_details array
-        const envIds = env_details.map(env => env.env_id);
+    try {
+      const result = await User_Roles.destroy({
+        where: {
+          user_id: userId,
+          project_id: projectId,
+        },
+      });
 
-        try {
-            // fetch permissions for the given role_id and env_ids
-            const permissions = await Permission.findAll({
-                where: {
-                    role_id: role_id,
-                    env_id: {
-                        [Op.in]: envIds
-                    }
-                }
-            });
-
-            // check if found any permissions
-            if (permissions.length > 0) {
-                // map the results
-                const result = permissions.map(permission => ({
-                    env_id: permission.env_id,
-                    can_view: permission.can_view,
-                    can_edit: permission.can_edit
-                }));
-                // console.log(result);
-
-                res.status(200).json({
-                    success: true,
-                    permissions: result
-                });
-            } else {
-                // if no permissions are found, return empty checkboxes for all environments
-                const result = env_details.map(env => ({
-                    env_id: env.env_id,
-                    can_view: null,
-                    can_edit: null
-                }));
-
-                res.status(200).json({
-                    success: true,
-                    permissions: result
-                });
-            }
-        } catch (error) {
-            console.error('Error fetching selected permissions:', error.message);
-            res.status(500).json({
-                success: false,
-                message: 'Failed to fetch selected permissions'
-            });
-        }
+      if (result) {
+        res
+          .status(200)
+          .json({ success: true, message: "User deleted successfully" });
+      } else {
+        res.status(404).json({ success: false, message: "User not found" });
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
     }
+  }
 
-    // add New Role
-    async addNewRoles(req, res) {
-        console.log('inside addNewRoles controller');
+  // add super admin
+  async postNew_admin(req, res) {
+    console.log("Inside postNew_admin controller");
 
-        const { roleName, roleDescription, roleScope } = req.body;
+    try {
+      const { user_id } = req.body;
+      const role_id = req.roleScope.role_id; // from middleware
+      const organization_id = req.session.organization_id;
+      if (!user_id || !role_id || !organization_id) {
+        return res.status(400).json({
+          error: "User ID, Role ID, and Organization ID are required.",
+        });
+      }
 
-        try {
-            if (!roleName || !roleDescription || !roleScope) {
-                return res.status(400).json({ message: 'All fields are required' });
-            }
+      // check if the user already exists in User_Roles
+      const userInUsers_roles = await User_Roles.findOne({
+        where: { user_id: user_id },
+      });
 
-            const newRole = await Roles.create({
-                role_name: roleName,
-                description: roleDescription,
-                role_scope: roleScope,
-            });
+      if (userInUsers_roles) {
+        // user exists, delete the record
+        await User_Roles.destroy({
+          where: { user_id: user_id },
+        });
 
-            return res.status(200).json({ message: 'Role added successfully!', newRole });
-        } catch (error) {
-            console.error('Error adding role:', error.message);
+        console.log("Existing user role deleted successfully");
+      }
 
-            return res.status(500).json({ message: 'Error adding role. Please try again.' });
-        }
+      await User_Roles.create({
+        user_id: user_id,
+        role_id: role_id,
+        organization_id: organization_id,
+        assigned_by: null,
+        project_id: null,
+      });
+
+      console.log("New user role assigned successfully");
+
+      res.json({ message: "Admin added successfully!" });
+    } catch (error) {
+      console.error("Error adding new admin:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
+  }
 
-    // get users associated with the project
-    async users_Associated(req, res) {
-        console.log('Inside users_Associated controller');
+  async getAllPermissions(req, res) {
+    try {
+      const result = await Environments.findAll(); // fetch all environments
+      console.log(result);
 
-        const project_id = req.session.project_id;
-
-        try {
-            const userRoles = await User_Roles.findAll({
-                where: { project_id },
-                attributes: ['user_id', 'role_id'], // fetch user_id and role_id
-                include: [
-                    {
-                        model: User,
-                        as: 'user',
-                        attributes: ['username'], // fetch username from the Roles table
-                    },
-                    {
-                        model: Roles,
-                        as: 'role',
-                        attributes: ['role_name'], // fetch role_name from the Roles table
-                    },
-                ],
-            });
-
-            if (!userRoles.length) {
-                return res.status(200).json({
-                    success: true,
-                    data: [],
-                    message: 'No users associated with this project.',
-                });
-            }
-
-            const responseData = userRoles.map(role => ({
-                user_id: role.user_id,
-                username: role.user?.username || 'Unknown',
-                role_name: role.role?.role_name || 'Unknown',
-            }));
-
-            res.status(200).json({
-                success: true,
-                data: responseData,
-            });
-        } catch (error) {
-            console.error('Error fetching user details:', error);
-            res.status(500).json({
-                success: false,
-                message: 'Error fetching user details',
-            });
-        }
+      res.render("permissionManagement", { data: result });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("An error occurred while fetching permissions.");
     }
+  }
 
-    //remove a user from user_rols table
-    async remove_Auser(req, res) {
-        console.log('inside remove_Auser controller');
+  async addPermission(req, res) {
+    try {
+      const { permissionType, descriptionInput } = req.body; // getting permission data
 
-        const userId = req.params.id;
-        const projectId = req.session.project_id;
+      const newPermission = await Environments.create({
+        env_type: permissionType,
+        description: descriptionInput,
+      });
 
-        try {
-            const result = await User_Roles.destroy({
-                where: {
-                    user_id: userId,
-                    project_id: projectId
-                }
-            });
-
-            if (result) {
-                res.status(200).json({ success: true, message: 'User deleted successfully' });
-            } else {
-                res.status(404).json({ success: false, message: 'User not found' });
-            }
-        } catch (error) {
-            console.error('Error deleting user:', error);
-            res.status(500).json({ success: false, message: 'Internal Server Error' });
-        }
+      res
+        .status(201)
+        .json({ message: "permission added successfully", newPermission });
+    } catch (error) {
+      console.error("error adding permission:", error);
+      res.status(500).json({ error: "failed to add permission" });
     }
+  }
 
-    // add super admin
-    async postNew_admin(req, res) {
-        console.log('Inside postNew_admin controller');
+  async deletePermission(req, res) {
+    const { id } = req.params;
 
-        try {
-            const { user_id } = req.body;
-            const role_id = req.roleScope.role_id;  // from middleware
-            const organization_id = req.session.organization_id;
-            if (!user_id || !role_id || !organization_id) {
-                return res.status(400).json({ error: 'User ID, Role ID, and Organization ID are required.' });
-            }
+    try {
+      // check if the env_id exists in the ProjectEnv table
+      const projectEnvExists = await Project_env.findOne({
+        where: { env_id: id },
+      });
 
-            // check if the user already exists in User_Roles
-            const userInUsers_roles = await User_Roles.findOne({
-                where: { user_id: user_id }
-            });
+      if (projectEnvExists) {
+        return res.status(400).json({
+          error: "already in use",
+          msg: "Permission cannot be deleted as it is in use.",
+        });
+      }
 
-            if (userInUsers_roles) {
-                // user exists, delete the record
-                await User_Roles.destroy({
-                    where: { user_id: user_id }
-                });
+      // not in use, proceed to delete
+      const deletedCount = await Environments.destroy({
+        where: { env_id: id },
+      });
 
-                console.log('Existing user role deleted successfully');
-            }
-
-            await User_Roles.create({
-                user_id: user_id,
-                role_id: role_id,
-                organization_id: organization_id,
-                assigned_by: null,
-                project_id: null
-            });
-
-            console.log('New user role assigned successfully');
-
-            res.json({ message: 'Admin added successfully!' });
-        } catch (error) {
-            console.error('Error adding new admin:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
+      if (deletedCount > 0) {
+        res.status(200).json({ message: "Permission deleted successfully" });
+      } else {
+        res.status(404).json({ error: "Permission not found" });
+      }
+    } catch (error) {
+      console.error("Error deleting permission:", error);
+      res.status(500).json({ error: "Failed to delete permission" });
     }
+  }
 
-    async getAllPermissions(req, res) {
-        try {
-            const result = await Environments.findAll(); // fetch all environments
-            console.log(result);
+  async updatePermission(req, res) {
+    const { id } = req.params;
+    const { env_type, description } = req.body;
 
-            res.render("permissionManagement", { data: result });
-        } catch (error) {
-            console.log(error);
-            res.status(500).send("An error occurred while fetching permissions.");
-        }
+    try {
+      const updated = await Environments.update(
+        { env_type, description },
+        { where: { env_id: id } }
+      );
+
+      if (updated[0] > 0) {
+        res.status(200).json({ message: "permission updated successfully" });
+      } else {
+        res.status(404).json({ error: "Permission not found" });
+      }
+    } catch (error) {
+      console.error("error updating permission:", error);
+      res.status(500).json({ error: "Failed to update permission" });
     }
-
-    async addPermission(req, res) {
-        try {
-            const { permissionType, descriptionInput } = req.body; // getting permission data
-
-            const newPermission = await Environments.create({
-                env_type: permissionType,
-                description: descriptionInput,
-            });
-
-            res
-                .status(201)
-                .json({ message: "permission added successfully", newPermission });
-        } catch (error) {
-            console.error("error adding permission:", error);
-            res.status(500).json({ error: "failed to add permission" });
-        }
-    }
-
-    async deletePermission(req, res) {
-        const { id } = req.params;
-
-        try {
-            // check if the env_id exists in the ProjectEnv table
-            const projectEnvExists = await Project_env.findOne({
-                where: { env_id: id },
-            });
-
-            if (projectEnvExists) {
-                return res.status(400).json({
-                    error: "already in use",
-                    msg: "Permission cannot be deleted as it is in use.",
-                });
-            }
-
-            // not in use, proceed to delete 
-            const deletedCount = await Environments.destroy({
-                where: { env_id: id },
-            });
-
-            if (deletedCount > 0) {
-                res.status(200).json({ message: "Permission deleted successfully" });
-            } else {
-                res.status(404).json({ error: "Permission not found" });
-            }
-        } catch (error) {
-            console.error("Error deleting permission:", error);
-            res.status(500).json({ error: "Failed to delete permission" });
-        }
-    }
-
-    async updatePermission(req, res) {
-        const { id } = req.params;
-        const { env_type, description } = req.body;
-
-        try {
-            const updated = await Environments.update(
-                { env_type, description },
-                { where: { env_id: id } }
-            );
-
-            if (updated[0] > 0) {
-                res.status(200).json({ message: "permission updated successfully" });
-            } else {
-                res.status(404).json({ error: "Permission not found" });
-            }
-        } catch (error) {
-            console.error("rror updating permission:", error);
-            res.status(500).json({ error: "Failed to update permission" });
-        }
-    }
-
+  }
 }
-module.exports = AccessController
+module.exports = AccessController;

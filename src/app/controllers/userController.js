@@ -588,12 +588,49 @@ class UserController {
       }
 
       res.json({
+        userId: user.user_id,
         email: user.email,
         username: user.username,
+        password: user.password_hash,
       });
     } catch (error) {
       console.error("Error fetching profile data:", error);
       res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
+  //Change password
+  async changePassword(req, res) {
+    const { oldPassword, oldPasswordHash, newPassword, userId } = req.body;
+
+    try {
+      // Check if the old password matches
+      const match = await bcrypt.compare(oldPassword, oldPasswordHash);
+
+      // if the old password not mathing
+      if (!match) {
+        return res.status(400).json({ error: "old password is incorrect" });
+      }
+
+      // Only if the old password matches, proceed with updation
+
+      // Hashing the new password
+      const newPasswordHash = await bcrypt.hash(newPassword, 10);
+
+      // Update the password_hash in the database using userId
+      const updated = await User.update(
+        { password_hash: newPasswordHash },
+        { where: { user_id: userId } }
+      );
+
+      if (updated[0] > 0) {
+        res.status(200).json({ message: "Password updated successfully!" });
+      } else {
+        res.status(404).json({ error: "User not found" });
+      }
+    } catch (error) {
+      console.error("Error updating password:", error);
+      res.status(500).json({ error: "Error updating passowrd" });
     }
   }
 }

@@ -4,21 +4,104 @@
     <%- include('partials/head', { title: "Profile" }) %>
   </head>
   <body>
-    <div class="flex items-center justify-center min-h-screen relative">
+    <div class="relative flex items-center justify-center min-h-screen p-6">
       <div
-        class="bg-white shadow-lg rounded-lg p-6 md:p-10 w-full max-w-md text-center"
+        class="bg-white shadow-lg rounded-lg p-6 md:p-10 w-full max-w-md flex flex-col items-center gap-6"
       >
-        <h1 class="text-xl md:text-2xl font-bold mb-6">Profile</h1>
-        <p class="text-lg md:text-xl">
-          Email:
-          <span id="email" class="font-semibold">Loading...</span>
-        </p>
-        <p class="text-lg md:text-xl mt-4 capitalize">
-          Username:
-          <span id="username" class="font-semibold">Loading.....</span>
-        </p>
+        <!-- Profile Image -->
+        <div class="w-24 md:w-28 lg:w-36">
+          <img
+            src="/images/profile.svg"
+            alt="Profile Logo"
+            class="rounded-full shadow-md"
+          />
+        </div>
+
+        <!-- User Details -->
+        <div class="w-full text-center">
+          <div class="mt-4">
+            <p class="text-gray-600 text-sm md:text-base">Username</p>
+            <p
+              id="username"
+              class="font-semibold text-gray-800 text-lg md:text-xl capitalize"
+            >
+              Loading...
+            </p>
+          </div>
+          <div class="mt-4">
+            <p class="text-gray-600 text-sm md:text-base">Email</p>
+            <p
+              id="email"
+              class="font-semibold text-gray-800 text-lg md:text-xl"
+            >
+              Loading...
+            </p>
+          </div>
+        </div>
+
+        <!-- Change Password -->
+        <h1 class="text-2xl font-semibold text-gray-800 text-center">
+          Change Password
+        </h1>
+
+        <!-- Change Password Form -->
+        <form onsubmit="handleChangePassword(event)" class="w-full">
+          <!-- Previous Password -->
+          <div class="mb-4">
+            <label
+              for="old-password-input"
+              class="block text-gray-600 font-medium mb-1"
+              >Previous Password</label
+            >
+            <input
+              id="old-password-input"
+              type="password"
+              placeholder="Enter your previous password"
+              class="w-full border border-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring focus:ring-orange-400"
+            />
+          </div>
+
+          <!-- New Password -->
+          <div class="mb-4">
+            <label
+              for="new-password-input"
+              class="block text-gray-600 font-medium mb-1"
+              >Enter New Password</label
+            >
+            <input
+              id="new-password-input"
+              type="password"
+              placeholder="Enter your new password"
+              class="w-full border border-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring focus:ring-orange-400"
+            />
+          </div>
+
+          <!-- Confirm New Password -->
+          <div class="mb-4">
+            <label
+              for="confirm-new-password-input"
+              class="block text-gray-600 font-medium mb-1"
+              >Confirm New Password</label
+            >
+            <input
+              id="confirm-new-password-input"
+              type="password"
+              placeholder="Confirm your new password"
+              class="w-full border border-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring focus:ring-orange-400"
+            />
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="w-full bg-orange-400 hover:bg-orange-500 text-white font-medium py-2 px-5 rounded-md mt-4 focus:outline-none focus:ring focus:ring-orange-300"
+          >
+            Change Password
+          </button>
+        </form>
       </div>
 
+      <!-- back to projects link -->
       <div class="absolute top-10">
         <a
           href="/projects"
@@ -32,7 +115,16 @@
       </div>
     </div>
 
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.2.0/bcrypt.min.js"
+      integrity="sha512-BJZhA/ftU3DVJvbBMWZwp7hXc49RJHq0xH81tTgLlG16/OkDq7VbNX6nUnx+QY4bBZkXtJoG0b0qihuia64X0w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
     <script>
+      let oldPasswordHash = null;
+      let userId = null;
       async function fetchUserData() {
         try {
           const response = await fetch("/api/profile");
@@ -41,6 +133,8 @@
             const data = await response.json();
             document.getElementById("email").textContent = data.email;
             document.getElementById("username").textContent = data.username;
+            userId = data.userId;
+            oldPasswordHash = data.password;
           } else {
             const errorData = await response.json();
             console.error("Error fetching user data:", errorData.error);
@@ -51,6 +145,77 @@
       }
 
       window.onload = fetchUserData;
+    </script>
+
+    <script>
+      const oldPasswordInput = document.getElementById("old-password-input");
+      const newPasswordInput = document.getElementById("new-password-input");
+      const confirmNewPasswordInput = document.getElementById(
+        "confirm-new-password-input"
+      );
+
+      async function updatePassword() {
+        try {
+          const response = await fetch(`/api/change-password`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              oldPassword: oldPasswordInput.value,
+              oldPasswordHash: oldPasswordHash,
+              newPassword: newPasswordInput.value,
+              userId: userId,
+            }),
+          });
+
+          const data = await response.json();
+          // If the password is successfully updated
+          if (response.ok) {
+            toastr.success(data.message);
+          }
+          //If the old password incorrect
+          else if (response.status === 400) {
+            toastr.error(data.error || "Old password is incorrect.");
+          }
+          // If the user not found
+          else if (response.status === 404) {
+            toastr.warning(data.error);
+          }
+          // Other errors
+          else {
+            toastr.error(data.error || "An unexpected error occurred");
+          }
+        } catch (error) {
+          console.error("Error while updating password:", error);
+          toastr.error("Something went wrong. Please try again later.");
+        }
+      }
+
+      function handleChangePassword(e) {
+        e.preventDefault();
+
+        // check if the old password input is empty
+        if (!oldPasswordInput.value) {
+          toastr.error("please enter your old password to confirm");
+          return;
+        }
+
+        //check if new password and confirm new password does not match
+        if (newPasswordInput.value !== confirmNewPasswordInput.value) {
+          toastr.error("New Passwords does not match! Please try again");
+          return;
+        }
+
+        //only update the passowrd if its at least 8 characters long
+        if (newPasswordInput.value.length < 8) {
+          toastr.error("New Password must be atleast 8 characters");
+          return;
+        }
+
+        //update password
+        updatePassword();
+      }
     </script>
   </body>
 </html>
