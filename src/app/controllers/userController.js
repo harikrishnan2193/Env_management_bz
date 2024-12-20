@@ -237,11 +237,11 @@ class UserController {
         where: { user_id, organization_id },
       });
 
-      let projects = []
+      let projects = [];
 
       if (userRoles.length === 0) {
         console.log("User has no roles assigned and is not a admin privilage");
-        return res.render("projects", { projects })
+        return res.render("projects", { projects });
       }
 
       if (userRoles.some((role) => role.project_id === null)) {
@@ -257,15 +257,14 @@ class UserController {
             organization_id,
             project_id: projectIds,
           },
-        })
+        });
       }
 
-      res.render("projects", { projects })
+      res.render("projects", { projects });
     } catch (error) {
       console.error("Error fetching projects:", error.message);
       res.status(500).send("Server Error");
     }
-
   }
 
   // get selected project all detils (edit button)
@@ -436,9 +435,6 @@ class UserController {
       // check if the user has view/edit permissions
       const canView = permission ? permission.can_view === 1 : false;
       const canEdit = permission ? permission.can_edit === 1 : false;
-      console.log("env_id is:", env_id);
-      console.log("canView is:", canView);
-      console.log("canEdit is:", canEdit);
 
       // fetch all environments for the project and env_id
       const allEnvs = await Project_env.findAll({
@@ -471,17 +467,13 @@ class UserController {
 
   // update envs
   async updateEnvs(req, res) {
-    console.log("Inside updateEnvs controller");
+    // console.log("Inside updateEnvs controller");
 
     try {
       const envData = req.body;
       const project_id = req.session.project_id;
       const env_id = req.session.env_id;
       const user_id = req.session.user_id;
-
-      console.log("Project ID:", project_id);
-      console.log("Env ID:", env_id);
-      console.log("user_id:", user_id);
 
       if (!project_id || !env_id) {
         req.flash("error", "Enveronment is missing. Please select an Env type");
@@ -499,7 +491,7 @@ class UserController {
       if (existingEnv) {
         await Project_env.update(
           {
-            env_content: envData.env_content,
+            env_content: envData.env_content.trim(),
             updated_by: user_id,
           },
 

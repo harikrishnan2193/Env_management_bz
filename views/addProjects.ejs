@@ -2,14 +2,15 @@
 <html lang="en">
   <head>
     <%- include('partials/head', { title: 'Add Project' }) %>
-    <style></style>
   </head>
 
-  <body class="min-h-screen relative">
+  <body class="">
     <%- include('partials/loading-indicator') %>
 
     <div class="main-content">
-      <div class="flex flex-col items-center justify-center space-y-6 mt-20">
+      <div
+        class="flex flex-col items-center justify-center space-y-6 mt-20 relative"
+      >
         <!-- Form Section -->
         <div
           class="w-11/12 md:w-[500px] bg-white text-black p-6 shadow-lg rounded-lg"
@@ -94,7 +95,6 @@
         </div>
       </div>
     </div>
-
     <script src="/js/loading-indicator.js"></script>
   </body>
 </html>
