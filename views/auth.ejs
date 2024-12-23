@@ -9,14 +9,14 @@
   <body class="h-screen">
     <%- include('partials/loading-indicator') %>
 
-    <div class="main-content">
+    <div class="main-content text-secondary">
       <main class="relative h-screen overflow-hidden">
         <!-- FORM -->
         <div
           class="auth-container absolute inset-0 flex justify-center items-center z-10"
         >
-          <div class="border-2 w-96 rounded-md">
-            <div class="auth-form p-8 shadow-lg bg-white">
+          <div class="w-96">
+            <div class="auth-form p-8 shadow-lg bg-medium_grey rounded-lg">
               <img
                 src="https://cdn-icons-png.flaticon.com/512/309/309492.png"
                 alt="no image"
@@ -34,10 +34,7 @@
               >
                 <% if (isRegisterPath) { %>
                 <div class="input-group mb-4">
-                  <label
-                    for="username"
-                    class="block text-gray-700 font-semibold mb-1"
-                  >
+                  <label for="username" class="block font-semibold mb-1">
                     Name
                   </label>
                   <input
@@ -46,7 +43,7 @@
                     id="username"
                     required
                     placeholder="Enter your name"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    class="w-full px-4 py-2 border border-dark_grey rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                   <span id="usernameError" class="text-red-500 hidden text-sm">
                     Username cannot exceed 30 characters
@@ -55,9 +52,7 @@
                 <% } %>
 
                 <div class="input-group mb-4">
-                  <label
-                    for="email"
-                    class="block text-gray-700 font-semibold mb-1"
+                  <label for="email" class="block font-semibold mb-1"
                     >Email</label
                   >
                   <input
@@ -66,7 +61,7 @@
                     id="email"
                     required
                     placeholder="Enter your email"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    class="w-full px-4 py-2 border border-dark_grey rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                   <span id="emailError" class="text-red-500 hidden text-sm"
                     >Invalid email format</span
@@ -75,10 +70,7 @@
 
                 <% if (isRegisterPath) { %>
                 <div class="input-group mb-6">
-                  <label
-                    for="organization"
-                    class="block text-gray-700 font-semibold"
-                  >
+                  <label for="organization" class="block font-semibold">
                     Organization Name
                   </label>
                   <input
@@ -89,7 +81,7 @@
                     placeholder="Enter your organization"
                     value="<%= organization ? organization.organization_name : '' %>"
                     readonly
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    class="w-full px-4 py-2 border border-dark_grey rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
@@ -101,9 +93,7 @@
                 <% } %>
 
                 <div class="input-group mb-6">
-                  <label
-                    for="password"
-                    class="block text-gray-700 font-semibold mb-1"
+                  <label for="password" class="block font-semibold mb-1"
                     >Password</label
                   >
                   <input
@@ -112,7 +102,7 @@
                     id="password"
                     required
                     placeholder="Enter your password"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    class="w-full px-4 py-2 border border-dark_grey rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                   <span id="passwordError" class="text-red-500 hidden text-sm">
                     Password must be at least 8 characters long
@@ -122,17 +112,23 @@
                 <div class="flex justify-center mb-6 relative">
                   <button
                     type="submit"
-                    class="w-full py-2 bg-orange-400 text-white rounded-lg transition duration-300 ease-in-out hover:bg-orange-500"
+                    class="w-full py-2 bg-primary text-white rounded-lg transition hover:bg-primary_hover"
                   >
                     <span><%= isRegisterPath ? 'Sign Up' : 'Login' %></span>
                   </button>
                 </div>
 
-                <p class="text-center text-gray-600">
+                <p class="text-center text-secondary">
                   <% if (isRegisterPath) { %> Already have an account?
-                  <a href="/" class="text-orange-500 hover:underline">Login</a>
+                  <a
+                    href="/"
+                    class="text-primary hover:underline hover:text-primary_hover"
+                    >Login</a
+                  >
                   <% } else { %> Don't have an account?
-                  <a href="/register" class="text-orange-500 hover:underline"
+                  <a
+                    href="/register"
+                    class="text-primary hover:underline hover:text-primary_hover"
                     >Sign Up</a
                   > <br>
                   <p class="text-center text-sm text-gray-600 mt-3">

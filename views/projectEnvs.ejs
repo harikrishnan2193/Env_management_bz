@@ -1,20 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-     <%- include('partials/head', { title: "ENVS"}) %> 
+    <%- include('partials/head', { title: "ENVS"}) %>
 
     <style>
-      body {
-        background: #0f2027;
-        background: -webkit-linear-gradient(
-          to right,
-          #2c5364,
-          #203a43,
-          #0f2027
-        );
-        background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
-      }
-
       .modal {
         display: none;
         position: fixed;
@@ -44,7 +33,44 @@
         margin: 0 !important;
         padding: 0 !important;
       }
+
+      .env-preview,
+      .env-textarea {
+        font-family: monospace;
+        font-size: 1rem;
+        line-height: 1.5;
+        padding: 1rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow: auto;
+      }
+
+      .env-preview {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        color: black;
+      }
+
+      .env-textarea {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        color: transparent;
+        caret-color: black;
+        background: none;
+        border: none;
+        resize: none;
+      }
     </style>
+
+    <!-- Highlight.js css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css"
+    />
   </head>
 
   <body>
@@ -62,7 +88,7 @@
           <!-- back to project -->
           <a
             href="/projects"
-            class="text-white absolute top-3 z-0 hover:text-orange-500"
+            class="text-light_grey absolute top-3 z-0 hover:text-primary"
           >
             <i class="fa-solid fa-arrow-left"></i>&nbsp;&nbsp;<span
               >Back to project</span
@@ -73,11 +99,12 @@
             id="projectEnvForm"
             action="/project/env_type/envs"
             method="GET"
+            class="text-secondary"
           >
             <select
               id="options"
               name="env_id"
-              class="w-72 px-2 py-1 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 capitalize"
+              class="w-72 px-2 py-1 bg-light_grey rounded-md focus:outline-none focus:ring-2 focus:ring-primary capitalize"
               onchange="this.form.submit()"
             >
               <option value="" disabled selected>Select Env</option>
@@ -89,62 +116,136 @@
             </select>
           </form>
 
-          <!-- alert messages -->
-          <script>
-            const error =  <%- JSON.stringify(error) %>;
-            const success =  <%- JSON.stringify(success) %>;
-
-            // success and error message using toastr
-            toastr.options = {
-              timeOut: "2000",
-            };
-
-            if (success && success.length > 0) {
-              toastr.success(success[0]);
-            }
-
-            if (error && error.length > 0) {
-              toastr.error(error[0]);
-            }
-          </script>
-
           <!-- Container -->
           <div
-            class="xs:w-11/12 sm:w-10/12 lg:w-7/12 bg-white text-black p-2 sm:p-6 shadow-lg rounded-lg relative"
+            class="xs:w-11/12 sm:w-10/12 lg:w-7/12 bg-medium_grey p-2 sm:p-6 shadow-lg rounded-lg relative text-secondary"
           >
             <h2
-              class="text-xl md:text-2xl font-bold mb-2 sm:mb-4 text-center text-gray-900"
+              class="text-xl md:text-2xl font-bold mb-2 sm:mb-4 text-center"
             >
               Env Types
             </h2>
+
             <!-- Form to handle environment updates -->
             <form action="/project/updateEnvs" method="POST" id="envForm">
-              <!-- textare ,render placeholder -->
-              <% if (allEnvs && allEnvs.length> 0) { %>
-                <% allEnvs.forEach(env=> { %>
-
-                  <% let placeholderText='' ; if (typeof canEdit !=='undefined' && canEdit) {
-                    placeholderText='No env available. Type here...' ; } else if (typeof canView !=='undefined' &&
-                    canView) { placeholderText='No env available' ; } else { placeholderText='No access to view content' ;
-                    } const readonlyAttribute=(typeof canEdit !=='undefined' && canEdit) ? '' : 'readonly' ; %>
-                    <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[550px]">
-                      <textarea name="env_content"
-                        class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm"
-                        <%=readonlyAttribute %>
-                        placeholder="<%= placeholderText %>"><%- (typeof canView !== 'undefined' && canView) || (typeof canEdit !== 'undefined' && canEdit) ? (env.env_content || '') : '' %></textarea>
-                    </div>
-                  <% }) %>
-                  <% } else { %>
-                    <% let placeholderText='' ; if (typeof canEdit !=='undefined' && canEdit) {placeholderText='No env available. Type here...' ; } else if (typeof canView !=='undefined' && canView) { placeholderText='No env available' ; } else {placeholderText='No access to view content' ; } const readonlyAttribute=(typeof canEdit!=='undefined' && canEdit) ? '' : 'readonly' ; %> <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[550px]"><textarea name="env_content"class="w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 resize-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-shadow shadow-sm"<%=readonlyAttribute %>placeholder="<%= placeholderText %>"><%- '' %></textarea></div><% } %>
-                    <!-- Button -->
-                    <div class="text-center mb-2"><button type="submit" class="w-full bg-orange-400 text-white font-bold rounded-md py-2 hover:bg-orange-500" <%=(typeof canEdit !=='undefined' && !canEdit) ? 'disabled' : '' %>>Save Env</button>
-                    </div>
-            </form>
+              <% if (allEnvs && allEnvs.length > 0) { %>
+                <% allEnvs.forEach(env => { %>
+                  <% 
+                    let placeholderText = '';
+                    if (typeof canEdit !== 'undefined' && canEdit) {
+                      placeholderText = 'No env available. Type here...';
+                    } else if (typeof canView !== 'undefined' && canView) {
+                      placeholderText = 'No env available';
+                    } else {
+                      placeholderText = 'No access to view content';
+                    }
+                    const readonlyAttribute = (typeof canEdit !== 'undefined' && canEdit) ? '' : 'readonly';
+                  %>
+                  <div class="bg-medium_grey p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[650px] relative">
+                    <pre 
+                      class="hljs env-preview w-full h-full bg-secondary rounded-lg p-4 overflow-auto"
+                    ></pre>
+                    <textarea 
+                      spellcheck="false"
+                      name="env_content" 
+                      class="env-textarea w-full h-full bg-transparent border-none p-4 resize-none text-transparent caret-white focus:outline-none"
+                      <%= readonlyAttribute %>
+                      placeholder="<%= placeholderText %>"><%- (typeof canView !== 'undefined' && canView) || (typeof canEdit !== 'undefined' && canEdit) ? (env.env_content.trim() || '') : '' %></textarea>
+                  </div>
+                <% }) %>
+              <% } else { %>
+                <% 
+                  let placeholderText = '';
+                  if (typeof canEdit !== 'undefined' && canEdit) {
+                    placeholderText = 'No env available. Type here...';
+                  } else if (typeof canView !== 'undefined' && canView) {
+                    placeholderText = 'No env available';
+                  } else {
+                    placeholderText = 'No access to view content';
+                  }
+                  const readonlyAttribute = (typeof canEdit !== 'undefined' && canEdit) ? '' : 'readonly';
+                %>
+                <div class="bg-medium_grey p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[650px] relative">
+                  <pre 
+                    class="hljs env-preview w-full h-full bg-secondary rounded-lg p-4 overflow-auto"
+                  ></pre>
+                  <textarea 
+                    spellcheck="false"
+                    name="env_content" 
+                    class="env-textarea w-full h-full bg-transparent border-none p-4 resize-none text-transparent caret-white focus:outline-none"
+                    <%= readonlyAttribute %>
+                    placeholder="<%= placeholderText %>"></textarea>
+                </div>
+              <% } %>
+            
+              <!-- Submit Button -->
+              <div class="text-center mb-2">
+                <button 
+                  type="submit" 
+                  class="w-full bg-primary text-light_grey font-bold rounded-md py-2 hover:bg-primary_hover" 
+                  <%= (typeof canEdit !== 'undefined' && !canEdit) ? 'disabled' : '' %>>
+                  Save Env
+                </button>
+              </div>
+            </form> 
           </div>
         </div>
-    </section>
-  </div>
+      </section>
+    </div>
 
+    <!-- Highlight.js functionality -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const textareas = document.querySelectorAll(".env-textarea");
+
+        textareas.forEach((textarea) => {
+          const pre = textarea.previousElementSibling;
+
+          // Function to update and reapply syntax highlighting
+          const updateHighlight = () => {
+            pre.textContent = textarea.value; // Update content in <pre>
+            hljs.highlightElement(pre); // Reapply highlight.js styling
+          };
+
+          // Update highlight on input
+          textarea.addEventListener("input", () => {
+            updateHighlight();
+          });
+
+          // Sync scrolling between textarea and pre
+          textarea.addEventListener("scroll", () => {
+            pre.scrollTop = textarea.scrollTop;
+            pre.scrollLeft = textarea.scrollLeft;
+          });
+
+          // Initialize highlighting on load
+          updateHighlight();
+        });
+      });
+    </script>
+
+    <!-- alert messages -->
+    <script>
+      const error =  <%- JSON.stringify(error) %>;
+      const success =  <%- JSON.stringify(success) %>;
+
+      // success and error message using toastr
+      toastr.options = {
+        timeOut: "2000",
+      };
+
+      if (success && success.length > 0) {
+        toastr.success(success[0]);
+      }
+
+      if (error && error.length > 0) {
+        toastr.error(error[0]);
+      }
+    </script>
 
     <!-- save the selected option inside local storage so when it refreshes we can get it from session storage -->
     <script>

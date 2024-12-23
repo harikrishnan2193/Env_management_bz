@@ -5,14 +5,14 @@
     <style>
       @media (max-width: 1535px) {
         #sidebar {
-          background: #0f2027;
-          background: -webkit-linear-gradient(
+          background: #2d375b;
+          /* background: -webkit-linear-gradient(
             to right,
             #2c5364,
             #203a43,
             #0f2027
           );
-          background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+          background: linear-gradient(to right, #2c5364, #203a43, #0f2027); */
         }
       }
 
@@ -32,7 +32,10 @@
     roleDetails.role_scope==='project' ))) { %>
 
     <div class="fixed top-4 left-4 z-50">
-      <button id="toggleMenu" class="text-white p-2 rounded focus:outline-none">
+      <button
+        id="toggleMenu"
+        class="text-light_grey p-2 rounded focus:outline-none"
+      >
         <span id="burgerIcon" class="block"
           ><i class="fa fa-bars fa-lg"></i
         ></span>
@@ -52,7 +55,7 @@
     <!-- Sidebar -->
     <div
       id="sidebar"
-      class="fixed top-0 left-0 h-full text-white transform -translate-x-full transition-transform duration-300 z-20 2xl:bg-transparent w-80"
+      class="fixed top-0 left-0 h-full text-light_grey transform -translate-x-full transition-transform duration-300 z-20 2xl:bg-transparent w-80"
     >
       <!-- Users Content -->
       <div class="p-7">
@@ -82,7 +85,7 @@
               Add new users ?
               <a
                 href="/getAllUsers_AllRoles"
-                class="text-orange-500 hover:underline"
+                class="text-primary hover:underline"
                 onclick="openModal(event)"
                 >Click here</a
               >
@@ -94,38 +97,38 @@
       </div>
     </div>
 
-    <!-- model -->
+    <!-- modal -->
     <div
       class="fixed inset-0 z-50 items-center justify-center bg-opacity-50 hidden bg-black modal-wrapper"
       style="margin: 0"
     >
       <div
-        class="bg-white rounded-lg shadow-lg max-w-md text-black w-full p-6 modal-content text-left"
+        class="bg-medium_grey rounded-lg shadow-lg max-w-md text-secondary w-full p-6 modal-content text-left"
       >
         <form onsubmit="submitModal(event)">
           <!-- Modal Header -->
 
-          <h2 class="text-lg font-semibold text-gray-700 mb-4">Add New User</h2>
+          <h2 class="text-lg font-semibold mb-4">Add New User</h2>
 
           <!-- Username Dropdown -->
 
           <div class="mb-4">
-            <label class="block text-gray-600">Username</label>
+            <label class="block">Username</label>
             <select
               required
               id="username"
-              class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              class="w-full rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option disabled selected>Loading...</option>
             </select>
           </div>
 
           <div class="mb-4">
-            <label class="block text-gray-600">Role</label>
+            <label class="block">Role</label>
             <select
               required
               id="userrole"
-              class="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              class="w-full rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option disabled selected>Loading...</option>
             </select>
@@ -135,13 +138,13 @@
             <button
               type="button"
               onclick="closeModal()"
-              class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+              class="px-4 py-2 bg-dark_grey text-light_grey rounded-md hover:bg-light_grey hover:text-secondary"
             >
               Cancel
             </button>
             <button
               type="submit"
-              class="px-4 py-2 bg-orange-400 text-white rounded-md hover:bg-orange-500 font-semibold"
+              class="px-4 py-2 bg-primary text-light_grey rounded-md hover:bg-primary_hover"
             >
               Submit
             </button>
