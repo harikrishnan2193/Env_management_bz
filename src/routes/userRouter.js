@@ -16,6 +16,20 @@ router.post("/register", usersController.register);
 //login
 router.post("/login", usersController.login);
 
+//render forget password page
+router.get("/forgetPage", usersController.forgetPage)
+
+//forget pasword
+router.post("/forgot-password", usersController.forgotPassword);
+
+//render reset-password page
+router.get("/reset-password/:token", (req, res) => {
+  res.render("reset-password", { token: req.params.token });
+});
+
+//reset password
+router.post("/reset-password/:token", usersController.resetPassword);
+
 //get project status table
 router.get("/project/status", usersController.getProjectStatus);
 

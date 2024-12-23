@@ -13,6 +13,9 @@ const { Op } = require("sequelize"); // Import Sequelize operators
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
+
+const crypto = require("crypto");
+const transporter = require("../../core/nodeMailer/mailer");
 //sesion - organization_id , project_id , user_id , env_id , project_env_id , project_id_edit
 
 class UserController {
@@ -125,6 +128,122 @@ class UserController {
     } catch (error) {
       req.flash("error", "Something went wrong. Please try again.");
       return res.redirect("/");
+    }
+  }
+
+  // render forget password page
+  async forgetPage(req, res) {
+    try {
+      res.render('forgetPassword', {
+        title: "Forget Password",
+      });
+    } catch (error) {
+      console.error("Error rendering forget password page:", error);
+      req.flash("error", "Something went wrong. Please try again.");
+      return res.redirect("/");
+    }
+  }
+
+  // forget pasword
+  async forgotPassword(req, res) {
+    console.log('inside forgotPassword controller');
+
+    const { email } = req.body;
+
+    if (!email) {
+      req.flash("error", "Please provide your email.");
+      return res.redirect("/forgetPage");
+    }
+
+    try {
+      const user = await User.findOne({ where: { email } });
+      if (!user) {
+        req.flash("error", "No account found with this email.");
+        console.log('No account found with this email.');
+        return res.redirect("/forgetPage");
+      }
+
+      // generate reset token
+      const token = crypto.randomBytes(32).toString("hex");
+      const resetToken = crypto.createHash("sha256").update(token).digest("hex");
+      const resetTokenExpires = Date.now() + 3600000; // experation 1 hr
+
+      // update user with token and expiration
+      user.reset_token = resetToken;
+      user.reset_token_expires = resetTokenExpires;
+      await user.save();
+
+      const resetUrl = `${req.protocol}://${req.get("host")}/reset-password/${token}`;
+
+      await transporter.sendMail({
+        to: user.email,
+        subject: "Password Reset Request",
+        html: `
+          <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5; padding: 20px; background-color: #f9f9f9;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+              <h2 style="text-align: center; color: #007BFF;">Password Reset Request</h2>
+              <p style="font-size: 16px;">You requested a password reset. Click the link below to reset your password:</p>
+              <div style="text-align: center;">
+                <a href="${resetUrl}" style="display: inline-block; padding: 12px 25px; margin-top: 15px; background-color: #007BFF; color: #ffffff; text-decoration: none; border-radius: 5px; font-size: 16px;">Reset Password</a>
+              </div>
+              <p style="font-size: 16px; margin-top: 20px;">If you didn't request this, please ignore this email.</p>
+              <p style="font-size: 14px; color: #888888; text-align: center; margin-top: 40px;">If you have any questions, feel free to contact our support team.</p>
+            </div>
+          </div>`
+      });
+
+      req.flash("success", "Password reset link sent to your email.");
+      console.log('Password reset link sent to the email.');
+      return res.redirect("/forgetPage");
+    } catch (error) {
+      console.error(error);
+      req.flash("error", "Something went wrong. Please try again.");
+      return res.redirect("/forgetPage");
+    }
+  }
+
+  //reset password
+  async resetPassword(req, res) {
+    const { token } = req.params;
+    const { password, confirmPassword } = req.body;
+
+    if (!password || !confirmPassword) {
+      req.flash("error", "Please provide all required fields.");
+      return res.redirect(`/reset-password/${token}`);
+    }
+
+    if (password !== confirmPassword) {
+      req.flash("error", "Passwords do not match. Please try again.");
+      return res.redirect(`/reset-password/${token}`);
+    }
+
+    try {
+      const resetToken = crypto.createHash("sha256").update(token).digest("hex");
+      const user = await User.findOne({
+        where: {
+          reset_token: resetToken,
+          reset_token_expires: { [Op.gt]: Date.now() },
+        },
+      });
+
+      if (!user) {
+        req.flash("error", "Invalid or expired token.");
+        return res.redirect("/forgetPage");
+      }
+      else {
+        // update password
+        user.password_hash = await bcrypt.hash(password, 10);
+        user.reset_token = null;
+        user.reset_token_expires = null;
+        await user.save();
+      }
+
+      req.flash("success", "Password updated successfully.");
+      return res.redirect("/");
+    } catch (error) {
+      console.error(error);
+      req.flash("error", "Something went wrong. Please try again.");
+      return res.redirect("/forgetPage");
     }
   }
 
@@ -624,25 +743,19 @@ class UserController {
     }
   }
 
-  //Change password
+  // change password
   async changePassword(req, res) {
     const { oldPassword, oldPasswordHash, newPassword, userId } = req.body;
 
     try {
-      // Check if the old password matches
       const match = await bcrypt.compare(oldPassword, oldPasswordHash);
 
-      // if the old password not mathing
       if (!match) {
         return res.status(400).json({ error: "old password is incorrect" });
       }
 
-      // Only if the old password matches, proceed with updation
-
-      // Hashing the new password
       const newPasswordHash = await bcrypt.hash(newPassword, 10);
 
-      // Update the password_hash in the database using userId
       const updated = await User.update(
         { password_hash: newPasswordHash },
         { where: { user_id: userId } }
