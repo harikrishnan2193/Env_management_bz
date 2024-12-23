@@ -2,57 +2,50 @@
 <html lang="en">
   <head>
     <%- include('partials/head', { title: "Permissions"}) %>
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
   </head>
   <body class="p-4 md:p-0" style="z-index: 100">
     <!--!Modal -->
     <div
       id="edit-modal"
-      class="fixed inset-0 z-50 hidden flex items-center justify-center bg-gray-800 bg-opacity-50"
+      class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50"
     >
-      <div class="bg-white w-96 p-6 rounded-lg shadow-lg">
-        <h2 class="text-lg font-semibold mb-4 text-gray-700">
-          Edit Permission
-        </h2>
+      <div class="bg-medium_grey w-96 p-6 rounded-lg shadow-lg text-secondary">
+        <h2 class="text-lg font-semibold mb-4">Edit Permission</h2>
         <form id="edit-form">
           <div class="mb-4">
-            <label
-              for="modal-envType"
-              class="block text-sm font-medium text-gray-700"
+            <label for="modal-envType" class="block text-sm font-medium"
               >Environment Type</label
             >
             <input
               id="modal-envType"
               name="modal-envType"
               type="text"
-              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
+              class="mt-1 block w-full p-2 border border-dark_grey rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div class="mb-4">
-            <label
-              for="modal-description"
-              class="block text-sm font-medium text-gray-700"
+            <label for="modal-description" class="block text-sm font-medium"
               >Description</label
             >
             <input
               id="modal-description"
               name="modal-description"
               type="text"
-              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
+              class="mt-1 block w-full p-2 border border-dark_grey rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div class="flex justify-end">
             <button
               type="button"
               id="close-modal"
-              class="mr-4 px-4 py-2 bg-gray-500 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              class="bg-dark_grey text-light_grey px-4 py-2 rounded-lg shadow mr-2 hover:bg-darker_grey transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               id="update-permission-btn"
-              class="px-4 py-2 bg-orange-400 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-300"
+              class="bg-primary text-light_grey px-4 py-2 rounded-lg shadow hover:bg-primary_hover transition"
             >
               Update
             </button>
@@ -63,24 +56,24 @@
 
     <!-- Add Permissions -->
     <div
-      class="max-w-4xl mx-auto mt-10 p-5 bg-gray-400 shadow-md text-black border border-gray-300 rounded-lg relative z-1"
+      class="max-w-4xl mx-auto mt-10 p-5 bg-medium_grey shadow-md text-secondary rounded-lg relative z-1"
     >
       <div class="flex justify-between gap-4">
         <div class="flex flex-col gap-2 grow">
           <input
             type="text"
             placeholder="Enter permission type"
-            class="add-permission-input w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-oranage-400 focus:border-transparent"
+            class="add-permission-input w-full px-4 py-2 border border-dark_grey rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           />
           <input
             type="text"
             placeholder="Enter permission description"
-            class="add-description-input w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-oranage-400 focus:border-transparent"
+            class="add-description-input w-full px-4 py-2 border border-dark_grey rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
 
         <button
-          class="add-permission-btn px-6 py-2 bg-orange-400 hover:bg-orange-500 text-white text-sm font-semibold rounded-lg shadow-md focus:outline-none"
+          class="add-permission-btn px-6 py-2 bg-primary hover:bg-primary_hover text-white text-sm font-semibold rounded-lg shadow-md focus:outline-none"
         >
           Add Permission
         </button>
@@ -90,26 +83,26 @@
     <!-- Render Permissions Dynamically -->
     <% if (data && data.length > 0) { %>
     <div
-      class="max-w-4xl mx-auto mt-10 p-2 sm:p-5 bg-gray-400 shadow-md text-black border border-gray-300 rounded-lg relative z-10 capitalize mb-5"
+      class="max-w-4xl mx-auto mt-10 p-2 sm:p-5 bg-medium_grey shadow-md text-secondary rounded-lg relative z-10 capitalize mb-5"
     >
       <h1 class="text-2xl font-bold mb-5 text-center">Permissions</h1>
       <ul class="space-y-4">
         <% data.forEach(permission => { %>
         <div
-          class="flex items-center justify-between p-4 bg-gray-100 rounded-lg shadow-md"
+          class="flex items-center justify-between p-4 bg-light_grey rounded-lg shadow-md"
         >
           <div>
-            <span class="block text-lg font-medium text-gray-800"
+            <span class="block text-lg font-medium"
               ><%= permission.env_type %></span
             >
-            <span class="text-sm text-gray-600 hidden sm:block"
+            <span class="text-sm hidden sm:block"
               ><%= permission.description %></span
             >
           </div>
 
           <div>
             <button
-              class="edit-permission-btn px-4 py-2 bg-orange-400 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-300"
+              class="edit-permission-btn px-4 py-2 bg-primary text-light_grey text-sm font-semibold rounded-lg shadow-md hover:bg-primary_hover"
               data-id="<%= permission.env_id %>"
               data-env-type="<%= permission.env_type %>"
               data-description="<%= permission.description %>"
@@ -117,7 +110,7 @@
               Edit
             </button>
             <button
-              class="delete-permission-btn px-4 py-2 bg-white text-sm font-semibold rounded-lg shadow-md hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-300"
+              class="delete-permission-btn px-4 py-2 bg-darker_grey text-light_grey text-sm font-semibold rounded-lg shadow-md hover:bg-red-500"
               data-id="<%= permission.env_id %>"
             >
               Delete
@@ -136,7 +129,7 @@
       <a
         href="/superadmin/permission"
         id="back-to-projects"
-        class="text-white z-0 hover:text-orange-500"
+        class="text-light_grey z-0 hover:text-primary"
       >
         <i class="fa-solid fa-arrow-left"></i>&nbsp;&nbsp;<span
           >Back to Permissions</span

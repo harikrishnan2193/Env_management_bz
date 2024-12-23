@@ -13,7 +13,7 @@
       >
         <!-- Form Section -->
         <div
-          class="w-11/12 md:w-[500px] bg-white text-black p-6 shadow-lg rounded-lg"
+          class="w-11/12 md:w-[500px] bg-medium_grey text-secondary p-6 shadow-lg rounded-lg"
         >
           <h2 class="text-2xl font-bold text-center mb-6">Add New Project</h2>
 
@@ -24,7 +24,7 @@
             class="space-y-5 add-project-form"
           >
             <div class="relative">
-              <label for="name" class="block text-gray-700 font-semibold mb-2"
+              <label for="name" class="block font-semibold mb-2"
                 >Project Name</label
               >
               <input
@@ -32,28 +32,24 @@
                 id="name"
                 name="name"
                 required
-                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:outline-none focus:ring-orange-500"
+                class="w-full px-4 py-2 border border-dark_grey rounded-md focus:ring-2 focus:outline-none focus:ring-primary"
               />
             </div>
 
             <div class="relative">
-              <label
-                for="description"
-                class="block text-gray-700 font-semibold mb-2"
+              <label for="description" class="block font-semibold mb-2"
                 >Project Description</label
               >
               <textarea
                 id="description"
                 name="description"
                 required
-                class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:outline-none h-32 focus:ring-orange-500"
+                class="w-full px-4 py-3 border border-dark_grey rounded-md focus:ring-2 focus:outline-none h-32 focus:ring-primary"
               ></textarea>
             </div>
 
             <div class="relative">
-              <label
-                for="technology"
-                class="block text-gray-700 font-semibold mb-2"
+              <label for="technology" class="block font-semibold mb-2"
                 >Technology</label
               >
               <input
@@ -61,19 +57,19 @@
                 id="technology"
                 name="technology"
                 required
-                class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:outline-none focus:ring-orange-500"
+                class="w-full px-4 py-3 border border-dark_grey rounded-md focus:ring-2 focus:outline-none focus:ring-primary"
               />
             </div>
 
             <div class="relative">
-              <label for="status" class="block text-gray-700 font-semibold mb-2"
+              <label for="status" class="block font-semibold mb-2"
                 >Status</label
               >
               <select
                 id="status"
                 name="status"
                 required
-                class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:outline-none focus:ring-orange-500"
+                class="w-full px-4 py-3 border border-dark_grey rounded-md shadow-sm focus:ring-2 focus:outline-none focus:ring-primary"
               >
                 <% status.forEach(function(item) { %>
                 <option value="<%= item.dataValues.status_id %>" class="">
@@ -86,7 +82,7 @@
             <div class="flex justify-center">
               <button
                 type="submit"
-                class="bg-orange-400 hover:bg-orange-500 hover:text-gray-800 text-white px-4 py-2 rounded-md w-1/2"
+                class="bg-primary hover:bg-primary_hover text-light_grey px-4 py-2 rounded-md w-1/2"
               >
                 <span>Create Project</span>
               </button>

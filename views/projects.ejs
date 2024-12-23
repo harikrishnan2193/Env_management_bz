@@ -5,13 +5,13 @@
 
     <style>
       #sidebar {
-        background: #0f2027;
-        background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+        background: #2d375b;
+        /* background: linear-gradient(to right, #2c5364, #203a43, #0f2027); */
       }
     </style>
   </head>
 
-  <body class="text-white">
+  <body class="">
     <%- include('partials/loading-indicator') %>
 
     <div class="main-content">
@@ -19,27 +19,27 @@
       <header><%- include('navbar') %></header>
 
       <!-- Main Content -->
-      <main class="w-4/5 mx-auto mt-20">
+      <main class="w-4/5 mx-auto mt-20 text-secondary">
         <section class="justify-center">
           <!-- Search and Add Projects Section -->
           <div
             class="flex mb-12 flex-col md:flex-row items-center gap-10 justify-center"
           >
-            <h1 class="text-3xl font-bold">Projects</h1>
+            <!-- <h1 class="text-3xl font-bold text-light_grey">Projects</h1> -->
             <!-- Search Box -->
             <div class="relative flex items-center gap-4">
               <input
-                class="border border-gray-400 p-2 pl-10 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400 text-black w-full lg:w-[500px]"
+                class="p-2 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-primary w-full lg:w-[500px] bg-light_grey"
                 type="text"
                 placeholder="Search projects"
                 id="search-bar"
               />
-              <span class="absolute left-3 top-[10px] text-gray-500">
+              <span class="absolute left-3 top-[10px]">
                 <i class="fa-solid fa-magnifying-glass"></i>
               </span>
               <button
                 id="search-btn"
-                class="bg-white text-gray-800 px-4 py-2 rounded-md hover:bg-orange-500 hover:text-white min-w-24"
+                class="bg-light_grey px-4 py-2 rounded-md hover:bg-primary hover:text-white min-w-24"
               >
                 Search
               </button>
@@ -47,11 +47,11 @@
 
             <p
               id="openModalBtn"
-              class="bg-white text-gray-800 px-2 py-2 rounded-md hover:bg-orange-500 hover:text-white min-w-36"
+              class="bg-light_grey px-2 py-2 rounded-md hover:bg-primary hover:text-white min-w-36"
             >
               <a href="/project/status" class="flex justify-center gap-2">
-                <span>Add Project</span>
                 <span><i class="fa-solid fa-plus"></i></span>
+                <span>Add Project</span>
               </a>
             </p>
           </div>
@@ -68,13 +68,10 @@
         <!-- Sidebar -->
         <aside
           id="sidebar"
-          class="hidden fixed top-0 right-0 h-full w-10/12 sm:w-6/12 lg:w-4/12 xl:w-3/12 shadow-lg p-6 border-l z-10"
+          class="hidden fixed top-0 right-0 h-full w-10/12 sm:w-6/12 lg:w-4/12 xl:w-3/12 shadow-lg p-6 border-l z-10 text-light_grey"
         >
           <div class="flex justify-end items-center">
-            <button
-              onclick="closeSidebar()"
-              class="text-white hover:text-orange-500"
-            >
+            <button onclick="closeSidebar()" class="hover:text-primary">
               <i class="fas fa-xl fa-times"></i>
             </button>
           </div>
@@ -91,6 +88,7 @@
       const projects = <%- JSON.stringify(projects) %>;
       const error =  <%- JSON.stringify(error) %>;
       const success =  <%- JSON.stringify(success) %>;
+      console.log(projects);
 
       // success and error message using toastr
       toastr.options = {
@@ -130,7 +128,7 @@
               <div class="p-4 space-y-6">
                 <!-- Details Section -->
                 <div>
-                  <h3 class="text-lg text-orange-500 uppercase font-semibold mb-3">Details</h3>
+                  <h3 class="text-lg text-primary uppercase font-semibold mb-3">Details</h3>
                   <p class="mb-2">
                     <span class="font-medium">Status:</span>
                     <span>${
@@ -147,7 +145,7 @@
 
                 <!-- Description Section -->
                 <div style="margin-bottom:4rem">
-                  <h3 class="text-lg text-orange-500 uppercase font-semibold">Description</h3>
+                  <h3 class="text-lg text-primary uppercase font-semibold">Description</h3>
                   <p class="">${
                     project.description || "No description available."
                   }</p>
@@ -156,10 +154,10 @@
 
                 <div class="flex gap-6">
                   <!-- Edit Button -->
-                  <button class="text-white block" id="editBtn">
+                  <button class="text-light_grey block" id="editBtn">
                    <a
                      href="/project/alldetils?project_id=${project.project_id}"
-                     > <span class="flex gap-1 items-center hover:text-gray-400"><i class="fas fa-edit"></i>Edit Project</span></a>
+                     > <span class="flex gap-1 items-center hover:text-medium_grey"><i class="fas fa-edit"></i>Edit Project</span></a>
                   </button>
                   <!-- Delete Button -->
                   <form action="/project/delete" method="POST" class="inline-block delete-form">
@@ -168,7 +166,7 @@
                       name="project_id"
                       value=${project.project_id}  
                      />
-                   <button type="submit" class="text-red-600 hover:text-red-800 flex items-center gap-1"><i class="fas fa-trash"></i><span>Delete Project </span></button>
+                   <button type="submit" class="text-red-500 hover:text-red-700 flex items-center gap-1"><i class="fas fa-trash"></i><span>Delete Project </span></button>
                  </form>
                 </div>
               </div>`;
@@ -189,35 +187,38 @@
           3: "bg-blue-500",
         };
 
-        return `
-          <div class="bg-gray-200 text-black shadow-md border border-gray-300 rounded-lg p-4 relative">
-          <p onclick='openSidebar(${JSON.stringify(project)})'>
-              <i class="fa-solid fa-circle-info cursor-pointer hover:text-orange-500 absolute right-2 top-2"></i>
-            </p>
+        // Project card
+        return `<div class="bg-secondary text-light_grey shadow-lg rounded-xl p-6 transition-transform transform hover:scale-105 relative">
+          <p onclick='openSidebar(${JSON.stringify(
+            project
+          )})' class="absolute right-4 top-4">
+            <i class="fa-solid fa-circle-info cursor-pointer hover:text-primary"></i>
+          </p>
 
-            <div class="flex flex-col gap-3 justify-between h-full">
-              <div class="flex gap-2 items-center flex-wrap ">
-                <p>
-                  <a href="/project/envStatus?project_id=${
-                    project.project_id
-                  }" class="font-semibold cursor-pointer hover:text-orange-500 capitalize"
-                    onclick="clearSessionAndRedirect(event, '${
-                      project.project_id
-                    }')"
-                  >
-                    ${project.project_name}
-                  </a>
-                </p>
-                <span class="p-1 h-1 w-1 text-sm font-semibold text-white rounded ${
-                  statusColors[project.status_id]
-                } text-center"></span>
-              </div>
+          <div class="flex flex-col gap-4 justify-between h-full">
+            <div class="flex items-center gap-3 flex-wrap">
+              <a href="/project/envStatus?project_id=${
+                project.project_id
+              }" class="font-bold text-lg hover:text-primary capitalize"
+                onclick="clearSessionAndRedirect(event, '${
+                  project.project_id
+                }')"
+              >
+                ${project.project_name}
+              </a>
+              <span class="p-[5px] rounded-full ${
+                statusColors[project.status_id]
+              }"></span>
+            </div>
 
-              <p class="text-gray-500 min-h-24">${project.description}</p>
-              <p>${project.technology}</p>
+            <p class="text-sm leading-5 line-clamp-3">${project.description}</p>
+
+            <div class="flex items-base gap-2">
+              <span class="text-sm font-medium text-light_grey">Tech:</span>
+              <p class="text-sm text-medium_grey">${project.technology}</p>
             </div>
           </div>
-        `;
+        </div>`;
       }
 
       // Function to search project
@@ -240,7 +241,7 @@
           projectsContainer.innerHTML = gridHTML;
         } else {
           projectsContainer.innerHTML = `
-            <div class="col-span-full py-8 text-xl text-center">
+            <div class="col-span-full py-8 text-xl text-center text-secondary">
               No projects found.
             </div>
           `;

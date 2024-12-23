@@ -11,7 +11,7 @@
           <a
             href="/projects"
             id="back-to-projects"
-            class="text-white z-0 hover:text-orange-500"
+            class="text-light_grey z-0 hover:text-primary"
           >
             <i class="fa-solid fa-arrow-left"></i>&nbsp;&nbsp;<span
               >Back to Projects</span
@@ -20,99 +20,103 @@
         </div>
 
         <div
-          class="relative shadow-lg rounded-lg p-6 md:p-10 w-full max-w-md flex flex-col items-center gap-6 bg-white h-[800px]"
+          class="relative shadow-lg rounded-lg p-6 md:p-10 w-full max-w-md flex flex-col items-center gap-20 bg-light_grey h-[800px]"
         >
-          <!-- Profile Image -->
-          <div class="w-24 md:w-28 lg:w-36">
-            <img
-              src="/images/profile.svg"
-              alt="Profile Logo"
-              class="rounded-full shadow-md"
-            />
+          <!--  -->
+          <div class="flex flex-col items-center justify-center">
+            <!-- Profile Image -->
+            <div class="w-24 md:w-28 lg:w-36">
+              <img
+                src="/images/profile.svg"
+                alt="Profile Logo"
+                class="rounded-full shadow-md"
+              />
+            </div>
+
+            <!-- User Details -->
+            <div class="w-full text-center">
+              <div class="mt-4">
+                <p class="text-secondary text-sm md:text-base">Username</p>
+                <p
+                  id="username"
+                  class="font-semibold text-darker_grey text-lg md:text-xl capitalize"
+                >
+                  Loading...
+                </p>
+              </div>
+              <div class="mt-4">
+                <p class="text-secondary text-sm md:text-base">Email</p>
+                <p
+                  id="email"
+                  class="font-semibold text-darker_grey text-lg md:text-xl"
+                >
+                  Loading...
+                </p>
+              </div>
+            </div>
           </div>
 
-          <!-- User Details -->
-          <div class="w-full text-center">
-            <div class="mt-4">
-              <p class="text-gray-600 text-sm md:text-base">Username</p>
-              <p
-                id="username"
-                class="font-semibold text-gray-800 text-lg md:text-xl capitalize"
-              >
-                Loading...
-              </p>
-            </div>
-            <div class="mt-4">
-              <p class="text-gray-600 text-sm md:text-base">Email</p>
-              <p
-                id="email"
-                class="font-semibold text-gray-800 text-lg md:text-xl"
-              >
-                Loading...
-              </p>
-            </div>
-          </div>
+          <!-- Reset Password -->
+          <div class="w-full">
+            <h1 class="text-2xl font-semibold text-secondary text-center mb-4">
+              Reset Password
+            </h1>
 
-          <!-- Change Password -->
-          <h1 class="text-2xl font-semibold text-gray-800 text-center">
-            Change Password
-          </h1>
-
-          <!-- Change Password Form -->
-          <form onsubmit="handleChangePassword(event)" class="w-full">
-            <!-- Previous Password -->
-            <div class="mb-4">
-              <label
-                for="old-password-input"
-                class="block text-gray-600 font-medium mb-1"
-                >Previous Password</label
-              >
-              <input
-                id="old-password-input"
-                type="password"
-                placeholder="Enter your previous password"
-                class="w-full border border-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring focus:ring-orange-400"
-              />
-            </div>
-
-            <!-- New Password -->
-            <div class="mb-4">
-              <label
-                for="new-password-input"
-                class="block text-gray-600 font-medium mb-1"
-                >Enter New Password</label
-              >
-              <input
-                id="new-password-input"
-                type="password"
-                placeholder="Enter your new password"
-                class="w-full border border-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring focus:ring-orange-400"
-              />
-            </div>
-
-            <!-- Confirm New Password -->
-            <div class="mb-4">
-              <label
-                for="confirm-new-password-input"
-                class="block text-gray-600 font-medium mb-1"
-                >Confirm New Password</label
-              >
-              <input
-                id="confirm-new-password-input"
-                type="password"
-                placeholder="Confirm your new password"
-                class="w-full border border-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring focus:ring-orange-400"
-              />
-            </div>
-
-            <!-- Submit Button -->
-            <button
-              type="submit"
-              class="w-full bg-orange-400 hover:bg-orange-500 text-white font-medium py-2 px-5 rounded-md mt-4 focus:outline-none focus:ring focus:ring-orange-300"
+            <!-- Change Password Form -->
+            <form
+              onsubmit="handleChangePassword(event)"
+              class="w-full text-secondary"
             >
-              Change Password
-            </button>
-          </form>
+              <!-- Previous Password -->
+              <div class="mb-4">
+                <label for="old-password-input" class="block font-medium mb-1"
+                  >Previous Password</label
+                >
+                <input
+                  id="old-password-input"
+                  type="password"
+                  placeholder="Enter your previous password"
+                  class="w-full border border-dark_grey rounded-md px-4 py-2 focus:outline-none focus:ring focus:ring-primary"
+                />
+              </div>
+
+              <!-- New Password -->
+              <div class="mb-4">
+                <label for="new-password-input" class="block font-medium mb-1"
+                  >Enter New Password</label
+                >
+                <input
+                  id="new-password-input"
+                  type="password"
+                  placeholder="Enter your new password"
+                  class="w-full border border-dark_grey rounded-md px-4 py-2 focus:outline-none focus:ring focus:ring-primary"
+                />
+              </div>
+
+              <!-- Confirm New Password -->
+              <div class="mb-4">
+                <label
+                  for="confirm-new-password-input"
+                  class="block font-medium mb-1"
+                  >Confirm New Password</label
+                >
+                <input
+                  id="confirm-new-password-input"
+                  type="password"
+                  placeholder="Confirm your new password"
+                  class="w-full border border-dark_grey rounded-md px-4 py-2 focus:outline-none focus:ring focus:ring-primary"
+                />
+              </div>
+
+              <!-- Submit Button -->
+              <button
+                type="submit"
+                class="w-full bg-primary text-light_grey hover:bg-primary_hover text-lig font-medium py-2 px-5 rounded-md mt-4"
+              >
+                Change Password
+              </button>
+            </form>
+          </div>
         </div>
       </main>
     </div>

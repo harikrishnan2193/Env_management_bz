@@ -88,7 +88,7 @@
           <!-- back to project -->
           <a
             href="/projects"
-            class="text-white absolute top-3 z-0 hover:text-orange-500"
+            class="text-light_grey absolute top-3 z-0 hover:text-primary"
           >
             <i class="fa-solid fa-arrow-left"></i>&nbsp;&nbsp;<span
               >Back to project</span
@@ -99,11 +99,12 @@
             id="projectEnvForm"
             action="/project/env_type/envs"
             method="GET"
+            class="text-secondary"
           >
             <select
               id="options"
               name="env_id"
-              class="w-72 px-2 py-1 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 capitalize"
+              class="w-72 px-2 py-1 bg-light_grey rounded-md focus:outline-none focus:ring-2 focus:ring-primary capitalize"
               onchange="this.form.submit()"
             >
               <option value="" disabled selected>Select Env</option>
@@ -117,10 +118,10 @@
 
           <!-- Container -->
           <div
-            class="xs:w-11/12 sm:w-10/12 lg:w-7/12 bg-white text-black p-2 sm:p-6 shadow-lg rounded-lg relative"
+            class="xs:w-11/12 sm:w-10/12 lg:w-7/12 bg-medium_grey p-2 sm:p-6 shadow-lg rounded-lg relative text-secondary"
           >
             <h2
-              class="text-xl md:text-2xl font-bold mb-2 sm:mb-4 text-center text-gray-900"
+              class="text-xl md:text-2xl font-bold mb-2 sm:mb-4 text-center"
             >
               Env Types
             </h2>
@@ -140,14 +141,14 @@
                     }
                     const readonlyAttribute = (typeof canEdit !== 'undefined' && canEdit) ? '' : 'readonly';
                   %>
-                  <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[550px] relative">
+                  <div class="bg-medium_grey p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[650px] relative">
                     <pre 
-                      class="hljs env-preview w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 overflow-auto text-gray-700"
+                      class="hljs env-preview w-full h-full bg-secondary rounded-lg p-4 overflow-auto"
                     ></pre>
                     <textarea 
                       spellcheck="false"
                       name="env_content" 
-                      class="env-textarea w-full h-full bg-transparent border-none p-4 resize-none text-transparent caret-gray-700 focus:outline-none"
+                      class="env-textarea w-full h-full bg-transparent border-none p-4 resize-none text-transparent caret-white focus:outline-none"
                       <%= readonlyAttribute %>
                       placeholder="<%= placeholderText %>"><%- (typeof canView !== 'undefined' && canView) || (typeof canEdit !== 'undefined' && canEdit) ? (env.env_content.trim() || '') : '' %></textarea>
                   </div>
@@ -164,14 +165,14 @@
                   }
                   const readonlyAttribute = (typeof canEdit !== 'undefined' && canEdit) ? '' : 'readonly';
                 %>
-                <div class="bg-gray-200 p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[550px] relative">
+                <div class="bg-medium_grey p-4 rounded-lg mb-5 h-60 shadow-inner min-h-[650px] relative">
                   <pre 
-                    class="hljs env-preview w-full h-full bg-gray-200 border border-gray-300 rounded-lg p-4 overflow-auto text-gray-700"
+                    class="hljs env-preview w-full h-full bg-secondary rounded-lg p-4 overflow-auto"
                   ></pre>
                   <textarea 
                     spellcheck="false"
                     name="env_content" 
-                    class="env-textarea w-full h-full bg-transparent border-none p-4 resize-none text-transparent caret-gray-700 focus:outline-none"
+                    class="env-textarea w-full h-full bg-transparent border-none p-4 resize-none text-transparent caret-white focus:outline-none"
                     <%= readonlyAttribute %>
                     placeholder="<%= placeholderText %>"></textarea>
                 </div>
@@ -181,7 +182,7 @@
               <div class="text-center mb-2">
                 <button 
                   type="submit" 
-                  class="w-full bg-orange-400 text-white font-bold rounded-md py-2 hover:bg-orange-500" 
+                  class="w-full bg-primary text-light_grey font-bold rounded-md py-2 hover:bg-primary_hover" 
                   <%= (typeof canEdit !== 'undefined' && !canEdit) ? 'disabled' : '' %>>
                   Save Env
                 </button>
