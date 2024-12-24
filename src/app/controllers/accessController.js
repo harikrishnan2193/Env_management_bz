@@ -59,6 +59,7 @@ class AccessController {
         selectedProjectId,
       });
     } catch (error) {
+      logError(error.message || "Error fetching users and roles", req.url);
       console.error("Error fetching users and roles:", error.message);
       res.status(500).send("Server Error");
     }
@@ -83,6 +84,11 @@ class AccessController {
       const user = await User.findOne({ where: { user_id: user_id } });
 
       if (!user) {
+        logError(
+          error.message || "Error updating user roles : User not found",
+          req.url
+        );
+
         return res
           .status(404)
           .json({ success: false, message: "User not found" });
@@ -196,6 +202,7 @@ class AccessController {
 
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
+          logError(error.message || "Error sending email", req.url);
           console.error("Error sending email:", error);
         } else {
           console.log("Email sent:", info.response);
@@ -204,6 +211,7 @@ class AccessController {
 
       res.status(200).json({ success: true, message });
     } catch (error) {
+      logError(error.message || "Error processing User_Roles", req.url);
       console.error("Error processing User_Roles:", error);
       res
         .status(500)
@@ -230,6 +238,7 @@ class AccessController {
       });
 
       if (!userRole) {
+        logError("Error getting User Roles : User role not found", req.url);
         return res.status(404).json({ error: "User role not found" });
       }
 
@@ -238,11 +247,13 @@ class AccessController {
       });
 
       if (!roleDetails) {
+        logError("Error getting User Roles : Role details not found", req.url);
         return res.status(404).json({ error: "Role details not found" });
       }
 
       res.json({ role_scope: roleDetails.role_scope });
     } catch (error) {
+      logError(error.message || "Error fetching user role scope", req.url);
       console.error("Error fetching user role scope:", error.message);
       res.status(500).json({ error: "Server error" });
     }
@@ -263,6 +274,7 @@ class AccessController {
 
       res.json(roles);
     } catch (error) {
+      logError(error.message || "Error fetching roles", req.url);
       console.error("Error fetching roles:", error.message);
       res.status(500).send("Server Error");
     }
@@ -344,6 +356,10 @@ class AccessController {
         });
 
         if (!environment) {
+          logError(
+            "Error updating permission : Environment not found ",
+            req.url
+          );
           return res
             .status(404)
             .json({ success: false, error: "Environment not found" });
@@ -367,6 +383,10 @@ class AccessController {
         });
 
         if (!environment) {
+          logError(
+            "Error updating permission : Environment not found ",
+            req.url
+          );
           return res
             .status(404)
             .json({ success: false, error: "Environment not found" });
@@ -378,6 +398,7 @@ class AccessController {
         });
       }
     } catch (error) {
+      logError(error.message || "Error updating permission", req.url);
       console.error("Error updating permission:", error);
       res
         .status(500)
@@ -435,6 +456,7 @@ class AccessController {
         });
       }
     } catch (error) {
+      logError(error.message || "Error fetching selected permissions", req.url);
       console.error("Error fetching selected permissions:", error.message);
       res.status(500).json({
         success: false,
@@ -465,7 +487,7 @@ class AccessController {
         .json({ message: "Role added successfully!", newRole });
     } catch (error) {
       console.error("Error adding role:", error.message);
-
+      logError(error.message || "Error adding role", req.url);
       return res
         .status(500)
         .json({ message: "Error adding role. Please try again." });
@@ -515,6 +537,7 @@ class AccessController {
         data: responseData,
       });
     } catch (error) {
+      logError(error.message || "Error fetching user details", req.url);
       console.error("Error fetching user details:", error);
       res.status(500).json({
         success: false,
@@ -543,9 +566,11 @@ class AccessController {
           .status(200)
           .json({ success: true, message: "User deleted successfully" });
       } else {
+        logError("Error deleting user : User not found", req.url);
         res.status(404).json({ success: false, message: "User not found" });
       }
     } catch (error) {
+      logError(error.message || "Error deleting user", req.url);
       console.error("Error deleting user:", error);
       res
         .status(500)
@@ -593,6 +618,7 @@ class AccessController {
 
       res.json({ message: "Admin added successfully!" });
     } catch (error) {
+      logError(error.message || "Error adding new admin", req.url);
       console.error("Error adding new admin:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
@@ -605,6 +631,10 @@ class AccessController {
 
       res.render("permissionManagement", { data: result });
     } catch (error) {
+      logError(
+        error.message || "An error occurred while fetching permissions",
+        req.url
+      );
       console.log(error);
       res.status(500).send("An error occurred while fetching permissions.");
     }
@@ -623,6 +653,7 @@ class AccessController {
         .status(201)
         .json({ message: "permission added successfully", newPermission });
     } catch (error) {
+      logError(error.message || "Error adding permission", req.url);
       console.error("error adding permission:", error);
       res.status(500).json({ error: "failed to add permission" });
     }
@@ -652,9 +683,11 @@ class AccessController {
       if (deletedCount > 0) {
         res.status(200).json({ message: "Permission deleted successfully" });
       } else {
+        logError("Error Deleting permission : Permission not found", req.url);
         res.status(404).json({ error: "Permission not found" });
       }
     } catch (error) {
+      logError(error.message || "Error Deleting permission", req.url);
       console.error("Error deleting permission:", error);
       res.status(500).json({ error: "Failed to delete permission" });
     }
@@ -676,6 +709,7 @@ class AccessController {
         res.status(404).json({ error: "Permission not found" });
       }
     } catch (error) {
+      logError(error.message || "Error updating permission", req.url);
       console.error("error updating permission:", error);
       res.status(500).json({ error: "Failed to update permission" });
     }

@@ -37,7 +37,7 @@ class UserController {
       });
     } catch (error) {
       console.error("Error fetching organization details:", error.message);
-      logError(error.message, req.url);
+      logError(error.message || "Error fetching organization details", req.url);
       res.status(500).send("Server Error");
     }
   }
@@ -97,8 +97,8 @@ class UserController {
       req.session.user_id = user_id; // Store user_id in session
 
       if (!user) {
-        req.flash("error", "Invalid email or password.");
-        logError("Invalid email or password.", req.url);
+        req.flash("error", "User not found.");
+        logError("Error logging in : User not found", req.url);
         return res.redirect("/");
       } else {
         const passwordMatch = await bcrypt.compare(
@@ -113,9 +113,9 @@ class UserController {
         } else {
           req.session.regenerate((err) => {
             if (err) {
+              logError(err.message || "Error regenerating session:", req.url);
               console.error("Error regenerating session:", err);
               req.flash("error", "Something went wrong. Please try again.");
-              logError(err.message, req.url);
               return res.redirect("/");
             }
 
@@ -146,6 +146,10 @@ class UserController {
       });
     } catch (error) {
       console.error("Error rendering forget password page:", error);
+      logError(
+        error.message || "Error rendering forget password page:",
+        req.url
+      );
       req.flash("error", "Something went wrong. Please try again.");
       return res.redirect("/");
     }
@@ -166,6 +170,7 @@ class UserController {
       const user = await User.findOne({ where: { email } });
       if (!user) {
         req.flash("error", "No account found with this email.");
+        logError("Account not found with this email", req.url);
         console.log("No account found with this email.");
         return res.redirect("/forgetPage");
       }
@@ -209,6 +214,7 @@ class UserController {
       return res.redirect("/forgetPage");
     } catch (error) {
       console.error(error);
+      logError(error.message, req.url);
       req.flash("error", "Something went wrong. Please try again.");
       return res.redirect("/forgetPage");
     }
@@ -242,7 +248,8 @@ class UserController {
       });
 
       if (!user) {
-        req.flash("error", "Invalid or expired token.");
+        req.flash("error", "Invalid User or expired token.");
+        logError("Invalid User or expired token.", req.url);
         return res.redirect("/forgetPage");
       } else {
         // update password
@@ -256,6 +263,7 @@ class UserController {
       return res.redirect("/");
     } catch (error) {
       console.error(error);
+      logError(error.message, req.url);
       req.flash("error", "Something went wrong. Please try again.");
       return res.redirect("/forgetPage");
     }
@@ -271,6 +279,7 @@ class UserController {
       res.render("addProjects", { status });
       console.log(status);
     } catch (error) {
+      logError(error.message || "Error fetching projects", req.url);
       console.error("Error fetching projects:", error.message);
       res.status(500).send("Server Error");
     }
@@ -348,6 +357,7 @@ class UserController {
 
       res.redirect("/projects");
     } catch (error) {
+      logError(error.message || "Error creating project", req.url);
       console.error("Error creating project:", error);
       res.status(500).send("Internal Server Error");
     }
@@ -395,6 +405,7 @@ class UserController {
 
       res.render("projects", { projects });
     } catch (error) {
+      logError(error.message || "Error fetching projects", req.url);
       console.error("Error fetching projects:", error.message);
       res.status(500).send("Server Error");
     }
@@ -429,6 +440,7 @@ class UserController {
       res.render("editProject", { projectDetils, status, role_id });
       console.log(projectDetils);
     } catch (error) {
+      logError(error.message || "Error fetching project details", req.url);
       console.error("Error fetching project details:", error.message);
       res.status(500).send("Server Error");
     }
@@ -470,6 +482,10 @@ class UserController {
         allEnvs: [], //allEnvs: [] is used in getAllEnvs controller
       });
     } catch (error) {
+      logError(
+        error.message || "Error fetching environment status or role details",
+        req.url
+      );
       console.error(
         "Error fetching environment status or role details:",
         error.message
@@ -506,6 +522,7 @@ class UserController {
       });
 
       if (!role) {
+        logError("Error Deleting Project: Authorization error", req.url);
         req.flash("error", "You are not authorized to delete this project.");
         return res.redirect("/projects");
       }
@@ -524,6 +541,7 @@ class UserController {
       req.flash("success", "Project deleted successfully.");
       res.redirect("/projects");
     } catch (error) {
+      logError(error.message || "Error deleting project", req.url);
       console.error("Error deleting project:", error.message);
       res.status(500).send("Server Error");
     }
@@ -558,6 +576,7 @@ class UserController {
       });
       if (!roleDetails) {
         console.log("Role details not found.");
+        logError("Role details Not Found", req.url);
         return res.status(403).send("Role details not found.");
       }
 
@@ -593,6 +612,7 @@ class UserController {
         roleDetails,
       });
     } catch (error) {
+      logError(error.message || "Error fetching all environments", req.url);
       console.error("Error fetching all environments:", error.message);
       res.status(500).send("Server Error");
     }
@@ -609,7 +629,7 @@ class UserController {
       const user_id = req.session.user_id;
 
       if (!project_id || !env_id) {
-        req.flash("error", "Enveronment is missing. Please select an Env type");
+        req.flash("error", "Env is missing. Please select an Env type");
         return res.redirect(`/project/envStatus?project_id=${project_id}`);
       }
 
@@ -651,6 +671,10 @@ class UserController {
 
       res.redirect("/project/env_type/envs?env_id=" + env_id);
     } catch (error) {
+      logError(
+        error.message || "Error updating or creating environment",
+        req.url
+      );
       console.error("Error updating or creating environment:", error.message);
       res.status(500).send("Server Error");
     }
@@ -683,6 +707,7 @@ class UserController {
       console.log("Project details updated successfully");
       res.redirect("/projects");
     } catch (error) {
+      logError(error.message || "Error updating project details", req.url);
       console.error("Error updating project details:", error.message);
       res.status(500).send("Server Error");
     }
@@ -694,6 +719,7 @@ class UserController {
 
     req.session.destroy((err) => {
       if (err) {
+        logError("Logout Failure", req.url);
         console.error("Error destroying session:", err);
         return res.redirect(
           "/projects?message=Unable to logout. Please try again."
@@ -717,7 +743,8 @@ class UserController {
 
       res.render("profile");
     } catch (error) {
-      console.error("error rendering profile page:", error);
+      logError(error.message || "Error rendering profile page", req.url);
+      console.error("Error rendering profile page:", error);
       res.status(500).send("Internal Server Error");
     }
   }
@@ -728,12 +755,14 @@ class UserController {
       const user_id = req.session.user_id;
 
       if (!user_id) {
+        logError("Error fetching profile data : Unauthorized", req.url);
         return res.status(401).json({ error: "Unauthorized" });
       }
 
       const user = await User.findOne({ where: { user_id } });
 
       if (!user) {
+        logError("Error fetching profile data : User not found", req.url);
         return res.status(404).json({ error: "User not found" });
       }
 
@@ -744,6 +773,7 @@ class UserController {
         password: user.password_hash,
       });
     } catch (error) {
+      logError(error.message || "Error fetching profile data", req.url);
       console.error("Error fetching profile data:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
@@ -757,6 +787,10 @@ class UserController {
       const match = await bcrypt.compare(oldPassword, oldPasswordHash);
 
       if (!match) {
+        logError(
+          "Error updating password : Old and new password does not matching",
+          req.url
+        );
         return res.status(400).json({ error: "old password is incorrect" });
       }
 
@@ -770,9 +804,11 @@ class UserController {
       if (updated[0] > 0) {
         res.status(200).json({ message: "Password updated successfully!" });
       } else {
+        logError("Error updating password : User not found", req.url);
         res.status(404).json({ error: "User not found" });
       }
     } catch (error) {
+      logError(error.message || "Error updating password", req.url);
       console.error("Error updating password:", error);
       res.status(500).json({ error: "Error updating passowrd" });
     }
