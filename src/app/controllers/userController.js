@@ -16,6 +16,7 @@ const { v4: uuidv4 } = require("uuid");
 
 const crypto = require("crypto");
 const transporter = require("../../core/nodeMailer/mailer");
+const { logError } = require("../../../errorLogger");
 //sesion - organization_id , project_id , user_id , env_id , project_env_id , project_id_edit
 
 class UserController {
@@ -36,6 +37,7 @@ class UserController {
       });
     } catch (error) {
       console.error("Error fetching organization details:", error.message);
+      logError(error.message, req.url);
       res.status(500).send("Server Error");
     }
   }
@@ -71,6 +73,7 @@ class UserController {
       return res.redirect("/");
     } catch (error) {
       console.error("Error during user registration:", error);
+      logError(error.message, req.url);
       req.flash("error", "Something went wrong. Please try again.");
       return res.redirect("/register");
     }
@@ -95,6 +98,7 @@ class UserController {
 
       if (!user) {
         req.flash("error", "Invalid email or password.");
+        logError("Invalid email or password.", req.url);
         return res.redirect("/");
       } else {
         const passwordMatch = await bcrypt.compare(
@@ -104,12 +108,14 @@ class UserController {
 
         if (!passwordMatch) {
           req.flash("error", "Invalid email or password.");
+          logError("Invalid email or password (password mismatch).", req.url);
           return res.redirect("/");
         } else {
           req.session.regenerate((err) => {
             if (err) {
               console.error("Error regenerating session:", err);
               req.flash("error", "Something went wrong. Please try again.");
+              logError(err.message, req.url);
               return res.redirect("/");
             }
 
@@ -127,6 +133,7 @@ class UserController {
       }
     } catch (error) {
       req.flash("error", "Something went wrong. Please try again.");
+      logError(error.message, req.url);
       return res.redirect("/");
     }
   }
@@ -134,7 +141,7 @@ class UserController {
   // render forget password page
   async forgetPage(req, res) {
     try {
-      res.render('forgetPassword', {
+      res.render("forgetPassword", {
         title: "Forget Password",
       });
     } catch (error) {
@@ -146,7 +153,7 @@ class UserController {
 
   // forget pasword
   async forgotPassword(req, res) {
-    console.log('inside forgotPassword controller');
+    console.log("inside forgotPassword controller");
 
     const { email } = req.body;
 
@@ -159,13 +166,16 @@ class UserController {
       const user = await User.findOne({ where: { email } });
       if (!user) {
         req.flash("error", "No account found with this email.");
-        console.log('No account found with this email.');
+        console.log("No account found with this email.");
         return res.redirect("/forgetPage");
       }
 
       // generate reset token
       const token = crypto.randomBytes(32).toString("hex");
-      const resetToken = crypto.createHash("sha256").update(token).digest("hex");
+      const resetToken = crypto
+        .createHash("sha256")
+        .update(token)
+        .digest("hex");
       const resetTokenExpires = Date.now() + 3600000; // experation 1 hr
 
       // update user with token and expiration
@@ -173,7 +183,9 @@ class UserController {
       user.reset_token_expires = resetTokenExpires;
       await user.save();
 
-      const resetUrl = `${req.protocol}://${req.get("host")}/reset-password/${token}`;
+      const resetUrl = `${req.protocol}://${req.get(
+        "host"
+      )}/reset-password/${token}`;
 
       await transporter.sendMail({
         to: user.email,
@@ -189,11 +201,11 @@ class UserController {
               <p style="font-size: 16px; margin-top: 20px;">If you didn't request this, please ignore this email.</p>
               <p style="font-size: 14px; color: #888888; text-align: center; margin-top: 40px;">If you have any questions, feel free to contact our support team.</p>
             </div>
-          </div>`
+          </div>`,
       });
 
       req.flash("success", "Password reset link sent to your email.");
-      console.log('Password reset link sent to the email.');
+      console.log("Password reset link sent to the email.");
       return res.redirect("/forgetPage");
     } catch (error) {
       console.error(error);
@@ -218,7 +230,10 @@ class UserController {
     }
 
     try {
-      const resetToken = crypto.createHash("sha256").update(token).digest("hex");
+      const resetToken = crypto
+        .createHash("sha256")
+        .update(token)
+        .digest("hex");
       const user = await User.findOne({
         where: {
           reset_token: resetToken,
@@ -229,8 +244,7 @@ class UserController {
       if (!user) {
         req.flash("error", "Invalid or expired token.");
         return res.redirect("/forgetPage");
-      }
-      else {
+      } else {
         // update password
         user.password_hash = await bcrypt.hash(password, 10);
         user.reset_token = null;

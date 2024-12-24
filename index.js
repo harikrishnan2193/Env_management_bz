@@ -3,12 +3,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
+const { logError } = require("./errorLogger");
 
+// Database connection
 require("./src/core/db/connection");
-
-//Routs
-const userRouts = require("./src/routes/userRouter");
-const accessRouts = require("./src/routes/accessRouter");
 
 const envServer = express();
 
@@ -26,7 +24,8 @@ envServer.use(
     },
   })
 );
-// Middlewar - flash
+
+// Flash middleware
 envServer.use(flash());
 envServer.use((req, res, next) => {
   res.locals.success = req.flash("success");
@@ -36,13 +35,14 @@ envServer.use((req, res, next) => {
 
 // Middleware to parse form data
 envServer.use(bodyParser.urlencoded({ extended: true }));
-// middleware to JSON body parsing
 envServer.use(express.json());
 
-//use Router
-// envServer.use(authRouts)
-envServer.use(userRouts);
-envServer.use(accessRouts);
+// Routes
+const userRoutes = require("./src/routes/userRouter");
+const accessRoutes = require("./src/routes/accessRouter");
+
+envServer.use(userRoutes);
+envServer.use(accessRoutes);
 
 const PORT = process.env.PORT || 4000;
 
@@ -50,12 +50,21 @@ envServer.listen(PORT, () => {
   console.log(`Server running on port number: ${PORT}`);
 });
 
+// Home route
 envServer.get("/", (req, res) => {
-  // res.send(`<h1>Server running successfully and ready to accept client request </h1>`)
   res.render("auth", { isRegisterPath: false });
 });
 
-// 404 handler
+// 404 error handler
 envServer.use((req, res, next) => {
+  const error = "Page not found";
+  logError(error, req.url);
   res.status(404).render("404");
+});
+
+// General error handler
+envServer.use((err, req, res, next) => {
+  console.error(err.stack);
+  logError(err.message, req.url);
+  res.status(500).send("Something went wrong!");
 });

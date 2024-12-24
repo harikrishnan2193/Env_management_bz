@@ -1,0 +1,27 @@
+2024-12-24T02:34:17.911Z - Error: Invalid email or password.
+Route: /login
+
+2024-12-24T02:36:17.381Z - Error: Cannot read properties of null (reading 'user_id')
+Route: /login
+
+2024-12-24T02:54:56.999Z - Error: Cannot read properties of null (reading 'user_id')
+Route: /login
+
+2024-12-24T02:55:21.227Z - Error: Cannot read properties of null (reading 'user_id')
+Route: /login
+
+2024-12-24T02:55:37.727Z - Error: Invalid email or password (password mismatch).
+Route: /login
+
+2024-12-24T02:55:50.204Z - Error: Invalid email or password (password mismatch).
+Route: /login
+
+2024-12-24T03:00:52.818Z - Error: Page not found
+Route: /unknown
+
+2024-12-24T03:01:20.090Z - Error: Page not found
+Route: /unknown-route
+
+2024-12-24T03:05:30.731Z - Error: Invalid email or password (password mismatch).
+Route: /login
+

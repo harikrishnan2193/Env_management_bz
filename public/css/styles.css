@@ -6,8 +6,11 @@ body {
   position: relative;
   min-height: 100vh;
   overflow-y: auto;
-  background-color: "#09071F";
+  background-color: #09071f; /* Remove quotes */
   background-image: url("/images/09.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top;
 }
 
 .main-content {
