@@ -89,4 +89,7 @@ router.get("/api/profile", usersController.getProfileData);
 //change password
 router.put("/api/change-password", usersController.changePassword);
 
+// get history of a project
+router.get('/project/history', usersController.getHistoryByProject);
+
 module.exports = router;

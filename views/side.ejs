@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('partials/head', { title: "Permissions"}) %>
+
+<head>
+  <%- include('partials/head', { title: "Permissions" }) %>
     <style>
       @media (max-width: 1535px) {
         #sidebar {
@@ -22,441 +23,478 @@
         }
       }
     </style>
-  </head>
 
-  <body>
-    <!-- Burger Menu Button -->
-    <% if (typeof roleDetails !=='undefined' &&
-    (roleDetails.role_scope==='organization' ||
-    (roleDetails.role_name==='project_admin' &&
-    roleDetails.role_scope==='project' ))) { %>
+</head>
 
-    <div class="fixed top-4 left-4 z-50">
-      <button
-        id="toggleMenu"
-        class="text-light_grey p-2 rounded focus:outline-none"
-      >
-        <span id="burgerIcon" class="block"
-          ><i class="fa fa-bars fa-lg"></i
-        ></span>
-        <span id="closeIcon" class="hidden"
-          ><i class="fa-solid fa-x fa-lg"></i
-        ></span>
-      </button>
-    </div>
-    <% } %>
+<body>
+  <!-- Burger Menu Button -->
 
-    <!-- Overlay -->
-    <div
-      id="overlay"
-      class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden"
-    ></div>
 
-    <!-- Sidebar -->
-    <div
-      id="sidebar"
-      class="fixed top-0 left-0 h-full text-light_grey transform -translate-x-full transition-transform duration-300 z-20 2xl:bg-transparent w-80"
-    >
-      <!-- Users Content -->
+  <div class="fixed top-4 left-4 z-50">
+    <button id="toggleMenu" class="text-light_grey p-2 rounded focus:outline-none">
+      <span id="burgerIcon" class="block"><i class="fa fa-bars fa-lg"></i></span>
+      <span id="closeIcon" class="hidden"><i class="fa-solid fa-x fa-lg"></i></span>
+    </button>
+  </div>
+
+  <!-- Overlay -->
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden"></div>
+
+  <!-- Sidebar -->
+  <div id="sidebar"
+    class="fixed top-0 left-0 h-full text-light_grey transform -translate-x-full transition-transform duration-300 z-20 2xl:bg-transparent w-80">
+
+    <!-- Users Content -->
+    <% if (typeof roleDetails !=='undefined' && (roleDetails.role_scope==='organization' ||
+      (roleDetails.role_name==='project_admin' && roleDetails.role_scope==='project' ))) { %>
       <div class="p-7">
         <div class="border rounded-lg shadow w-full mx-auto mt-20">
-          <h3
-            class="w-full px-4 py-2 text-left text-lg font-medium flex justify-between"
-          >
+          <h3 class="w-full px-4 py-2 text-left text-lg font-medium flex justify-between">
             Users
           </h3>
 
-          <div
-            id="accordionContent"
+          <div id="accordionContent"
             class="hidden border-t overflow-hidden transition-[max-height] duration-500 ease-in-out"
-            style="max-height: 0"
-          >
+            style="max-height: 0">
             <ul id="userList" class="px-4 py-2">
               <!-- List items -->
             </ul>
           </div>
 
-          <% if (typeof roleDetails !=='undefined' &&
-          ((roleDetails.role_scope==='organization' ) ||
-          (roleDetails.role_name==='project_admin' &&
-          roleDetails.role_scope==='project' ))) { %>
-          <div class="text-center mt-10 mb-5">
-            <p class="text-center text-white mt-4">
-              Add new users ?
-              <a
-                href="/getAllUsers_AllRoles"
-                class="text-primary hover:underline"
-                onclick="openModal(event)"
-                >Click here</a
-              >
-            </p>
-          </div>
+          <% if (typeof roleDetails !=='undefined' && ((roleDetails.role_scope==='organization' ) ||
+            (roleDetails.role_name==='project_admin' && roleDetails.role_scope==='project' ))) { %>
+            <div class="text-center mt-10 mb-5">
+              <p class="text-center text-white mt-4">
+                Add new users ?
+                <a href="/getAllUsers_AllRoles" class="text-primary hover:underline" onclick="openModal(event)">Click
+                  here</a>
+              </p>
+            </div>
+            <% } %>
 
-          <% } %>
         </div>
       </div>
+      <% } %>
+
+        <!-- Updation detils -->
+        <div class="px-6 mt-20">
+          <h2>Future updations:</h2>
+          <div id="updates-container">
+            <!-- Updates will be loaded here -->
+          </div>
+          <button id="load-more" class="btn btn-primary mt-4" data-page="1">
+            Read More
+          </button>
+        </div>
+
+  </div>
+
+  <!-- modal -->
+  <div class="fixed inset-0 z-50 items-center justify-center bg-opacity-50 hidden bg-black modal-wrapper"
+    style="margin: 0">
+    <div class="bg-medium_grey rounded-lg shadow-lg max-w-md text-secondary w-full p-6 modal-content text-left">
+      <form onsubmit="submitModal(event)">
+        <!-- Modal Header -->
+
+        <h2 class="text-lg font-semibold mb-4">Add New User</h2>
+
+        <!-- Username Dropdown -->
+
+        <div class="mb-4">
+          <label class="block">Username</label>
+          <select required id="username"
+            class="w-full rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-primary">
+            <option disabled selected>Loading...</option>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label class="block">Role</label>
+          <select required id="userrole"
+            class="w-full rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-primary">
+            <option disabled selected>Loading...</option>
+          </select>
+        </div>
+
+        <div class="flex justify-end space-x-2 mt-10">
+          <button type="button" onclick="closeModal()"
+            class="px-4 py-2 bg-dark_grey text-light_grey rounded-md hover:bg-light_grey hover:text-secondary">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 bg-primary text-light_grey rounded-md hover:bg-primary_hover">
+            Submit
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <!-- modal -->
-    <div
-      class="fixed inset-0 z-50 items-center justify-center bg-opacity-50 hidden bg-black modal-wrapper"
-      style="margin: 0"
-    >
-      <div
-        class="bg-medium_grey rounded-lg shadow-lg max-w-md text-secondary w-full p-6 modal-content text-left"
-      >
-        <form onsubmit="submitModal(event)">
-          <!-- Modal Header -->
+  <!-- Sidebar Functionality   -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggleMenu = document.getElementById("toggleMenu");
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("overlay");
+      const burgerIcon = document.getElementById("burgerIcon");
+      const closeIcon = document.getElementById("closeIcon");
 
-          <h2 class="text-lg font-semibold mb-4">Add New User</h2>
+      // Function to open sidebar
+      function openSidebar() {
+        sidebar.classList.remove("-translate-x-full");
+        overlay.classList.remove("hidden");
+        burgerIcon.classList.add("hidden");
+        closeIcon.classList.remove("hidden");
+      }
 
-          <!-- Username Dropdown -->
+      // Function to close sidebar
+      function closeSidebar() {
+        sidebar.classList.add("-translate-x-full");
+        overlay.classList.add("hidden");
+        burgerIcon.classList.remove("hidden");
+        closeIcon.classList.add("hidden");
+      }
 
-          <div class="mb-4">
-            <label class="block">Username</label>
-            <select
-              required
-              id="username"
-              class="w-full rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option disabled selected>Loading...</option>
-            </select>
-          </div>
-
-          <div class="mb-4">
-            <label class="block">Role</label>
-            <select
-              required
-              id="userrole"
-              class="w-full rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option disabled selected>Loading...</option>
-            </select>
-          </div>
-
-          <div class="flex justify-end space-x-2 mt-10">
-            <button
-              type="button"
-              onclick="closeModal()"
-              class="px-4 py-2 bg-dark_grey text-light_grey rounded-md hover:bg-light_grey hover:text-secondary"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="px-4 py-2 bg-primary text-light_grey rounded-md hover:bg-primary_hover"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Sidebar Functionality   -->
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const toggleMenu = document.getElementById("toggleMenu");
-        const sidebar = document.getElementById("sidebar");
-        const overlay = document.getElementById("overlay");
-        const burgerIcon = document.getElementById("burgerIcon");
-        const closeIcon = document.getElementById("closeIcon");
-
-        // Function to open sidebar
-        function openSidebar() {
-          sidebar.classList.remove("-translate-x-full");
-          overlay.classList.remove("hidden");
-          burgerIcon.classList.add("hidden");
-          closeIcon.classList.remove("hidden");
+      // Toggle button click event
+      toggleMenu.addEventListener("click", () => {
+        if (sidebar.classList.contains("-translate-x-full")) {
+          openSidebar();
+        } else {
+          closeSidebar();
         }
-
-        // Function to close sidebar
-        function closeSidebar() {
-          sidebar.classList.add("-translate-x-full");
-          overlay.classList.add("hidden");
-          burgerIcon.classList.remove("hidden");
-          closeIcon.classList.add("hidden");
-        }
-
-        // Toggle button click event
-        toggleMenu.addEventListener("click", () => {
-          if (sidebar.classList.contains("-translate-x-full")) {
-            openSidebar();
-          } else {
-            closeSidebar();
-          }
-        });
-
-        // Close sidebar when overlay is clicked
-        overlay.addEventListener("click", closeSidebar);
       });
-    </script>
 
-    <script>
-      // Function to fetch data
-      async function fetchAssociatedUsers() {
-        try {
-          const response = await fetch("/users/associated");
+      // Close sidebar when overlay is clicked
+      overlay.addEventListener("click", closeSidebar);
+    });
+  </script>
 
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
+  <script>
+    // Function to fetch data
+    async function fetchAssociatedUsers() {
+      try {
+        const response = await fetch("/users/associated");
 
-          const data = await response.json();
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-          // console.log("Associated Users:", data);
+        const data = await response.json();
 
-          if (data.success && data.data.length > 0) {
-            // response data
-            const users = data.data;
+        // console.log("Associated Users:", data);
 
-            // sort users: first 'project_admin' then those without it
-            const sortedUsers = [
-              ...users.filter((user) => user.role_name === "project_admin"),
-              ...users.filter((user) => user.role_name !== "project_admin"),
-            ];
+        if (data.success && data.data.length > 0) {
+          // response data
+          const users = data.data;
 
-            // reference the UL inside the #accordionContent div
-            const userList = document.querySelector("#accordionContent ul");
+          // sort users: first 'project_admin' then those without it
+          const sortedUsers = [
+            ...users.filter((user) => user.role_name === "project_admin"),
+            ...users.filter((user) => user.role_name !== "project_admin"),
+          ];
 
-            userList.innerHTML = "";
+          // reference the UL inside the #accordionContent div
+          const userList = document.querySelector("#accordionContent ul");
 
-            // Populate the list with fetched data
-            sortedUsers.forEach((user) => {
-              const listItem = document.createElement("li");
-              listItem.classList.add(
-                "py-3",
-                "flex",
-                "space-y-2",
-                "items-center",
-                "justify-between"
-              );
+          userList.innerHTML = "";
 
-              // create the content HTML without the trash button initially
-              let contentHTML = `
+          // Populate the list with fetched data
+          sortedUsers.forEach((user) => {
+            const listItem = document.createElement("li");
+            listItem.classList.add(
+              "py-3",
+              "flex",
+              "space-y-2",
+              "items-center",
+              "justify-between"
+            );
+
+            // create the content HTML without the trash button initially
+            let contentHTML = `
               <div class="flex gap-3 capitalize">
                   <p class="capitalize">${user.username} : </p>  
                   <p class="font-semibold ">${user.role_name}</p>
                </div> `;
 
-              // conditionally render the trash button based on the user's role
-              if (user.role_name !== "project_admin") {
-                contentHTML += `
+            // conditionally render the trash button based on the user's role
+            if (user.role_name !== "project_admin") {
+              contentHTML += `
                     <span class=""> 
                     <button
-                      class="text-red-500 delete-button mb-1"
+                      class="delete-button text-red-500 mb-1"
                       data-user-id="${user.user_id}"
                     >
                       <i class="fa-solid fa-trash"></i>
                     </button>
                     </span>
                   `;
-              }
-
-              // Set the innerHTML of the listItem
-              listItem.innerHTML = contentHTML;
-
-              // attach delete functionality to the button
-              const deleteButton = listItem.querySelector(".delete-button");
-              if (deleteButton) {
-                deleteButton.addEventListener("click", async (event) => {
-                  const userId = event.target
-                    .closest("button")
-                    .getAttribute("data-user-id");
-
-                  try {
-                    const response = await fetch(`/users/delete/${userId}`, {
-                      method: "DELETE",
-                    });
-                    if (!response.ok)
-                      throw new Error(`HTTP error! Status: ${response.status}`);
-                    toastr.success("User successfully deleted!");
-                    listItem.remove(); // remove the user from the DOM
-                  } catch (error) {
-                    console.error("Error deleting user:", error);
-                    toastr.error("Error deleting user.");
-                  }
-                });
-              }
-
-              // ensure the userList element exists and then append the item
-              const userList = document.getElementById("userList");
-              if (userList) {
-                userList.appendChild(listItem);
-              } else {
-                console.error("userList element not found!");
-              }
-            });
-
-            // make accordion visible
-            const accordionContent =
-              document.querySelector("#accordionContent");
-            accordionContent.classList.remove("hidden");
-            accordionContent.style.maxHeight = `${accordionContent.scrollHeight}px`;
-          } else {
-            console.log("No associated users found.");
-          }
-        } catch (error) {
-          console.error("Error fetching associated users:", error);
-        }
-      }
-
-      // Call the function when the page loads
-      window.onload = fetchAssociatedUsers;
-    </script>
-
-    <!-- Model Functionality   -->
-    <script>
-      const modal = document.querySelector(".modal-wrapper");
-
-      // handle outside modal click
-
-      modal.addEventListener("click", (e) => {
-        if (e.target.classList.contains("modal-wrapper")) {
-          modal.style.display = "none";
-        }
-      });
-
-      // open main model
-      async function openModal(event) {
-        event.preventDefault();
-
-        // open modal
-        modal.style.display = "flex";
-
-        //in this page that indicator causes error so just removing the indicator after 1 second
-        setTimeout(() => {
-          pageLoadingIndicator.classList.add("hidden");
-        }, 1000);
-
-        try {
-          // fetch user and role data from server
-          const response = await fetch("/getAllUsers_AllRoles");
-          if (response.ok) {
-            const data = await response.json();
-            const {
-              users,
-              roles,
-              loggedInUserId: fetchedLoggedInUserId,
-              selectedProjectId: fetchedSelectedProjectId,
-            } = data;
-
-            // store loggedInUserId globally to use in submitModal
-            loggedInUserId = fetchedLoggedInUserId;
-            selectedProjectId = fetchedSelectedProjectId;
-
-            // dropdown with usernames
-            const usernameSelect = document.getElementById("username");
-            usernameSelect.innerHTML =
-              "<option disabled selected>Select a user</option>";
-            console.log("users are:", users);
-
-            users.forEach((user) => {
-              if (
-                user.user_id !== loggedInUserId &&
-                user.role_scope !== "organization"
-              ) {
-                const option = document.createElement("option");
-                option.value = user.user_id;
-                option.textContent = user.username;
-                usernameSelect.appendChild(option);
-              }
-            });
-
-            // dropdown with roles
-            const userroleSelect = document.getElementById("userrole");
-            userroleSelect.innerHTML =
-              "<option disabled selected>Select a role</option>";
-            console.log("roles are:", roles);
-
-            roles
-              .filter((role) => role.role_scope === "project") // filter roles based on role_scope
-              .forEach((role) => {
-                const option = document.createElement("option");
-                option.value = role.role_id;
-                option.textContent = role.role_name;
-                userroleSelect.appendChild(option);
-              });
-          } else {
-            console.error("Failed to fetch user and role data");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        }
-      }
-
-      function submitModal(event) {
-        event.preventDefault();
-
-        const userSelect = document.getElementById("username");
-        const roleSelect = document.getElementById("userrole");
-
-        // Validate the select values
-        if (userSelect.value === "" || userSelect.selectedIndex === 0) {
-          setTimeout(() => {
-            pageLoadingIndicator.classList.add("hidden");
-          });
-          toastr.error("Please select a valid username");
-          return;
-        }
-
-        if (roleSelect.value === "" || roleSelect.selectedIndex === 0) {
-          setTimeout(() => {
-            pageLoadingIndicator.classList.add("hidden");
-          });
-          toastr.warning("Please select a valid role.");
-          return;
-        }
-
-        const user_id = userSelect.value;
-        const role_id = roleSelect.value;
-
-        if (user_id === "Select a user" || role_id === "Select a role") {
-          console.warn("Please select both a valid user and role.");
-          toastr.warning(
-            "Please select a valid user and role before submitting"
-          );
-          return;
-        }
-
-        const data = {
-          user_id: user_id,
-          role_id: role_id,
-          loggedInUserId: loggedInUserId,
-          selectedProjectId: selectedProjectId,
-          currentPath: window.location.href,
-        };
-
-        fetch("/postUser_roles", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              console.log("Success:", data);
-              toastr.success(data.message);
-              closeModal();
-              location.reload(); // reload the current page
-            } else {
-              console.log("Error:", data);
-              toastr.error(data.message);
-              pageLoadingIndicator.classList.add("hidden");
             }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            toastr.error(error);
-            pageLoadingIndicator.classList.add("hidden");
-          });
-      }
 
-      function closeModal() {
+            // set the innerHTML of listItem
+            listItem.innerHTML = contentHTML;
+
+            // attach delete functionality to the button
+            const deleteButton = listItem.querySelector(".delete-button");
+            if (deleteButton) {
+              deleteButton.addEventListener("click", async (event) => {
+                const userId = event.target
+                  .closest("button")
+                  .getAttribute("data-user-id");
+
+                try {
+                  const response = await fetch(`/users/delete/${userId}`, {
+                    method: "DELETE",
+                  });
+                  if (!response.ok)
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                  toastr.success("User successfully deleted!");
+                  listItem.remove(); // remove the user from the DOM
+                } catch (error) {
+                  console.error("Error deleting user:", error);
+                  toastr.error("Error deleting user.");
+                }
+              });
+            }
+
+            // ensure the userList element exists and then append the item
+            const userList = document.getElementById("userList");
+            if (userList) {
+              userList.appendChild(listItem);
+            } else {
+              console.error("userList element not found!");
+            }
+          });
+
+          // accordion visible
+          const accordionContent =
+            document.querySelector("#accordionContent");
+          accordionContent.classList.remove("hidden");
+          accordionContent.style.maxHeight = `${accordionContent.scrollHeight}px`;
+        } else {
+          console.log("No associated users found.");
+        }
+      } catch (error) {
+        console.error("Error fetching associated users:", error);
+      }
+    }
+
+    // Call the function when the page loads
+    window.onload = fetchAssociatedUsers;
+  </script>
+
+  <!-- Model Functionality   -->
+  <script>
+    const modal = document.querySelector(".modal-wrapper");
+
+    // handle outside modal click
+
+    modal.addEventListener("click", (e) => {
+      if (e.target.classList.contains("modal-wrapper")) {
         modal.style.display = "none";
       }
-    </script>
-  </body>
+    });
+
+    // open main model
+    async function openModal(event) {
+      event.preventDefault();
+
+      // open modal
+      modal.style.display = "flex";
+
+      //in this page that indicator causes error so just removing the indicator after 1 second
+      setTimeout(() => {
+        pageLoadingIndicator.classList.add("hidden");
+      }, 1000);
+
+      try {
+        // fetch user and role data from server
+        const response = await fetch("/getAllUsers_AllRoles");
+        if (response.ok) {
+          const data = await response.json();
+          const {
+            users,
+            roles,
+            loggedInUserId: fetchedLoggedInUserId,
+            selectedProjectId: fetchedSelectedProjectId,
+          } = data;
+
+          // store loggedInUserId globally to use in submitModal
+          loggedInUserId = fetchedLoggedInUserId;
+          selectedProjectId = fetchedSelectedProjectId;
+
+          // dropdown with usernames
+          const usernameSelect = document.getElementById("username");
+          usernameSelect.innerHTML =
+            "<option disabled selected>Select a user</option>";
+          console.log("users are:", users);
+
+          users.forEach((user) => {
+            if (
+              user.user_id !== loggedInUserId &&
+              user.role_scope !== "organization"
+            ) {
+              const option = document.createElement("option");
+              option.value = user.user_id;
+              option.textContent = user.username;
+              usernameSelect.appendChild(option);
+            }
+          });
+
+          // dropdown with roles
+          const userroleSelect = document.getElementById("userrole");
+          userroleSelect.innerHTML =
+            "<option disabled selected>Select a role</option>";
+          console.log("roles are:", roles);
+
+          roles
+            .filter((role) => role.role_scope === "project") // filter roles based on role_scope
+            .forEach((role) => {
+              const option = document.createElement("option");
+              option.value = role.role_id;
+              option.textContent = role.role_name;
+              userroleSelect.appendChild(option);
+            });
+        } else {
+          console.error("Failed to fetch user and role data");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    function submitModal(event) {
+      event.preventDefault();
+
+      const userSelect = document.getElementById("username");
+      const roleSelect = document.getElementById("userrole");
+
+      // Validate the select values
+      if (userSelect.value === "" || userSelect.selectedIndex === 0) {
+        setTimeout(() => {
+          pageLoadingIndicator.classList.add("hidden");
+        });
+        toastr.error("Please select a valid username");
+        return;
+      }
+
+      if (roleSelect.value === "" || roleSelect.selectedIndex === 0) {
+        setTimeout(() => {
+          pageLoadingIndicator.classList.add("hidden");
+        });
+        toastr.warning("Please select a valid role.");
+        return;
+      }
+
+      const user_id = userSelect.value;
+      const role_id = roleSelect.value;
+
+      if (user_id === "Select a user" || role_id === "Select a role") {
+        console.warn("Please select both a valid user and role.");
+        toastr.warning(
+          "Please select a valid user and role before submitting"
+        );
+        return;
+      }
+
+      const data = {
+        user_id: user_id,
+        role_id: role_id,
+        loggedInUserId: loggedInUserId,
+        selectedProjectId: selectedProjectId,
+        currentPath: window.location.href,
+      };
+
+      fetch("/postUser_roles", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            console.log("Success:", data);
+            toastr.success(data.message);
+            closeModal();
+            location.reload(); // reload the current page
+          } else {
+            console.log("Error:", data);
+            toastr.error(data.message);
+            pageLoadingIndicator.classList.add("hidden");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          toastr.error(error);
+          pageLoadingIndicator.classList.add("hidden");
+        });
+    }
+
+    function closeModal() {
+      modal.style.display = "none";
+    }
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const updatesContainer = document.getElementById("updates-container");
+      const loadMoreButton = document.getElementById("load-more");
+
+      // Function to fetch and display updates
+      async function fetchUpdates(page) {
+        try {
+          const response = await fetch(`/project/history?page=${page}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch updates.");
+          }
+
+          const data = await response.json();
+
+          if (data.success) {
+            if (data.data.length === 0 && page === 1) {
+              updatesContainer.innerHTML = "<p>No updates available.</p>";
+              loadMoreButton.style.display = "none"; // hide button if no updates
+              return;
+            }
+
+            // append updates to the container
+            data.data.forEach((update) => {
+              const updateElement = document.createElement("div");
+              updateElement.className = "update-item p-3 mb-2 bg-light rounded";
+              updateElement.innerHTML = `
+              <p><strong>Time:</strong> ${new Date(update.time_at).toLocaleString()}</p>
+              <p>${update.history_view}</p>
+            `;
+              updatesContainer.appendChild(updateElement);
+            });
+
+            // hide button if this is the last page
+            if (data.isLastPage) {
+              loadMoreButton.style.display = "none";
+            } else {
+              // update button page attribute for the next page
+              loadMoreButton.setAttribute("data-page", page + 1);
+            }
+          } else {
+            console.error(data.message);
+          }
+        } catch (error) {
+          console.error("Error fetching updates:", error.message);
+        }
+      }
+
+      // initial load
+      fetchUpdates(1);
+
+      // load more on button click
+      loadMoreButton.addEventListener("click", function () {
+        const nextPage = parseInt(loadMoreButton.getAttribute("data-page"), 10);
+        fetchUpdates(nextPage);
+      });
+    });
+  </script>
+
+
+</body>
+
 </html>

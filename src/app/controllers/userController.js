@@ -7,6 +7,7 @@ const Environments = require("../models/environmentsModel");
 const User_Roles = require("../models/user_rolesModel");
 const Permission = require("../models/permissionModel");
 const Roles = require("../models/rolesModel");
+const Env_History = require("../models/env_history")
 
 const { Op } = require("sequelize"); // Import Sequelize operators
 
@@ -620,7 +621,7 @@ class UserController {
 
   // update envs
   async updateEnvs(req, res) {
-    // console.log("Inside updateEnvs controller");
+    console.log("Inside updateEnvs controller");
 
     try {
       const envData = req.body;
@@ -632,6 +633,28 @@ class UserController {
         req.flash("error", "Env is missing. Please select an Env type");
         return res.redirect(`/project/envStatus?project_id=${project_id}`);
       }
+
+      // fetch env_type from environments table
+      const environment = await Environments.findOne({
+        where: { env_id: env_id },
+      });
+      if (!environment) {
+        req.flash("error", "Environment type not found!");
+        return res.redirect(`/project/envStatus?project_id=${project_id}`);
+      }
+      const env_type = environment.env_type;
+
+      // fetch username from users table
+      const user = await User.findOne({
+        where: { user_id: user_id },
+      });
+      if (!user) {
+        req.flash("error", "User not found!");
+        return res.redirect(`/project/envStatus?project_id=${project_id}`);
+      }
+      const username = user.username;
+
+      let historyViewMessage = "";
 
       // check the record exists
       const existingEnv = await Project_env.findOne({
@@ -655,7 +678,9 @@ class UserController {
             },
           }
         );
+        historyViewMessage = `Environment ${env_type} was updated by ${username}.`;
         req.flash("success", "Your environment was updated successfully!");
+
       } else {
         const newProjectEnvId = uuidv4();
 
@@ -666,8 +691,15 @@ class UserController {
           env_content: envData.env_content,
           updated_by: user_id,
         });
+        historyViewMessage = `Environment ${env_type} was created by ${username}.`;
         req.flash("success", "A new environment was created successfully!");
       }
+
+      // add history record to env_history
+      await Env_History.create({
+        project_id: project_id,
+        history_view: historyViewMessage,
+      });
 
       res.redirect("/project/env_type/envs?env_id=" + env_id);
     } catch (error) {
@@ -677,6 +709,57 @@ class UserController {
       );
       console.error("Error updating or creating environment:", error.message);
       res.status(500).send("Server Error");
+    }
+  }
+
+  // get history of a project
+  async getHistoryByProject(req, res) {
+    try {
+      const { project_id } = req.session;
+      const { page = 1 } = req.query; // Fetch the page number from query params
+      const itemsPerPage = 5; // Number of items per page
+
+      if (!project_id) {
+        return res.status(400).json({
+          success: false,
+          message: "Project ID is missing in the session.",
+        });
+      }
+
+      // Calculate offset for pagination
+      const offset = (page - 1) * itemsPerPage;
+
+      // Fetch paginated history data for the project
+      const historyData = await Env_History.findAll({
+        where: { project_id },
+        order: [["time_at", "DESC"]],
+        limit: itemsPerPage,
+        offset,
+      });
+
+      if (!historyData || historyData.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "No more history data found for the specified project.",
+        });
+      }
+
+      // Check total count for hiding "Read More" button
+      const totalCount = await Env_History.count({ where: { project_id } });
+      const isLastPage = totalCount <= page * itemsPerPage;
+
+      // Return the data as JSON
+      res.status(200).json({
+        success: true,
+        data: historyData,
+        isLastPage, // Include flag to indicate if this is the last page
+      });
+    } catch (error) {
+      console.error("Error fetching history data:", error.message);
+      res.status(500).json({
+        success: false,
+        message: "Server error while fetching history data.",
+      });
     }
   }
 
@@ -813,6 +896,8 @@ class UserController {
       res.status(500).json({ error: "Error updating passowrd" });
     }
   }
+
+
 }
 
 module.exports = UserController;

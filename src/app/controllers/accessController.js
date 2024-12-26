@@ -6,6 +6,8 @@ const User_Roles = require("../models/user_rolesModel");
 const Environments = require("../models/environmentsModel");
 const Permission = require("../models/permissionModel");
 const Project_env = require("../models/project_envModel");
+const Env_History = require("../models/env_history")
+
 
 const { Op } = require("sequelize");
 const transporter = require("../../core/nodeMailer/mailer");
@@ -80,8 +82,10 @@ class AccessController {
     }
 
     try {
+      let historyViewMessage = "";
       // user email from users table
       const user = await User.findOne({ where: { user_id: user_id } });
+      const role = await Roles.findOne({ where: { role_id: role_id } })
 
       if (!user) {
         logError(
@@ -95,6 +99,8 @@ class AccessController {
       }
 
       const userEmail = user.email;
+      const userName = user.username;
+      const userRole = role.role_name;
       console.log("userEmail is :", userEmail);
       console.log("currentPath is :", currentPath);
 
@@ -112,6 +118,7 @@ class AccessController {
           organization_id: organization_id,
           assigned_by: loggedInUserId,
         });
+        historyViewMessage = `User ${userName}'s role is changed to ${userRole}.`;
         message = "User role updated successfully";
       } else {
         await User_Roles.create({
@@ -121,8 +128,14 @@ class AccessController {
           project_id: selectedProjectId,
           assigned_by: loggedInUserId,
         });
+        historyViewMessage = `User ${userName} is asigned to new role ${userRole}.`;
         message = "User role added successfully";
       }
+      // add history record to env_history
+      await Env_History.create({
+        project_id: selectedProjectId,
+        history_view: historyViewMessage,
+      });
 
       const mailOptions = {
         from: process.env.EMAIL_USER,
@@ -554,6 +567,9 @@ class AccessController {
     const projectId = req.session.project_id;
 
     try {
+      const user = await User.findOne({ where: { user_id: userId } });
+      const userName = user.username;
+
       const result = await User_Roles.destroy({
         where: {
           user_id: userId,
@@ -562,6 +578,11 @@ class AccessController {
       });
 
       if (result) {
+        // add history record to env_history
+        await Env_History.create({
+          project_id: projectId,
+          history_view: `User ${userName} is removed from the project.`,
+        });
         res
           .status(200)
           .json({ success: true, message: "User deleted successfully" });

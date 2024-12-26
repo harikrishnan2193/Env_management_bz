@@ -7,3 +7,12 @@ Route: /login
 24/12/2024, 1:47:06 pm - Error: Cannot read properties of null (reading 'user_id')
 Route: /login
 
+24/12/2024, 6:22:35 pm - Error: Invalid email or password (password mismatch).
+Route: /login
+
+26/12/2024, 1:44:46 pm - Error: Unknown column 'time_at' in 'field list'
+Route: /project/updateEnvs
+
+26/12/2024, 5:00:54 pm - Error: read ECONNRESET
+Route: /project/updateEnvs
+
