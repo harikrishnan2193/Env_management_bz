@@ -11,6 +11,7 @@ const Env_History = require("../models/env_history")
 
 const { Op } = require("sequelize");
 const transporter = require("../../core/nodeMailer/mailer");
+const { logError } = require("../../../errorLogger");
 
 class AccessController {
   // get all users and roles in the environment page

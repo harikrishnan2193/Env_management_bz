@@ -7,13 +7,6 @@
       @media (max-width: 1535px) {
         #sidebar {
           background: #2d375b;
-          /* background: -webkit-linear-gradient(
-            to right,
-            #2c5364,
-            #203a43,
-            #0f2027
-          );
-          background: linear-gradient(to right, #2c5364, #203a43, #0f2027); */
         }
       }
 
@@ -24,11 +17,12 @@
       }
     </style>
 
+    <!-- tailwind cdn -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body>
   <!-- Burger Menu Button -->
-
 
   <div class="fixed top-4 left-4 z-50">
     <button id="toggleMenu" class="text-light_grey p-2 rounded focus:outline-none">
@@ -42,7 +36,7 @@
 
   <!-- Sidebar -->
   <div id="sidebar"
-    class="fixed top-0 left-0 h-full text-light_grey transform -translate-x-full transition-transform duration-300 z-20 2xl:bg-transparent w-80">
+    class="fixed top-0 left-0 h-full text-light_grey transform -translate-x-full transition-transform duration-300 z-20 2xl:bg-transparent w-80 overflow-y-auto">
 
     <!-- Users Content -->
     <% if (typeof roleDetails !=='undefined' && (roleDetails.role_scope==='organization' ||
@@ -82,7 +76,7 @@
           <div id="updates-container">
             <!-- Updates will be loaded here -->
           </div>
-          <button id="load-more" class="btn btn-primary mt-4" data-page="1">
+          <button id="load-more" class="btn btn-primary mt-2 text-white hover:text-primary" data-page="1">
             Read More
           </button>
         </div>
@@ -493,7 +487,6 @@
       });
     });
   </script>
-
 
 </body>
 

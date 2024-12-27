@@ -16,3 +16,21 @@ Route: /project/updateEnvs
 26/12/2024, 5:00:54 pm - Error: read ECONNRESET
 Route: /project/updateEnvs
 
+27/12/2024, 4:58:18 pm - Error: Error getting User Roles : User role not found
+Route: /getUserRoleScope
+
+27/12/2024, 4:58:30 pm - Error: Error getting User Roles : User role not found
+Route: /getUserRoleScope
+
+27/12/2024, 5:05:16 pm - Error: Error getting User Roles : User role not found
+Route: /getUserRoleScope
+
+27/12/2024, 5:05:27 pm - Error: Error getting User Roles : User role not found
+Route: /getUserRoleScope
+
+27/12/2024, 5:10:30 pm - Error: Error getting User Roles : User role not found
+Route: /getUserRoleScope
+
+27/12/2024, 5:14:16 pm - Error: Error getting User Roles : User role not found
+Route: /getUserRoleScope
+
