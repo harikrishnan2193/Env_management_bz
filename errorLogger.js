@@ -3,11 +3,11 @@ const path = require("path");
 
 const logFilePath = path.join(__dirname, "/error.log");
 
-// Function to log errors
+// function to log errors
 function logError(error, route) {
   try {
     if (!fs.existsSync(logFilePath)) {
-      fs.writeFileSync(logFilePath, "", "utf8"); // Creating the file if it doesn't exist
+      fs.writeFileSync(logFilePath, "", "utf8"); // creating the file if it doesn't exist
     }
     const logMessage = `${new Date().toLocaleString(
       "en-IN"
