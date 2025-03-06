@@ -3,7 +3,7 @@
 ## Description
 This project is built using **Node.js** and **EJS** for the frontend. It follows the **MVC architecture** and uses **MySQL** as the database. The project allows users to perform CRUD operations and manage data efficiently.
 
-The project is designed for **environment management for developers**, allowing users to create new accounts using email and password, using there acont manage environment efficiently. It includes a **Super Admin** role with additional controls over the entire project.
+The project is designed for **environment management for developers**, allowing users to create new accounts using email and password, using there account manage environment efficiently. It includes a **Super Admin** role with additional controls over the entire project.
 
 ## Features
 - Node.js with Express.js
