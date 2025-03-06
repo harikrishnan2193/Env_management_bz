@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
 const { logError } = require("./errorLogger");
+const { swaggerUi, swaggerSpec } = require("./swagger/swagger");
 
 // Database connection
 require("./src/core/db/connection");
@@ -45,6 +46,16 @@ envServer.use(userRoutes);
 envServer.use(accessRoutes);
 
 const PORT = process.env.PORT || 4000;
+
+//
+// Serve Swagger UI
+envServer.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Example route
+envServer.get("/api/example", (req, res) => {
+  res.send({ message: "Hello, Swagger!" });
+});
+//
 
 envServer.listen(PORT, () => {
   console.log(`Server running on port number: ${PORT}`);

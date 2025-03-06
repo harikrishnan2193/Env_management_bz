@@ -34,3 +34,9 @@ Route: /getUserRoleScope
 27/12/2024, 5:14:16 pm - Error: Error getting User Roles : User role not found
 Route: /getUserRoleScope
 
+23/1/2025, 10:02:14 pm - Error: Cannot read properties of null (reading 'user_id')
+Route: /login
+
+6/3/2025, 2:07:36 pm - Error: Invalid email or password (password mismatch).
+Route: /login
+

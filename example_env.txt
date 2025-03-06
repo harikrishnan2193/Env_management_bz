@@ -10,5 +10,11 @@ SECRET_KEY=2736$3usy7@6eneh
 
 JWT_SECRET=supersecretkey2u3@hry
 
-EMAIL_USER=
-EMAIL_PASS=
+EMAIL_USER=<add email id hear>
+EMAIL_PASS=<add password hear>
+
+---------------------
+
+superAdmin detils:-
+email - superadmin@gmail.com
+password - super123
