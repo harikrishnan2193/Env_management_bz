@@ -34,5 +34,9 @@ Ensure you have the following installed:
    ```bash
    node index.js  
 
+
+### 🖼️ Screenshot
+![App Screenshot](./public/images/Screenshot.png)
+
 ### 🚀 Live Demo
 [Click here to try the live app](https://env-management-bz.onrender.com/)
