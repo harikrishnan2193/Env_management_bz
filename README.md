@@ -11,7 +11,7 @@ The project is designed for **environment management for developers**, allowing 
 - MySQL database (included as a file - msqlDB.sql)
 - MVC architecture
 - CRUD operations
-- Environment variables for configuration
+- Environment variables for configuration (file - example_env.txt)
 - User authentication (Email & Password)
 - **Super Admin** with full control
 
