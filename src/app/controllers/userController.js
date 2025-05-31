@@ -9,7 +9,7 @@ const Permission = require("../models/permissionModel");
 const Roles = require("../models/rolesModel");
 const Env_History = require("../models/env_history")
 
-const { Op } = require("sequelize"); // Import Sequelize operators
+const { Op } = require("sequelize"); // import sequelize operators
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");

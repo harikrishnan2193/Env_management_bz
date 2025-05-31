@@ -45,7 +45,7 @@ router.get('/users/associated', accessController.users_Associated);
 router.delete('/users/delete/:id', accessController.remove_Auser)
 
 //add super admin
-router.post('/postnew_admin', checkRoleScope(['organization'], ['admin']), accessController.postNew_admin)
+router.post('/postnew_admin', checkRoleScope(['organization'], ['Admin']), accessController.postNew_admin)
 
 //!Permisson Management
 router.get("/permissionManagement", checkUserRoleScope('organization'), accessController.getAllPermissions);

@@ -136,7 +136,7 @@ class AccessController {
       await Env_History.create({
         project_id: selectedProjectId,
         history_view: historyViewMessage,
-      });
+      })
 
       const mailOptions = {
         from: process.env.EMAIL_USER,
@@ -212,24 +212,24 @@ class AccessController {
                     </div>
                 </body>
                 </html>`,
-      };
+      }
 
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          logError(error.message || "Error sending email", req.url);
-          console.error("Error sending email:", error);
+          logError(error.message || "Error sending email", req.url)
+          console.error("Error sending email:", error)
         } else {
-          console.log("Email sent:", info.response);
+          console.log("Email sent:", info.response)
         }
-      });
+      })
 
-      res.status(200).json({ success: true, message });
+      res.status(200).json({ success: true, message })
     } catch (error) {
-      logError(error.message || "Error processing User_Roles", req.url);
-      console.error("Error processing User_Roles:", error);
+      logError(error.message || "Error processing User_Roles", req.url)
+      console.error("Error processing User_Roles:", error)
       res
         .status(500)
-        .json({ success: false, message: "Internal Server Error" });
+        .json({ success: false, message: "Internal Server Error" })
     }
   }
 

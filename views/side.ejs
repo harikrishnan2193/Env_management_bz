@@ -40,7 +40,7 @@
 
     <!-- Users Content -->
     <% if (typeof roleDetails !=='undefined' && (roleDetails.role_scope==='organization' ||
-      (roleDetails.role_name==='project_admin' && roleDetails.role_scope==='project' ))) { %>
+      (roleDetails.role_name==='Project_admin' && roleDetails.role_scope==='project' ))) { %>
       <div class="p-7">
         <div class="border rounded-lg shadow w-full mx-auto mt-20">
           <h3 class="w-full px-4 py-2 text-left text-lg font-medium flex justify-between">
@@ -56,7 +56,7 @@
           </div>
 
           <% if (typeof roleDetails !=='undefined' && ((roleDetails.role_scope==='organization' ) ||
-            (roleDetails.role_name==='project_admin' && roleDetails.role_scope==='project' ))) { %>
+            (roleDetails.role_name==='Project_admin' && roleDetails.role_scope==='project' ))) { %>
             <div class="text-center mt-10 mb-5">
               <p class="text-center text-white mt-4">
                 Add new users ?
@@ -180,10 +180,10 @@
           // response data
           const users = data.data;
 
-          // sort users: first 'project_admin' then those without it
+          // sort users: first 'Project_admin' then those without it
           const sortedUsers = [
-            ...users.filter((user) => user.role_name === "project_admin"),
-            ...users.filter((user) => user.role_name !== "project_admin"),
+            ...users.filter((user) => user.role_name === "Project_admin"),
+            ...users.filter((user) => user.role_name !== "Project_admin"),
           ];
 
           // reference the UL inside the #accordionContent div
@@ -200,7 +200,7 @@
               "space-y-2",
               "items-center",
               "justify-between"
-            );
+            )
 
             // create the content HTML without the trash button initially
             let contentHTML = `
@@ -210,7 +210,7 @@
                </div> `;
 
             // conditionally render the trash button based on the user's role
-            if (user.role_name !== "project_admin") {
+            if (user.role_name !== "Project_admin") {
               contentHTML += `
                     <span class=""> 
                     <button
