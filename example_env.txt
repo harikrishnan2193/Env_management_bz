@@ -15,6 +15,6 @@ EMAIL_PASS=<add password hear>
 
 ---------------------
 
-superAdmin detils:-
+superAdmin detils for admin login :-
 email - superadmin@gmail.com
 password - super123
