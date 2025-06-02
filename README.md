@@ -20,7 +20,7 @@ The project is designed for **environment management for developers**, allowing 
 ### Prerequisites
 Ensure you have the following installed:
 - **Node.js** (v14+ recommended)
-- **XAMPP** (to run MySQL locally)
+- **XAMPP** (to run MySQL database locally)
 
 ### Getting Started
 
